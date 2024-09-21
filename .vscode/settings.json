@@ -1,0 +1,9 @@
+{
+    "python.analysis.extraPaths": [
+        "components/base-component-api/src",
+        "components/warhammer/src",
+        "components/home-assistant/src",
+        "components/base-library/src",
+    ],
+ 
+}
