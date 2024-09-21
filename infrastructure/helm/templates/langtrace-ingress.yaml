@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/whitelist-source-range: 192.168.0.1/16
+    cert-manager.io/cluster-issuer: cert-issuer
+    kubernetes.io/tls-acme: "true"
+  name: langtrace
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: langtrace.melvin.beer
+    http:
+      paths:
+      - backend:
+          service:
+            name: langtrace-app
+            port:
+              number: 3000
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - langtrace.melvin.beer
+    secretName: tls-certificate

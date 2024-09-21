@@ -1,0 +1,149 @@
+openapi: 3.0.2
+info:
+    title: Component API
+    version: 1.0.0
+    description: API for integrating components into the Assistant
+paths:
+    /documents:
+        post:
+            requestBody:
+                content:
+                    multipart/form-data: {}
+                required: true
+            tags:
+                - component
+            responses:
+                '201':
+                    description: Uploading
+                '422':
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                    description: Unsupoorted document
+                '501':
+                    description: Not available for this componment
+            operationId: upload_document
+    /question:
+        post:
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: string
+                required: true
+            tags:
+                - component
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ChatResponse'
+                    description: Answer
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                    description: Couldn't answer your question.
+                '500':
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                    description: Something somewhere went terribly wrong.
+                '501':
+                    description: Doesn't exist for this component
+            operationId: answer_question
+    /act:
+        post:
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: string
+                required: true
+            tags:
+                - component
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                    description: Done
+                '500':
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                    description: Something Somewhere went terribly wrong.
+                '501':
+                    description: Not available for this component.
+            operationId: act
+    /availbale/actions:
+        get:
+            tags:
+                - component
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/KeyValue'
+                    description: Available actions
+                '500':
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                    description: Something somewhere went terribly wrong
+            operationId: get_available_actions
+components:
+    schemas:
+        SourceDocument:
+            description: ''
+            required:
+                - page_content
+                - Metadata
+            type: object
+            properties:
+                page_content:
+                    description: ''
+                    type: string
+                Metadata:
+                    description: ''
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/KeyValue'
+        KeyValue:
+            description: ''
+            required:
+                - Name
+                - Value
+            type: object
+            properties:
+                Name:
+                    description: ''
+                    type: string
+                Value:
+                    description: ''
+                    type: string
+        ChatResponse:
+            description: ''
+            required:
+                - Sources
+                - Answer
+            type: object
+            properties:
+                Sources:
+                    description: ''
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/SourceDocument'
+                Answer:
+                    description: ''
+                    type: string

@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: warhammer
+  labels:
+    app: warhammer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: warhammer
+  template:
+    metadata:
+      labels:
+        app: warhammer
+    spec:
+      containers:
+      - name: warhammer
+        image: warhammer
+        ports:
+        - containerPort: 8080
+        #command: {{ .Values.components.warhammer.command }}
+        command: 
+          - "poetry"
+          - "run"
+          - "python"
+          - "-m"
+          - "debugpy"
+          - "--listen"
+          - "0.0.0.0:5678"
+          - "--wait-for-client"
+          - "-m"
+          - "uvicorn"
+          - "src.main:component_app"
+          - "--host"
+          - "0.0.0.0"
+          - "--port"
+          - "8080"
+        

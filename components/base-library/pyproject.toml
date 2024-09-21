@@ -1,0 +1,49 @@
+[tool.black]
+line-length = 120
+exclude = '''
+(
+  /(
+      \.eggs         # exclude a few common directories in the
+    | \.git          # root of the project
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+  )/
+)
+'''
+
+[tool.isort]
+profile = "black"
+skip = [
+    '.eggs', '.git', '.hg', '.mypy_cache', '.nox', '.pants.d', '.tox',
+    '.venv', '_build', 'buck-out', 'build', 'dist', 'node_modules', 'venv',
+]
+skip_gitignore = true
+
+
+[tool.poetry]
+name = "base-library"
+version = "0.1.0"
+description = ""
+authors = ["Melvin Klein"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.13"
+pydantic = "^2.9.0"
+pdfplumber = "^0.11.4"
+langchain-community = "^0.3.0"
+langchain-openai = "^0.2.0"
+qdrant-client = {version="^1.11.2", extras=["fastembed"]}
+langchain-qdrant = "^0.1.4"
+pydantic-settings = "^2.4.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+

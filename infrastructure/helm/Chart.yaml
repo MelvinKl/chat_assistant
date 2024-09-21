@@ -1,0 +1,18 @@
+name: rag
+description: RAG solution to rule them all
+version: 0.0.1
+apiVersion: v1
+keywords:
+  - rag
+  - llm
+  - ollama
+dependencies:
+  - name: open-webui
+    version: "3.1.0"
+    repository: "https://helm.openwebui.com/"
+  - name: qdrant
+    repository: https://qdrant.github.io/qdrant-helm
+    version: 0.10.1
+  - name: langtrace 
+    repository: https://Scale3-Labs.github.io/langtrace-helm-chart
+    version: 1.0.2
