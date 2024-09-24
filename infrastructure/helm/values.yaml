@@ -1,8 +1,15 @@
+ghcrIo:
+  username: github-username # replace with your github username
+  pat: github-pat # replace with your github personal access token
+  email: email-address@domain.de # replace with your email address
+
 components:
   warhammer:
-    command:
-      - "poetry"
-      - "run"
+    ingress: 
+      enabled: true
+      host: warhammer.melvin.beer
+    debug: false
+    debugArgs:
       - "python"
       - "-m"
       - "debugpy"
@@ -16,7 +23,15 @@ components:
       - "0.0.0.0"
       - "--port"
       - "8080"
-
+    args:
+      - "python"
+      - "-m"
+      - "uvicorn"
+      - "src.main:component_app"
+      - "--host"
+      - "0.0.0.0"
+      - "--port"
+      - "8080"
 
 open-webui:
   nameOverride: ""

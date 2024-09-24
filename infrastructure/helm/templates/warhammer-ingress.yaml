@@ -1,0 +1,39 @@
+{{- if .Values.components.warhammer.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/whitelist-source-range: 192.168.0.1/16
+    cert-manager.io/cluster-issuer: cert-issuer
+    kubernetes.io/tls-acme: "true"
+  name: warhammer
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: {{ .Values.components.warhammer.ingress.host }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: warhammer
+            port:
+              number: 8080
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - {{ .Values.components.warhammer.ingress.host }}
+    secretName: tls-certificate
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: tls-certificate
+spec:
+  dnsNames:
+    - {{ .Values.components.warhammer.ingress.host }}    
+  secretName: tls-certificate
+  issuerRef:
+    name: cert-issuer
+    kind: ClusterIssuer    
+{{- end }}
