@@ -18,7 +18,7 @@ class QdrantDatabase(VectorDatabase):
         try:
             self._qdrant.create_collection(
                 collection_name=collection_name,
-                vectors_config=VectorParams(size=4096, distance=Distance.COSINE),
+                vectors_config=VectorParams(size=2048, distance=Distance.COSINE),
             )
         except Exception as e:
             pass

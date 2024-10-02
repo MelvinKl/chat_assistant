@@ -26,12 +26,12 @@ class WarhammerDependencyContainer(DeclarativeContainer):
 
     embedder = Singleton(
         OllamaEmbeddings,
-        model="llama3.1:8b",
+        model="llama3.2:1b",
         base_url="http://192.168.5.23:11434",
     )
     llm = Singleton(
         Ollama,
-        model="llama3.1:8b", 
+        model="llama3.2:1b", 
         base_url="http://192.168.5.23:11434"
     )
 

@@ -61,7 +61,7 @@ open-webui:
 
   # -- A list of Ollama API endpoints. These can be added in lieu of automatically installing the Ollama Helm chart, or in addition to it.
   ollamaUrls: 
-    - "192.168.5.23:11434"
+    - "http://192.168.5.23:11434"
 
   # -- Value of cluster domain
   clusterDomain: cluster.local
@@ -84,21 +84,21 @@ open-webui:
 
     # -- Additional annotations for the Ingress resource.
     annotations: 
-      ingress.kubernetes.io/whitelist-source-range: 192.168.0.1/16
+      #ingress.kubernetes.io/whitelist-source-range: 192.168.0.1/16
       cert-manager.io/cluster-issuer: cert-issuer
       kubernetes.io/tls-acme: "true"
 
     # The list of hostnames to be covered with this ingress record.
     hosts:
-      - host: rag.melvin.beer
+      - host: chat.melvin.beer
         paths:
           - path: /
             pathType: Prefix
     
-    host: "rag.melvin.beer"
+    host: "chat.melvin.beer"
     tls: true
 
-    existingSecret: "tls-certificate"
+    # existingSecret: "tls-certificate"
   persistence:
     enabled: true
     size: 2Gi
