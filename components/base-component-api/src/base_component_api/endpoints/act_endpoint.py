@@ -3,8 +3,8 @@ from abc import ABC, abstractmethod
 
 class ActEndpoint(ABC):
 
-    @abstractmethod
     @property
+    @abstractmethod
     def available(self) -> bool: ...
 
     @abstractmethod
