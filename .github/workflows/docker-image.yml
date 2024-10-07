@@ -29,6 +29,6 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./components/warhammer/Dockerfile # Corrected path to Dockerfile
+          file: ./components/rag/Dockerfile # Corrected path to Dockerfile
           push: true
-          tags: ghcr.io/melvinkl/chat_assistant/warhammer:latest
+          tags: ghcr.io/melvinkl/chat_assistant/rag:latest
