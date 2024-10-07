@@ -10,8 +10,12 @@ from base_library.vector_database.vector_database import VectorDatabase
 
 class QdrantDatabase(VectorDatabase):
 
-        
-    def __init__(self, embedder,collection_name:str,qdrant:QdrantClient,):
+    def __init__(
+        self,
+        embedder,
+        collection_name: str,
+        qdrant: QdrantClient,
+    ):
         self._qdrant = qdrant
         self._embedder = embedder
         self._collection = collection_name
@@ -26,14 +30,14 @@ class QdrantDatabase(VectorDatabase):
             client=qdrant,
             collection_name=collection_name,
             embedding=embedder,
-        )        
+        )
 
-    def upload_documents(self, documents:list[Document])->None:
+    def upload_documents(self, documents: list[Document]) -> None:
         self._client.add_documents(documents=documents)
 
-    def search(self, query:str)->list[Document]:
+    def search(self, query: str) -> list[Document]:
         return self._client.similarity_search(query)
-    
+
     @property
     def retriever(self):
         return self._client.as_retriever()

@@ -9,20 +9,22 @@ from base_library.vector_database.vector_database import VectorDatabase
 
 
 class RagAnswerEndpoint(AnswerEndpoint):
-    
+
     @property
-    def available(self)->bool:
+    def available(self) -> bool:
         return True
 
-    def __init__(self, vector_database:VectorDatabase, llm):
+    def __init__(self, vector_database: VectorDatabase, llm):
         self._vector_database = vector_database
         self._llm = llm
         prompt_template = PromptTemplate.from_template(PROMPT)
         self._chain = prompt_template | llm
 
-    async def aanswer_question(self, question)->ChatResponse:
+    async def aanswer_question(self, question) -> ChatResponse:
         search_result = self._vector_database.search(question)
         sources = [DocumentMapper.map_to_source_document(x) for x in search_result]
-        
-        answer = await self._chain.ainvoke({"question": question, "context": "\n\n".join(x.page_content for x in search_result)})
+
+        answer = await self._chain.ainvoke(
+            {"question": question, "context": "\n\n".join(x.page_content for x in search_result)}
+        )
         return ChatResponse(sources=sources, answer=answer)

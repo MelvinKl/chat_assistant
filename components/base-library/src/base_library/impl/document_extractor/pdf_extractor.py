@@ -9,11 +9,10 @@ from base_library.document_extractor.extractor import Extractor
 
 class PDFExtractor(Extractor):
 
-    
     @property
-    def supported_types(self)->list[DocumentType]:
+    def supported_types(self) -> list[DocumentType]:
         return [DocumentType.PDF]
-    
-    def extract(self, content:Any)->list[Document]:
+
+    def extract(self, content: Any) -> list[Document]:
         loader = PDFPlumberLoader(content)
         return loader.load()

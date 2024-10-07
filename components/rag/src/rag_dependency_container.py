@@ -1,4 +1,3 @@
-
 from fastembed import TextEmbedding
 from dependency_injector.containers import DeclarativeContainer, WiringConfiguration
 from dependency_injector.providers import Configuration, Singleton
@@ -20,8 +19,9 @@ from base_component_api.impl.endpoints.default_get_actions_endpoint import Defau
 
 from impl.endpoints.rag_upload_document_endpoint import RagUploadDocument
 
+
 class RagDependencyContainer(DeclarativeContainer):
-    
+
     settings_qdrant = QdrantSetttings()
 
     embedder = Singleton(
@@ -29,13 +29,10 @@ class RagDependencyContainer(DeclarativeContainer):
         model="llama3.2:1b",
         base_url="http://open-webui-ollama.assistant.svc.cluster.local:11434",
     )
-    llm = Singleton(
-        Ollama,
-        model="llama3.2:1b", 
-        base_url="http://open-webui-ollama.assistant.svc.cluster.local:11434"
-    )
+    llm = Singleton(Ollama, model="llama3.2:1b", base_url="http://open-webui-ollama.assistant.svc.cluster.local:11434")
 
-    qdrant = Singleton(QdrantClient,
+    qdrant = Singleton(
+        QdrantClient,
         url=settings_qdrant.url,
     )
     vector_database = Singleton(
@@ -55,12 +52,11 @@ class RagDependencyContainer(DeclarativeContainer):
     )
     get_actions_endpoint = Singleton(
         DefaultGetActionsEndpoint,
-        answer_endpoint_implementation=answer_endpoint, 
-        act_endpoint_implementation=act_endpoint
+        answer_endpoint_implementation=answer_endpoint,
+        act_endpoint_implementation=act_endpoint,
     )
     upload_document_endpoint = Singleton(
         RagUploadDocument,
         pdf_extractor=pdf_extractor,
         vector_database=vector_database,
     )
-
