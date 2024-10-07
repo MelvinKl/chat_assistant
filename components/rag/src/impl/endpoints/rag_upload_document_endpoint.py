@@ -9,7 +9,7 @@ from fastapi import File, UploadFile
 from base_component_api.endpoints.upload_document_endpoint import UploadDocumentEndpoint
 
 
-class WarhammerUploadDocument(UploadDocumentEndpoint):
+class RagUploadDocument(UploadDocumentEndpoint):
 
     def __init__(self, pdf_extractor:Extractor,vector_database:VectorDatabase,):
         self._pdf_extractor = pdf_extractor

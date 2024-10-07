@@ -9,23 +9,12 @@ class DefaultGetActionsEndpoint(GetActionsEndpoint):
 
     def __init__(self, answer_endpoint_implementation: AnswerEndpoint, act_endpoint_implementation: ActEndpoint) -> None:        
         action_dict = {}
-
-        try:
-            answer = answer_endpoint_implementation.aanswer_question("Does this exist?")
+        if answer_endpoint_implementation.available:
             action_dict["answer"] = getdoc(answer_endpoint_implementation)
-        except NotImplementedError:
-            pass
-        except Exception as e:
-            action_dict["answer"] = getdoc(answer_endpoint_implementation)
-
-        try:
-            answer = act_endpoint_implementation.aact("Does this exist?")
+            
+        if act_endpoint_implementation.available:            
             action_dict["act"] = getdoc(act_endpoint_implementation)
-        except NotImplementedError:            
-            pass
-        except Exception as e:
-            action_dict["act"] = getdoc(act_endpoint_implementation)
-
+            
         self._action_dict = action_dict
 
     def get_actions(self)->dict:

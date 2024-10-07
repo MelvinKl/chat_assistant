@@ -8,8 +8,12 @@ from base_library.impl.mapper.document_mapper import DocumentMapper
 from base_library.vector_database.vector_database import VectorDatabase
 
 
-class WarhammerAnswerEndpoint(AnswerEndpoint):
+class RagAnswerEndpoint(AnswerEndpoint):
     
+    @property
+    def available(self)->bool:
+        return True
+
     def __init__(self, vector_database:VectorDatabase, llm):
         self._vector_database = vector_database
         self._llm = llm
