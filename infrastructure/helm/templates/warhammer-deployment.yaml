@@ -14,26 +14,24 @@ spec:
       labels:
         app: warhammer
     spec:
+      imagePullSecrets:
+      - name: "pull-secret"
       containers:
       - name: warhammer
-        image: warhammer
+        imagePullPolicy: Always
+        image: ghcr.io/melvinkl/chat_assistant/rag:latest
         ports:
         - containerPort: 8080
-        #command: {{ .Values.components.warhammer.command }}
         command: 
           - "poetry"
           - "run"
-          - "python"
-          - "-m"
-          - "debugpy"
-          - "--listen"
-          - "0.0.0.0:5678"
-          - "--wait-for-client"
-          - "-m"
-          - "uvicorn"
-          - "src.main:component_app"
-          - "--host"
-          - "0.0.0.0"
-          - "--port"
-          - "8080"
-        
+        args:
+          {{- if .Values.components.warhammer.debug }}
+          {{- range $arg :=  .Values.components.warhammer.debugArgs }}
+          - {{ $arg | quote -}}
+          {{ end }}
+          {{- else }}
+          {{- range $arg :=  .Values.components.warhammer.args }}
+          - {{ $arg | quote -}}
+          {{ end }}
+          {{- end }}

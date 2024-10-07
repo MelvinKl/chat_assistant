@@ -18,7 +18,7 @@ class DependencyContainer(DeclarativeContainer):
     answer_endpoint = Singleton(DefaultAnswerEndpoint)
     get_actions_endpoint = Singleton(
         DefaultGetActionsEndpoint,
-        answer_endpoint_implementation=answer_endpoint, 
-        act_endpoint_implementation=act_endpoint
-        )
+        answer_endpoint_implementation=answer_endpoint,
+        act_endpoint_implementation=act_endpoint,
+    )
     upload_document_endpoint = Singleton(UploadDocumentEndpoint)

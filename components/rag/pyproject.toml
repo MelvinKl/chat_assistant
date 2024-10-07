@@ -27,7 +27,7 @@ skip_gitignore = true
 
 
 [tool.poetry]
-name = "Warhammer Assistant component"
+name = "Rag Assistant component"
 version = "0.1.0"
 description = ""
 authors = ["Melvin Klein"]

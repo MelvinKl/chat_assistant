@@ -28,5 +28,6 @@ app = FastAPI(
 app.container = container
 app.include_router(ComponentApiRouter)
 
-def dependency_override(new_container: DeclarativeContainer): 
+
+def dependency_override(new_container: DeclarativeContainer):
     app.container.override(new_container)

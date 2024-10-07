@@ -7,7 +7,7 @@ sys.path.append(file_dir)
 from base_component_api.main import app as component_app
 from base_component_api.main import dependency_override
 
-from warhammer_dependency_container import WarhammerDependencyContainer
+from rag_dependency_container import RagDependencyContainer
 
-warhammer_container = WarhammerDependencyContainer()
-dependency_override(warhammer_container)
+container = RagDependencyContainer()
+dependency_override(container)

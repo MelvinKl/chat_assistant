@@ -11,11 +11,10 @@ RUN pip install --upgrade pip
 RUN pip install poetry
 COPY components/. /app/
 
-WORKDIR /app/warhammer
+WORKDIR /app/rag
 
 RUN poetry lock --no-update
 
 RUN if [ "$DEV" = 1 ] ; then poetry install --no-root --with dev; else poetry install --no-root; fi
 
-# CMD [ "tail", "-f", "/dev/null" ]
 CMD [ "poetry", "run", "uvicorn", "src.main:component_app", "--host", "0.0.0.0", "--port", "8080" ]

@@ -1,8 +1,15 @@
+ghcrIo:
+  username: github-username # replace with your github username
+  pat: github-pat # replace with your github personal access token
+  email: email-address@domain.de # replace with your email address
+
 components:
   warhammer:
-    command:
-      - "poetry"
-      - "run"
+    ingress: 
+      enabled: true
+      host: warhammer.melvin.beer
+    debug: false
+    debugArgs:
       - "python"
       - "-m"
       - "debugpy"
@@ -16,27 +23,38 @@ components:
       - "0.0.0.0"
       - "--port"
       - "8080"
-
+    args:
+      - "python"
+      - "-m"
+      - "uvicorn"
+      - "src.main:component_app"
+      - "--host"
+      - "0.0.0.0"
+      - "--port"
+      - "8080"
 
 open-webui:
   nameOverride: ""
 
   ollama:
+    image:
+      tag: "latest"
     # -- Automatically install Ollama Helm chart from https://otwld.github.io/ollama-helm/. Use [Helm Values](https://github.com/otwld/ollama-helm/#helm-values) to configure
-    enabled: false
+    enabled: true
     # -- If enabling embedded Ollama, update fullnameOverride to your desired Ollama name value, or else it will use the default ollama.name value from the Ollama chart
     fullnameOverride: "open-webui-ollama"
     # -- Example Ollama configuration with nvidia GPU enabled, automatically downloading a model, and deploying a PVC for model persistence
-    # ollama:
-    #   gpu:
-    #     enabled: true
-    #     type: 'nvidia'
-    #     number: 1
-    #   models:
-    #     - llama3
-    # runtimeClassName: nvidia
-    # persistentVolume:
-    #   enabled: true
+    ollama:
+      #gpu:
+      #  enabled: true
+      #  type: 'nvidia'
+      #  number: 1
+      models:
+        - llama3.2:1b
+        - llama3.2:3b
+    runtimeClassName: nvidia
+    persistentVolume:
+      enabled: true
 
   pipelines:
     # -- Automatically install Pipelines chart to extend Open WebUI functionality using Pipelines: https://github.com/open-webui/pipelines
@@ -45,8 +63,8 @@ open-webui:
     extraEnvVars: []
 
   # -- A list of Ollama API endpoints. These can be added in lieu of automatically installing the Ollama Helm chart, or in addition to it.
-  ollamaUrls: 
-    - "192.168.5.23:11434"
+  #ollamaUrls: 
+  #  - "http://192.168.5.23:11434"
 
   # -- Value of cluster domain
   clusterDomain: cluster.local
@@ -69,21 +87,21 @@ open-webui:
 
     # -- Additional annotations for the Ingress resource.
     annotations: 
-      ingress.kubernetes.io/whitelist-source-range: 192.168.0.1/16
+      #ingress.kubernetes.io/whitelist-source-range: 192.168.0.1/16
       cert-manager.io/cluster-issuer: cert-issuer
       kubernetes.io/tls-acme: "true"
 
     # The list of hostnames to be covered with this ingress record.
     hosts:
-      - host: rag.melvin.beer
+      - host: chat.melvin.beer
         paths:
           - path: /
             pathType: Prefix
     
-    host: "rag.melvin.beer"
+    host: "chat.melvin.beer"
     tls: true
 
-    existingSecret: "tls-certificate"
+    # existingSecret: "tls-certificate"
   persistence:
     enabled: true
     size: 2Gi

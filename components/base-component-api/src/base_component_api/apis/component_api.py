@@ -80,8 +80,7 @@ async def answer_question(
     tags=["component"],
     response_model_by_alias=True,
 )
-async def get_available_actions(
-) -> List[KeyValue]:
+async def get_available_actions() -> List[KeyValue]:
     if not BaseComponentApi.subclasses:
         raise HTTPException(status_code=500, detail="Not implemented")
     return await BaseComponentApi.subclasses[0]().get_available_actions()
@@ -97,9 +96,7 @@ async def get_available_actions(
     tags=["component"],
     response_model_by_alias=True,
 )
-async def upload_document(
-    file: UploadFile = File(...)
-) -> None:
+async def upload_document(file: UploadFile = File(...)) -> None:
     if not BaseComponentApi.subclasses:
         raise HTTPException(status_code=500, detail="Not implemented")
     return await BaseComponentApi.subclasses[0]().upload_document(file)

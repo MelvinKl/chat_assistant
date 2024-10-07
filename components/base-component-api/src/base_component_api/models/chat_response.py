@@ -18,20 +18,19 @@ import re  # noqa: F401
 import json
 
 
-
-
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing import Any, ClassVar, Dict, List
 from base_component_api.models.source_document import SourceDocument
+
 try:
     from typing import Self
 except ImportError:
     from typing_extensions import Self
 
+
 class ChatResponse(BaseModel):
-    """
-    
-    """ # noqa: E501
+    """ """  # noqa: E501
+
     sources: List[SourceDocument] = Field(alias="Sources")
     answer: StrictStr = Field(alias="Answer")
     __properties: ClassVar[List[str]] = ["Sources", "Answer"]
@@ -41,7 +40,6 @@ class ChatResponse(BaseModel):
         "validate_assignment": True,
         "protected_namespaces": (),
     }
-
 
     def to_str(self) -> str:
         """Returns the string representation of the model using alias"""
@@ -69,8 +67,7 @@ class ChatResponse(BaseModel):
         """
         _dict = self.model_dump(
             by_alias=True,
-            exclude={
-            },
+            exclude={},
             exclude_none=True,
         )
         # override the default output from pydantic by calling `to_dict()` of each item in sources (list)
@@ -79,7 +76,7 @@ class ChatResponse(BaseModel):
             for _item in self.sources:
                 if _item:
                     _items.append(_item.to_dict())
-            _dict['Sources'] = _items
+            _dict["Sources"] = _items
         return _dict
 
     @classmethod
@@ -91,10 +88,14 @@ class ChatResponse(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
-            "Sources": [SourceDocument.from_dict(_item) for _item in obj.get("Sources")] if obj.get("Sources") is not None else None,
-            "Answer": obj.get("Answer")
-        })
+        _obj = cls.model_validate(
+            {
+                "Sources": (
+                    [SourceDocument.from_dict(_item) for _item in obj.get("Sources")]
+                    if obj.get("Sources") is not None
+                    else None
+                ),
+                "Answer": obj.get("Answer"),
+            }
+        )
         return _obj
-
-

@@ -9,20 +9,24 @@ from fastapi import File, UploadFile
 from base_component_api.endpoints.upload_document_endpoint import UploadDocumentEndpoint
 
 
-class WarhammerUploadDocument(UploadDocumentEndpoint):
+class RagUploadDocument(UploadDocumentEndpoint):
 
-    def __init__(self, pdf_extractor:Extractor,vector_database:VectorDatabase,):
+    def __init__(
+        self,
+        pdf_extractor: Extractor,
+        vector_database: VectorDatabase,
+    ):
         self._pdf_extractor = pdf_extractor
-        self._vector_database=vector_database
+        self._vector_database = vector_database
 
     def upload_documents(self, file: UploadFile = File(...)) -> None:
-        try:            
+        try:
             with TemporaryDirectory() as tmpdirname:
                 # Copy content from UploadFile to SpooledTemporaryFile
                 temp_file_name = Path(tmpdirname) / "tmp.pdf"
                 with temp_file_name.open("wb") as tmpfile:
                     copyfileobj(file.file, tmpfile)
-                    
+
                 extracted_content = self._pdf_extractor.extract(temp_file_name)
                 self._vector_database.upload_documents(extracted_content)
         except Exception:

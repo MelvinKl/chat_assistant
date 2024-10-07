@@ -1,8 +1,7 @@
-
 from fastembed import TextEmbedding
 from dependency_injector.containers import DeclarativeContainer, WiringConfiguration
 from dependency_injector.providers import Configuration, Singleton
-from impl.endpoints.warhammer_answer_endpoint import WarhammerAnswerEndpoint
+from impl.endpoints.rag_answer_endpoint import RagAnswerEndpoint
 from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
 from langchain_qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient
@@ -18,24 +17,22 @@ from base_component_api.impl.endpoints.default_act_endpoint import DefaultActEnd
 from base_component_api.impl.endpoints.default_answer_endpoint import DefaultAnswerEndpoint
 from base_component_api.impl.endpoints.default_get_actions_endpoint import DefaultGetActionsEndpoint
 
-from impl.endpoints.warhammer_upload_document_endpoint import WarhammerUploadDocument
+from impl.endpoints.rag_upload_document_endpoint import RagUploadDocument
 
-class WarhammerDependencyContainer(DeclarativeContainer):
-    
+
+class RagDependencyContainer(DeclarativeContainer):
+
     settings_qdrant = QdrantSetttings()
 
     embedder = Singleton(
         OllamaEmbeddings,
-        model="llama3.1:8b",
-        base_url="http://192.168.5.23:11434",
+        model="llama3.2:1b",
+        base_url="http://open-webui-ollama.assistant.svc.cluster.local:11434",
     )
-    llm = Singleton(
-        Ollama,
-        model="llama3.1:8b", 
-        base_url="http://192.168.5.23:11434"
-    )
+    llm = Singleton(Ollama, model="llama3.2:1b", base_url="http://open-webui-ollama.assistant.svc.cluster.local:11434")
 
-    qdrant = Singleton(QdrantClient,
+    qdrant = Singleton(
+        QdrantClient,
         url=settings_qdrant.url,
     )
     vector_database = Singleton(
@@ -49,18 +46,17 @@ class WarhammerDependencyContainer(DeclarativeContainer):
 
     act_endpoint = Singleton(DefaultActEndpoint)
     answer_endpoint = Singleton(
-        WarhammerAnswerEndpoint,
+        RagAnswerEndpoint,
         vector_database=vector_database,
         llm=llm,
     )
     get_actions_endpoint = Singleton(
         DefaultGetActionsEndpoint,
-        answer_endpoint_implementation=answer_endpoint, 
-        act_endpoint_implementation=act_endpoint
+        answer_endpoint_implementation=answer_endpoint,
+        act_endpoint_implementation=act_endpoint,
     )
     upload_document_endpoint = Singleton(
-        WarhammerUploadDocument,
+        RagUploadDocument,
         pdf_extractor=pdf_extractor,
         vector_database=vector_database,
     )
-

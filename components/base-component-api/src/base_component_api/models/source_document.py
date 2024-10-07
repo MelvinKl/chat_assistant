@@ -18,20 +18,19 @@ import re  # noqa: F401
 import json
 
 
-
-
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing import Any, ClassVar, Dict, List
 from base_component_api.models.key_value import KeyValue
+
 try:
     from typing import Self
 except ImportError:
     from typing_extensions import Self
 
+
 class SourceDocument(BaseModel):
-    """
-    
-    """ # noqa: E501
+    """ """  # noqa: E501
+
     page_content: StrictStr
     metadata: List[KeyValue] = Field(alias="Metadata")
     __properties: ClassVar[List[str]] = ["page_content", "Metadata"]
@@ -41,7 +40,6 @@ class SourceDocument(BaseModel):
         "validate_assignment": True,
         "protected_namespaces": (),
     }
-
 
     def to_str(self) -> str:
         """Returns the string representation of the model using alias"""
@@ -69,8 +67,7 @@ class SourceDocument(BaseModel):
         """
         _dict = self.model_dump(
             by_alias=True,
-            exclude={
-            },
+            exclude={},
             exclude_none=True,
         )
         # override the default output from pydantic by calling `to_dict()` of each item in metadata (list)
@@ -79,7 +76,7 @@ class SourceDocument(BaseModel):
             for _item in self.metadata:
                 if _item:
                     _items.append(_item.to_dict())
-            _dict['Metadata'] = _items
+            _dict["Metadata"] = _items
         return _dict
 
     @classmethod
@@ -91,10 +88,14 @@ class SourceDocument(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
-            "page_content": obj.get("page_content"),
-            "Metadata": [KeyValue.from_dict(_item) for _item in obj.get("Metadata")] if obj.get("Metadata") is not None else None
-        })
+        _obj = cls.model_validate(
+            {
+                "page_content": obj.get("page_content"),
+                "Metadata": (
+                    [KeyValue.from_dict(_item) for _item in obj.get("Metadata")]
+                    if obj.get("Metadata") is not None
+                    else None
+                ),
+            }
+        )
         return _obj
-
-

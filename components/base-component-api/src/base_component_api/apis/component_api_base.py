@@ -14,28 +14,19 @@ class BaseComponentApi:
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
         BaseComponentApi.subclasses = BaseComponentApi.subclasses + (cls,)
+
     async def act(
         self,
         body: str,
-    ) -> str:
-        ...
-
+    ) -> str: ...
 
     async def answer_question(
         self,
         body: str,
-    ) -> ChatResponse:
-        ...
-
+    ) -> ChatResponse: ...
 
     async def get_available_actions(
         self,
-    ) -> List[KeyValue]:
-        ...
+    ) -> List[KeyValue]: ...
 
-
-    async def upload_document(
-        self,
-        file: UploadFile = File(...)
-    ) -> None:
-        ...
+    async def upload_document(self, file: UploadFile = File(...)) -> None: ...

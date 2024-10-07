@@ -3,6 +3,10 @@ from base_component_api.models.chat_response import ChatResponse
 
 
 class DefaultAnswerEndpoint(AnswerEndpoint):
-    
-    async def aanswer_question(self, question)->ChatResponse:
+
+    @property
+    def available(self) -> bool:
+        return False
+
+    async def aanswer_question(self, question) -> ChatResponse:
         raise NotImplementedError()
