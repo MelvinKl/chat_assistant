@@ -15,8 +15,8 @@
             },
             "pathMappings": [
                 {
-                    "localRoot": "${workspaceFolder}/components/warhammer",
-                    "remoteRoot": "/app/warhammer"
+                    "localRoot": "${workspaceFolder}/components/rag",
+                    "remoteRoot": "/app/rag"
                 },
                 {
                     "localRoot": "${workspaceFolder}/components/base-library",

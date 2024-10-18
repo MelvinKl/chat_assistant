@@ -38,6 +38,8 @@ python = ">=3.11,<3.13"
 fastembed = "^0.3.6"
 langchain-ollama = "^0.2.0"
 base-component-api = { path = "../base-component-api/" }
+langchain-unstructured = "^0.1.5"
+unstructured-client = "0.25.9"
 
 [tool.poetry.group.dev.dependencies]
 debugpy = "^1.8.5"

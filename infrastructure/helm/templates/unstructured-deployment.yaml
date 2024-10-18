@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unstructured
+  labels:
+    app: unstructured
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unstructured
+  template:
+    metadata:
+      labels:
+        app: unstructured
+    spec:
+      containers:
+      - name: unstructured
+        imagePullPolicy: Always
+        image: downloads.unstructured.io/unstructured-io/unstructured-api:latest
+        ports:
+        - containerPort: 8000
