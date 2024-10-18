@@ -26,10 +26,10 @@ class RagDependencyContainer(DeclarativeContainer):
 
     embedder = Singleton(
         OllamaEmbeddings,
-        model="llama3.2:1b",
-        base_url="http://open-webui-ollama.assistant.svc.cluster.local:11434",
+        model="llama3.2:3b",
+        base_url="http://open-webui-ollama:11434",
     )
-    llm = Singleton(Ollama, model="llama3.2:1b", base_url="http://open-webui-ollama.assistant.svc.cluster.local:11434")
+    llm = Singleton(Ollama, model="llama3.2:3b", base_url="http://open-webui-ollama:11434")
 
     qdrant = Singleton(
         QdrantClient,
@@ -40,6 +40,7 @@ class RagDependencyContainer(DeclarativeContainer):
         embedder=embedder,
         collection_name=settings_qdrant.collection_name,
         qdrant=qdrant,
+        url=settings_qdrant.url,
     )
 
     pdf_extractor = Singleton(PDFExtractor)

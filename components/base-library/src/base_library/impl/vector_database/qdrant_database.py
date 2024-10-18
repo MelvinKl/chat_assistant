@@ -1,5 +1,6 @@
 from langchain_core.documents import Document
 from langchain_qdrant import QdrantVectorStore
+from langchain_community.vectorstores.qdrant import Qdrant
 from qdrant_client import QdrantClient
 from langchain_community.vectorstores import Qdrant
 from qdrant_client.http.models import Distance, VectorParams
@@ -15,27 +16,32 @@ class QdrantDatabase(VectorDatabase):
         embedder,
         collection_name: str,
         qdrant: QdrantClient,
+        url: str,
     ):
         self._qdrant = qdrant
+        self._url = url
         self._embedder = embedder
-        self._collection = collection_name
-        try:
-            self._qdrant.create_collection(
-                collection_name=collection_name,
-                vectors_config=VectorParams(size=2048, distance=Distance.COSINE),
-            )
-        except Exception as e:
-            pass
-        self._client = QdrantVectorStore(
+        self._collection = collection_name       
+        self._client = Qdrant(
             client=qdrant,
             collection_name=collection_name,
-            embedding=embedder,
+            embeddings=embedder,
         )
 
     def upload_documents(self, documents: list[Document]) -> None:
-        self._client.add_documents(documents=documents)
+        Qdrant.from_documents(
+            documents,
+            self._embedder,
+            collection_name=self._collection,
+            url=self._url,
+        )        
+        #self._client.add_documents(documents=documents)
 
     def search(self, query: str) -> list[Document]:
+        retriever = self._client.as_retriever(
+            query=query,
+        )
+        return retriever.invoke(query)
         return self._client.similarity_search(query)
 
     @property
