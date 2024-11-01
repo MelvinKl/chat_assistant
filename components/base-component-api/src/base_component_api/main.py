@@ -12,22 +12,15 @@
 """  # noqa: E501
 
 
-from fastapi import FastAPI
-from dependency_injector.containers import DeclarativeContainer
-
 from base_component_api.apis.component_api import router as ComponentApiRouter
-from base_component_api.dependency_container import DependencyContainer
+from base_component_api.dependency_container import configure
+from fastapi import FastAPI
 
+configure()
 
-container = DependencyContainer()
 app = FastAPI(
     title="Component API",
     description="API for integrating components into the Assistant",
     version="1.0.0",
 )
-app.container = container
 app.include_router(ComponentApiRouter)
-
-
-def dependency_override(new_container: DeclarativeContainer):
-    app.container.override(new_container)

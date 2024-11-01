@@ -8,5 +8,5 @@ class DefaultAnswerEndpoint(AnswerEndpoint):
     def available(self) -> bool:
         return False
 
-    async def aanswer_question(self, question) -> ChatResponse:
+    async def aanswer_question(self, question:str) -> ChatResponse:
         raise NotImplementedError()

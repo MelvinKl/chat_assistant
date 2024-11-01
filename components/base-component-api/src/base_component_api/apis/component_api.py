@@ -1,31 +1,17 @@
 # coding: utf-8
 
-from typing import Dict, List  # noqa: F401
 import importlib
 import pkgutil
+from typing import Dict, List  # noqa: F401
 
-from base_component_api.apis.component_api_base import BaseComponentApi
 import base_component_api.impl
-from fastapi import File, UploadFile
-from fastapi import (  # noqa: F401
-    APIRouter,
-    Body,
-    Cookie,
-    Depends,
-    Form,
-    Header,
-    HTTPException,
-    Path,
-    Query,
-    Response,
-    Security,
-    status,
-)
-
-from base_component_api.models.extra_models import TokenModel  # noqa: F401
+from base_component_api.apis.component_api_base import BaseComponentApi
 from base_component_api.models.chat_response import ChatResponse
+from base_component_api.models.extra_models import TokenModel  # noqa: F401
 from base_component_api.models.key_value import KeyValue
-
+from fastapi import (APIRouter, Body, Cookie, Depends, File,  # noqa: F401
+                     Form, Header, HTTPException, Path, Query, Response,
+                     Security, UploadFile, status)
 
 router = APIRouter()
 

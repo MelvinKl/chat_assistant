@@ -2,10 +2,9 @@
 
 from typing import ClassVar, Dict, List, Tuple  # noqa: F401
 
-from fastapi import File, UploadFile
-
 from base_component_api.models.chat_response import ChatResponse
 from base_component_api.models.key_value import KeyValue
+from fastapi import File, UploadFile
 
 
 class BaseComponentApi:

@@ -1,24 +1,26 @@
-from dependency_injector.containers import DeclarativeContainer, WiringConfiguration
-from dependency_injector.providers import Configuration, Singleton
-
-from base_component_api.endpoints.upload_document_endpoint import UploadDocumentEndpoint
-from base_component_api.impl.endpoints.default_act_endpoint import DefaultActEndpoint
-from base_component_api.impl.endpoints.default_answer_endpoint import DefaultAnswerEndpoint
-from base_component_api.impl.endpoints.default_get_actions_endpoint import DefaultGetActionsEndpoint
+import inject
+from base_component_api.endpoints.act_endpoint import ActEndpoint
+from base_component_api.endpoints.answer_endpoint import AnswerEndpoint
+from base_component_api.endpoints.get_actions_endpoint import \
+    GetActionsEndpoint
+from base_component_api.endpoints.upload_document_endpoint import \
+    UploadDocumentEndpoint
 from base_component_api.impl import component_api_implementation
+from base_component_api.impl.endpoints.default_act_endpoint import \
+    DefaultActEndpoint
+from base_component_api.impl.endpoints.default_answer_endpoint import \
+    DefaultAnswerEndpoint
+from base_component_api.impl.endpoints.default_get_actions_endpoint import \
+    DefaultGetActionsEndpoint
 
 
-class DependencyContainer(DeclarativeContainer):
+def _di_config(binder):
+    #config = Configuration(yaml_files=["config.yml"])
 
-    wiring_config = WiringConfiguration(modules=[component_api_implementation])
-
-    config = Configuration(yaml_files=["config.yml"])
-
-    act_endpoint = Singleton(DefaultActEndpoint)
-    answer_endpoint = Singleton(DefaultAnswerEndpoint)
-    get_actions_endpoint = Singleton(
-        DefaultGetActionsEndpoint,
-        answer_endpoint_implementation=answer_endpoint,
-        act_endpoint_implementation=act_endpoint,
-    )
-    upload_document_endpoint = Singleton(UploadDocumentEndpoint)
+    binder.bind_to_constructor(ActEndpoint, DefaultActEndpoint)
+    binder.bind_to_constructor(AnswerEndpoint,DefaultAnswerEndpoint)
+    binder.bind_to_constructor(GetActionsEndpoint,DefaultGetActionsEndpoint)
+    binder.bind_to_constructor(UploadDocumentEndpoint,UploadDocumentEndpoint)
+    
+def configure():
+    inject.configure(_di_config)

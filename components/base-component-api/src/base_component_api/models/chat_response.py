@@ -13,14 +13,14 @@
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
-
-from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing import Any, ClassVar, Dict, List
+
 from base_component_api.models.source_document import SourceDocument
+from pydantic import BaseModel, ConfigDict, Field, StrictStr
 
 try:
     from typing import Self

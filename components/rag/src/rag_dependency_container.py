@@ -1,63 +1,69 @@
-from fastembed import TextEmbedding
-from dependency_injector.containers import DeclarativeContainer, WiringConfiguration
-from dependency_injector.providers import Configuration, Singleton
-from impl.endpoints.rag_answer_endpoint import RagAnswerEndpoint
-from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
-from langchain_qdrant import QdrantVectorStore
-from qdrant_client import QdrantClient
-from langchain_community.vectorstores import Qdrant
-from qdrant_client import QdrantClient
-from langchain_ollama import OllamaEmbeddings
-from langchain.llms import Ollama
-
+from base_library.document_extractor.extractor import Extractor
+from base_library.vector_database.vector_database import VectorDatabase
+import inject
+from base_component_api.endpoints.act_endpoint import ActEndpoint
+from base_component_api.endpoints.answer_endpoint import AnswerEndpoint
+from base_component_api.endpoints.get_actions_endpoint import \
+    GetActionsEndpoint
+from base_component_api.endpoints.upload_document_endpoint import \
+    UploadDocumentEndpoint
+from base_component_api.impl.endpoints.default_act_endpoint import \
+    DefaultActEndpoint
+from base_component_api.impl.endpoints.default_answer_endpoint import \
+    DefaultAnswerEndpoint
+from base_component_api.impl.endpoints.default_get_actions_endpoint import \
+    DefaultGetActionsEndpoint
 from base_library.impl.document_extractor.pdf_extractor import PDFExtractor
+from base_library.impl.settings.llm_settings import LLMSetttings
+from base_library.impl.settings.ollama_settings import OllamaSettings
 from base_library.impl.settings.qdrant_settings import QdrantSetttings
 from base_library.impl.vector_database.qdrant_database import QdrantDatabase
-from base_component_api.impl.endpoints.default_act_endpoint import DefaultActEndpoint
-from base_component_api.impl.endpoints.default_answer_endpoint import DefaultAnswerEndpoint
-from base_component_api.impl.endpoints.default_get_actions_endpoint import DefaultGetActionsEndpoint
-
+from fastembed import TextEmbedding
+from impl.endpoints.rag_answer_endpoint import RagAnswerEndpoint
 from impl.endpoints.rag_upload_document_endpoint import RagUploadDocument
+from langchain.llms import Ollama
+from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
+from langchain_community.vectorstores import Qdrant
+from langchain_core.embeddings.embeddings import Embeddings
+from langchain_core.language_models.llms import LLM
+from langchain_ollama import OllamaEmbeddings
+from langchain_qdrant import QdrantVectorStore
+from qdrant_client import QdrantClient
 
 
-class RagDependencyContainer(DeclarativeContainer):
+def _di_config(binder):
+    #config = Configuration(yaml_files=["config.yml"])
 
+    settings_llm = LLMSetttings()
     settings_qdrant = QdrantSetttings()
 
-    embedder = Singleton(
-        OllamaEmbeddings,
-        model="llama3.2:3b",
-        base_url="http://open-webui-ollama:11434",
-    )
-    llm = Singleton(Ollama, model="llama3.2:3b", base_url="http://open-webui-ollama:11434")
+    binder.bind_to_constructor(QdrantSetttings, QdrantSetttings)        
+    binder.bind(QdrantClient,QdrantClient(url=settings_qdrant.url))
 
-    qdrant = Singleton(
-        QdrantClient,
-        url=settings_qdrant.url,
-    )
-    vector_database = Singleton(
-        QdrantDatabase,
-        embedder=embedder,
+
+    match settings_llm.provider:
+        case "ollama":
+            settings_ollama = OllamaSettings()
+            binder.bind(Embeddings, OllamaEmbeddings(model=settings_ollama.model,
+                base_url=settings_ollama.url,
+            ))
+            binder.bind(LLM, Ollama(model=settings_ollama.model,
+                base_url=settings_ollama.url,))
+        case _:
+            raise NotImplementedError("Configured LLM is not implemented")
+    
+
+    binder.bind_to_constructor(VectorDatabase,lambda: QdrantDatabase(
         collection_name=settings_qdrant.collection_name,
-        qdrant=qdrant,
         url=settings_qdrant.url,
-    )
+    ))
 
-    pdf_extractor = Singleton(PDFExtractor)
+    binder.bind_to_constructor(Extractor,PDFExtractor)
+    binder.bind_to_constructor(AnswerEndpoint,RagAnswerEndpoint)
+    binder.bind_to_constructor(UploadDocumentEndpoint,RagUploadDocument)
+    binder.bind_to_constructor(GetActionsEndpoint,DefaultGetActionsEndpoint)
+    binder.bind_to_constructor(ActEndpoint, DefaultActEndpoint)
 
-    act_endpoint = Singleton(DefaultActEndpoint)
-    answer_endpoint = Singleton(
-        RagAnswerEndpoint,
-        vector_database=vector_database,
-        llm=llm,
-    )
-    get_actions_endpoint = Singleton(
-        DefaultGetActionsEndpoint,
-        answer_endpoint_implementation=answer_endpoint,
-        act_endpoint_implementation=act_endpoint,
-    )
-    upload_document_endpoint = Singleton(
-        RagUploadDocument,
-        pdf_extractor=pdf_extractor,
-        vector_database=vector_database,
-    )
+    
+def configure():
+    inject.configure(_di_config, allow_override=True, clear=True)

@@ -1,21 +1,22 @@
+import asyncio
 from pathlib import Path
 from shutil import copyfileobj
 from tempfile import SpooledTemporaryFile, TemporaryDirectory
 
-import asyncio
+import inject
+from base_component_api.endpoints.upload_document_endpoint import \
+    UploadDocumentEndpoint
+from base_library.document_extractor.extractor import Extractor
+from base_library.vector_database.vector_database import VectorDatabase
+from fastapi import File, UploadFile
 from langchain_unstructured import UnstructuredLoader
 from unstructured_client import UnstructuredClient
 from unstructured_client.models import shared
-from fastapi import File, UploadFile
-from base_library.document_extractor.extractor import Extractor
-from base_library.vector_database.vector_database import VectorDatabase
-
-
-from base_component_api.endpoints.upload_document_endpoint import UploadDocumentEndpoint
 
 
 class RagUploadDocument(UploadDocumentEndpoint):
 
+    @inject.autoparams()
     def __init__(
         self,
         pdf_extractor: Extractor,

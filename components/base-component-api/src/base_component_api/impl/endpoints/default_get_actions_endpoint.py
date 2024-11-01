@@ -1,12 +1,15 @@
 from inspect import getdoc
 
+import inject
 from base_component_api.endpoints.act_endpoint import ActEndpoint
 from base_component_api.endpoints.answer_endpoint import AnswerEndpoint
-from base_component_api.endpoints.get_actions_endpoint import GetActionsEndpoint
+from base_component_api.endpoints.get_actions_endpoint import \
+    GetActionsEndpoint
 
 
 class DefaultGetActionsEndpoint(GetActionsEndpoint):
 
+    @inject.autoparams()
     def __init__(
         self, answer_endpoint_implementation: AnswerEndpoint, act_endpoint_implementation: ActEndpoint
     ) -> None:

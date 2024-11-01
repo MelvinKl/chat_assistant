@@ -37,7 +37,7 @@ readme = "README.md"
 python = ">=3.11,<3.13"
 pydantic = "^2.9.0"
 pdfplumber = "^0.11.4"
-langchain-community = "^0.3.0"
+langchain-community = "^0.3.4"
 langchain-openai = "^0.2.0"
 qdrant-client = {version="^1.11.2", extras=["fastembed"]}
 langchain-qdrant = "^0.1.4"

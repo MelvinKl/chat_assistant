@@ -1,19 +1,20 @@
-from langchain_core.documents import Document
-from langchain_qdrant import QdrantVectorStore
-from langchain_community.vectorstores.qdrant import Qdrant
-from qdrant_client import QdrantClient
-from langchain_community.vectorstores import Qdrant
-from qdrant_client.http.models import Distance, VectorParams
-
-
+import inject
 from base_library.vector_database.vector_database import VectorDatabase
+from langchain_community.vectorstores import Qdrant
+from langchain_community.vectorstores.qdrant import Qdrant
+from langchain_core.documents import Document
+from langchain_core.embeddings.embeddings import Embeddings
+from langchain_qdrant import QdrantVectorStore
+from qdrant_client import QdrantClient
+from qdrant_client.http.models import Distance, VectorParams
 
 
 class QdrantDatabase(VectorDatabase):
 
+    @inject.autoparams("embedder", "qdrant")
     def __init__(
         self,
-        embedder,
+        embedder:Embeddings,
         collection_name: str,
         qdrant: QdrantClient,
         url: str,
