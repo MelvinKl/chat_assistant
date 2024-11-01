@@ -14,7 +14,7 @@ from base_component_api.impl.endpoints.default_get_actions_endpoint import \
     DefaultGetActionsEndpoint
 
 
-def _di_config(binder):
+def base_config(binder):
     #config = Configuration(yaml_files=["config.yml"])
 
     binder.bind_to_constructor(ActEndpoint, DefaultActEndpoint)
@@ -23,4 +23,4 @@ def _di_config(binder):
     binder.bind_to_constructor(UploadDocumentEndpoint,UploadDocumentEndpoint)
     
 def configure():
-    inject.configure(_di_config)
+    inject.configure(base_config,allow_override=True,)

@@ -29,11 +29,10 @@ from langchain_core.language_models.llms import LLM
 from langchain_ollama import OllamaEmbeddings
 from langchain_qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient
-
+from base_component_api.dependency_container import base_config
 
 def _di_config(binder):
-    #config = Configuration(yaml_files=["config.yml"])
-
+    binder.install(base_config)
     settings_llm = LLMSetttings()
     settings_qdrant = QdrantSetttings()
 
@@ -61,9 +60,6 @@ def _di_config(binder):
     binder.bind_to_constructor(Extractor,PDFExtractor)
     binder.bind_to_constructor(AnswerEndpoint,RagAnswerEndpoint)
     binder.bind_to_constructor(UploadDocumentEndpoint,RagUploadDocument)
-    binder.bind_to_constructor(GetActionsEndpoint,DefaultGetActionsEndpoint)
-    binder.bind_to_constructor(ActEndpoint, DefaultActEndpoint)
-
     
 def configure():
     inject.configure(_di_config, allow_override=True, clear=True)
