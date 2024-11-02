@@ -1,0 +1,29 @@
+{{- range $deploy :=  .Values.components.rag }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $deploy.name }}-llm
+data:
+  {{- range $key, $value := $deploy.settings.llm }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
+---  
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $deploy.name }}-ollama
+data:
+  {{- range $key, $value := $deploy.settings.ollama }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $deploy.name }}-qdrant
+data:
+  {{- range $key, $value := $deploy.settings.qdrant }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
+---
+{{ end }}  

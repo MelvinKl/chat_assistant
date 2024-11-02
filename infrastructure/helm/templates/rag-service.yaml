@@ -1,13 +1,15 @@
+{{- range $deploy :=  .Values.components.rag }}
 apiVersion: v1
 kind: Service
 metadata:  
-  name: warhammer  
+  name: {{ $deploy.name }}
 spec:  
   ports:
   - port: 8080
     protocol: TCP
     targetPort: 8080
   selector:
-    app: warhammer
+    app: {{ $deploy.name }}
   sessionAffinity: None
   type: ClusterIP
+{{ end }}          

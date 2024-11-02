@@ -16,8 +16,8 @@ docker_build('ghcr.io/melvinkl/chat_assistant/rag:latest',
              build_args={'DEV': '1'})
 
 values = [
-    "components.warhammer.ingress.enabled=false",
-    "components.warhammer.debug=true",
+    "components.rag[0].ingress.enabled=false",
+    "components.rag[0].debug=true",
     "open-webui.ollama.runtimeClassName=",
 ]
 

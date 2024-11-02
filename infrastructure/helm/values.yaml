@@ -4,34 +4,47 @@ ghcrIo:
   email: email-address@domain.de # replace with your email address
 
 components:
-  warhammer:
-    ingress: 
-      enabled: true
-      host: warhammer.melvin.beer
-    debug: false
-    debugArgs:
-      - "python"
-      - "-m"
-      - "debugpy"
-      - "--listen"
-      - "0.0.0.0:5678"
-      - "--wait-for-client"
-      - "-m"
-      - "uvicorn"
-      - "src.main:component_app"
-      - "--host"
-      - "0.0.0.0"
-      - "--port"
-      - "8080"
-    args:
-      - "python"
-      - "-m"
-      - "uvicorn"
-      - "src.main:component_app"
-      - "--host"
-      - "0.0.0.0"
-      - "--port"
-      - "8080"
+  rag:
+    - name: warhammer
+      ingress: 
+        enabled: true
+        host: warhammer.melvin.beer
+      debug: false
+      debugArgs:
+        - "python"
+        - "-m"
+        - "debugpy"
+        - "--listen"
+        - "0.0.0.0:5678"
+        - "--wait-for-client"
+        - "-m"
+        - "uvicorn"
+        - "src.main:component_app"
+        - "--host"
+        - "0.0.0.0"
+        - "--port"
+        - "8080"
+      args:
+        - "python"
+        - "-m"
+        - "uvicorn"
+        - "src.main:component_app"
+        - "--host"
+        - "0.0.0.0"
+        - "--port"
+        - "8080"
+      settings:
+        llm:
+          - key: provider
+            value: ollama
+        ollama:
+          - key: model 
+            value: llama3.2:3b
+          - key: url
+            value: http://open-webui-ollama:11434
+        qdrant:
+          - key: collection_name
+            value: warhammer
 
 open-webui:
   nameOverride: ""
