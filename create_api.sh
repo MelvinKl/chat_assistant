@@ -3,13 +3,16 @@
 # Base Component API
 docker  run --user $(id -u):$(id -g) --rm \
     -v $PWD/components:/local openapitools/openapi-generator-cli generate \
-    -i /local/openapi.yaml \
+    -i /local/base-component-api/openapi.yaml \
     -g python-fastapi \
     -o /local/base-component-api/
 
 # Component client
 docker  run --user $(id -u):$(id -g) --rm \
     -v $PWD:/local openapitools/openapi-generator-cli generate \
-    -i /local/components/openapi.yaml \
-    -g python \
-    -o /local/assistant
+    -i /local/components/base-component-api/openapi.yaml \
+    -g python \    
+    -o /local/assistant/src \
+    --additional-properties=generateSourceCodeOnly="true",packageName="assistant.component_api"
+
+
