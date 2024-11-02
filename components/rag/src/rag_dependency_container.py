@@ -24,35 +24,23 @@ def _di_config(binder):
     settings_llm = LLMSetttings()
     settings_qdrant = QdrantSetttings()
 
-    binder.bind_to_constructor(QdrantSetttings, QdrantSetttings)
-    binder.bind(QdrantClient, QdrantClient(url=settings_qdrant.url))
+    embedder = Singleton(
+        OllamaEmbeddings,
+        model="llama3.2:3b",
+        base_url="http://open-webui-ollama:11434",
+    )
+    llm = Singleton(Ollama, model="llama3.2:3b", base_url="http://open-webui-ollama:11434")
 
-    match settings_llm.provider:
-        case "ollama":
-            settings_ollama = OllamaSettings()
-            binder.bind(
-                Embeddings,
-                OllamaEmbeddings(
-                    model=settings_ollama.model,
-                    base_url=settings_ollama.url,
-                ),
-            )
-            binder.bind(
-                LLM,
-                Ollama(
-                    model=settings_ollama.model,
-                    base_url=settings_ollama.url,
-                ),
-            )
-        case _:
-            raise NotImplementedError("Configured LLM is not implemented")
-
-    binder.bind_to_constructor(
-        VectorDatabase,
-        lambda: QdrantDatabase(
-            collection_name=settings_qdrant.collection_name,
-            url=settings_qdrant.url,
-        ),
+    qdrant = Singleton(
+        QdrantClient,
+        url=settings_qdrant.url,
+    )
+    vector_database = Singleton(
+        QdrantDatabase,
+        embedder=embedder,
+        collection_name=settings_qdrant.collection_name,
+        qdrant=qdrant,
+        url=settings_qdrant.url,
     )
 
     binder.bind_to_constructor(Extractor, PDFExtractor)

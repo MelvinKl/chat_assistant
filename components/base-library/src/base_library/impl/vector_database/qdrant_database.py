@@ -37,14 +37,12 @@ class QdrantDatabase(VectorDatabase):
             collection_name=self._collection,
             url=self._url,
         )
-        # self._client.add_documents(documents=documents)
 
     def search(self, query: str) -> list[Document]:
         retriever = self._client.as_retriever(
             query=query,
         )
         return retriever.invoke(query)
-        return self._client.similarity_search(query)
 
     @property
     def retriever(self):
