@@ -47,6 +47,14 @@ def _di_config(binder):
         case _:
             raise NotImplementedError("Configured LLM is not implemented")
 
+    binder.bind_to_constructor(
+        VectorDatabase,
+        lambda: QdrantDatabase(
+            collection_name=settings_qdrant.collection_name,
+            url=settings_qdrant.url,
+        )
+    )
+
     binder.bind_to_constructor(Extractor, PDFExtractor)
     binder.bind_to_constructor(AnswerEndpoint, RagAnswerEndpoint)
     binder.bind_to_constructor(UploadDocumentEndpoint, RagUploadDocument)
