@@ -12,9 +12,10 @@
 """  # noqa: E501
 
 
+from fastapi import FastAPI
+
 from base_component_api.apis.component_api import router as ComponentApiRouter
 from base_component_api.dependency_container import configure
-from fastapi import FastAPI
 
 configure()
 

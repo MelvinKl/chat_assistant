@@ -19,8 +19,9 @@ import pprint
 import re  # noqa: F401
 from typing import Any, ClassVar, Dict, List
 
-from base_component_api.models.source_document import SourceDocument
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
+
+from base_component_api.models.source_document import SourceDocument
 
 try:
     from typing import Self

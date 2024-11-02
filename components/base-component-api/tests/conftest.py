@@ -1,7 +1,8 @@
 import pytest
-from base_component_api.main import app as application
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
+
+from base_component_api.main import app as application
 
 
 @pytest.fixture

@@ -1,11 +1,9 @@
-import asyncio
 from pathlib import Path
 from shutil import copyfileobj
-from tempfile import SpooledTemporaryFile, TemporaryDirectory
+from tempfile import TemporaryDirectory
 
 import inject
-from base_component_api.endpoints.upload_document_endpoint import \
-    UploadDocumentEndpoint
+from base_component_api.endpoints.upload_document_endpoint import UploadDocumentEndpoint
 from base_library.document_extractor.extractor import Extractor
 from base_library.vector_database.vector_database import VectorDatabase
 from fastapi import File, UploadFile
@@ -33,7 +31,15 @@ class RagUploadDocument(UploadDocumentEndpoint):
                 temp_file_name = Path(tmpdirname) / file.filename
                 with temp_file_name.open("wb") as tmpfile:
                     copyfileobj(file.file, tmpfile)
-                unstructured = UnstructuredLoader(client=self._unstructured_client, chunking_strategy=shared.ChunkingStrategy.BY_TITLE,file_path=temp_file_name, partition_via_api=True,strategy=shared.Strategy.OCR_ONLY,languages=["deu", "eng"], pdf_infer_table_structure=True)
+                unstructured = UnstructuredLoader(
+                    client=self._unstructured_client,
+                    chunking_strategy=shared.ChunkingStrategy.BY_TITLE,
+                    file_path=temp_file_name,
+                    partition_via_api=True,
+                    strategy=shared.Strategy.OCR_ONLY,
+                    languages=["deu", "eng"],
+                    pdf_infer_table_structure=True,
+                )
                 extracted_content = unstructured.load()
                 self._vector_database.upload_documents(extracted_content)
         except Exception:

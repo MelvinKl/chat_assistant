@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from base_component_api.models.chat_response import ChatResponse  # noqa: F401
-from base_component_api.models.key_value import KeyValue  # noqa: F401
 from fastapi.testclient import TestClient
 
 

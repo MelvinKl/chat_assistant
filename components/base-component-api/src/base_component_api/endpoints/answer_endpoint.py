@@ -6,8 +6,8 @@ from base_component_api.models.chat_response import ChatResponse
 class AnswerEndpoint(ABC):
 
     @property
-    @abstractmethod    
+    @abstractmethod
     def available(self) -> bool: ...
 
     @abstractmethod
-    async def aanswer_question(self, question:str) -> ChatResponse: ...
+    async def aanswer_question(self, question: str) -> ChatResponse: ...

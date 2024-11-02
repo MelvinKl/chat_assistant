@@ -1,15 +1,13 @@
 import inject
+from fastapi import UploadFile
+
 from base_component_api.apis.component_api_base import BaseComponentApi
 from base_component_api.endpoints.act_endpoint import ActEndpoint
 from base_component_api.endpoints.answer_endpoint import AnswerEndpoint
-from base_component_api.endpoints.get_actions_endpoint import \
-    GetActionsEndpoint
-from base_component_api.endpoints.upload_document_endpoint import \
-    UploadDocumentEndpoint
+from base_component_api.endpoints.get_actions_endpoint import GetActionsEndpoint
+from base_component_api.endpoints.upload_document_endpoint import UploadDocumentEndpoint
 from base_component_api.models.chat_response import ChatResponse
 from base_component_api.models.key_value import KeyValue
-from fastapi import File, UploadFile
-
 
 
 class ComponentApiImplementation(BaseComponentApi):

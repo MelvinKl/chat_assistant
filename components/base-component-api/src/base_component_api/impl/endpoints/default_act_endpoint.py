@@ -7,5 +7,5 @@ class DefaultActEndpoint(ActEndpoint):
     def available(self) -> bool:
         return False
 
-    async def aact(self, request:str) -> str:
+    async def aact(self, request: str) -> str:
         raise NotImplementedError()

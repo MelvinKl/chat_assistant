@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-from base_library.document_extractor.document_type import DocumentType
 from langchain_core.documents import Document
+
+from base_library.document_extractor.document_type import DocumentType
 
 
 class Extractor(ABC):
