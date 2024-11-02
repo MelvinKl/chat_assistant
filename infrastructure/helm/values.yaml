@@ -35,16 +35,12 @@ components:
         - "8080"
       settings:
         llm:
-          - key: provider
-            value: ollama
+          SETTINGS_LLM_PROVIDER: ollama
         ollama:
-          - key: model 
-            value: llama3.2:3b
-          - key: url
-            value: http://open-webui-ollama:11434
+          SETTINGS_OLLAMA_MODEL: llama3.2:3b
+          SETTINGS_OLLAMA_URL: http://open-webui-ollama:11434
         qdrant:
-          - key: collection_name
-            value: warhammer
+          SETTINGS_QDRANT_COLLECTION_NAME: warhammer
 
 open-webui:
   nameOverride: ""
