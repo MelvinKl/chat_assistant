@@ -1,8 +1,8 @@
-import asyncio
 from pathlib import Path
 from shutil import copyfileobj
 from tempfile import TemporaryDirectory
 
+import inject
 from base_component_api.endpoints.upload_document_endpoint import UploadDocumentEndpoint
 from base_library.document_extractor.extractor import Extractor
 from base_library.vector_database.vector_database import VectorDatabase
