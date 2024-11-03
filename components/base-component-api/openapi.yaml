@@ -34,9 +34,7 @@ paths:
           content:
             application/json:
               schema:
-                items:
-                  $ref: '#/components/schemas/KeyValue'
-                type: array
+                $ref: '#/components/schemas/Description'
           description: Available actions
         "500":
           content:
@@ -156,4 +154,23 @@ components:
       - Answer
       - Sources
       title: ChatResponse
+      type: object
+    Description:
+      description: ""
+      example:
+        Description: Description
+        Name: Name
+      properties:
+        Name:
+          description: ""
+          title: Name
+          type: string
+        Description:
+          description: ""
+          title: Description
+          type: string
+      required:
+      - Description
+      - Name
+      title: Description
       type: object

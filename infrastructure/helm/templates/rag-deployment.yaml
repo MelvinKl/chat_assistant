@@ -27,6 +27,8 @@ spec:
               name: {{ $deploy.name }}-ollama
           - configMapRef:
               name: {{ $deploy.name }}-qdrant
+          - configMapRef:
+              name: {{ $deploy.name }}-api
         image: ghcr.io/melvinkl/chat_assistant/rag:latest
         ports:
         - containerPort: 8080

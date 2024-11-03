@@ -26,4 +26,13 @@ data:
   {{ $key }}: {{ $value | quote }}
   {{- end }}
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $deploy.name }}-api
+data:
+  {{- range $key, $value := $deploy.settings.api }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
+---
 {{ end }}  

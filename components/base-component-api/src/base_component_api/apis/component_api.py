@@ -9,7 +9,6 @@ from fastapi import (  # noqa: F401
     Body,
     Cookie,
     Depends,
-    File,
     Form,
     Header,
     HTTPException,
@@ -25,8 +24,8 @@ from pydantic import StrictStr
 import base_component_api.impl
 from base_component_api.apis.component_api_base import BaseComponentApi
 from base_component_api.models.chat_response import ChatResponse
+from base_component_api.models.description import Description
 from base_component_api.models.extra_models import TokenModel  # noqa: F401
-from base_component_api.models.key_value import KeyValue
 
 router = APIRouter()
 
@@ -57,13 +56,13 @@ async def assist(
 @router.get(
     "/description",
     responses={
-        200: {"model": List[KeyValue], "description": "Available actions"},
+        200: {"model": Description, "description": "Available actions"},
         500: {"model": str, "description": "Something somewhere went terribly wrong"},
     },
     tags=["component"],
     response_model_by_alias=True,
 )
-async def get_description() -> List[KeyValue]:
+async def get_description() -> Description:
     if not BaseComponentApi.subclasses:
         raise HTTPException(status_code=500, detail="Not implemented")
     return await BaseComponentApi.subclasses[0]().get_description()

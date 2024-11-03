@@ -36,9 +36,7 @@ assistant:
       SETTINGS_LLM_PROVIDER: ollama
     ollama:
       SETTINGS_OLLAMA_MODEL: llama3.2:3b
-      SETTINGS_OLLAMA_URL: http://open-webui-ollama:11434
-    qdrant:
-      SETTINGS_QDRANT_COLLECTION_NAME: warhammer
+      SETTINGS_OLLAMA_URL: http://open-webui-ollama:11434    
 
 components:
   rag:
@@ -71,6 +69,9 @@ components:
         - "--port"
         - "8080"
       settings:
+        api:
+          SETTINGS_API_NAME: warhammer
+          SETTINGS_API_DESCRIPTION: "Can answer question about the Warhammer Fantasy Role Playing Game. This includes rules and lore."
         llm:
           SETTINGS_LLM_PROVIDER: ollama
         ollama:

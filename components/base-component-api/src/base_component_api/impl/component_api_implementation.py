@@ -6,6 +6,7 @@ from base_component_api.endpoints.assist_endpoint import AssistEndpoint
 from base_component_api.endpoints.get_description_endpoint import GetDescriptionEndpoint
 from base_component_api.endpoints.upload_document_endpoint import UploadDocumentEndpoint
 from base_component_api.models.chat_response import ChatResponse
+from base_component_api.models.description import Description
 from base_component_api.models.key_value import KeyValue
 
 
@@ -20,12 +21,11 @@ class ComponentApiImplementation(BaseComponentApi):
         return await assist_endpoint.aassist(body)
 
     @inject.autoparams("get_descriptions_endpoint")
-    async def get_available_actions(
+    async def get_description(
         self,
         get_descriptions_endpoint: GetDescriptionEndpoint,
-    ) -> list[KeyValue]:
-        available_actions = get_descriptions_endpoint.get_description()
-        return [KeyValue(Name=str(key), Value=str(value)) for key, value in available_actions.items()]
+    ) -> Description:
+        return get_descriptions_endpoint.get_description()
 
     @inject.autoparams("upload_document_endpoint")
     async def upload_document(
