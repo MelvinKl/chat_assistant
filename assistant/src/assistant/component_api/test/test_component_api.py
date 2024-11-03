@@ -26,20 +26,14 @@ class TestComponentApi(unittest.TestCase):
     def tearDown(self) -> None:
         pass
 
-    def test_act(self) -> None:
-        """Test case for act
+    def test_assist(self) -> None:
+        """Test case for assist
 
         """
         pass
 
-    def test_answer_question(self) -> None:
-        """Test case for answer_question
-
-        """
-        pass
-
-    def test_get_available_actions(self) -> None:
-        """Test case for get_available_actions
+    def test_get_description(self) -> None:
+        """Test case for get_description
 
         """
         pass

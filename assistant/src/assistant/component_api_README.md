@@ -49,11 +49,11 @@ with assistant.component_api.ApiClient(configuration) as api_client:
     body = 'body_example' # str | 
 
     try:
-        api_response = api_instance.act(body)
-        print("The response of ComponentApi->act:\n")
+        api_response = api_instance.assist(body)
+        print("The response of ComponentApi->assist:\n")
         pprint(api_response)
     except ApiException as e:
-        print("Exception when calling ComponentApi->act: %s\n" % e)
+        print("Exception when calling ComponentApi->assist: %s\n" % e)
 
 ```
 
@@ -63,9 +63,8 @@ All URIs are relative to *http://localhost*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*ComponentApi* | [**act**](assistant/component_api/docs/ComponentApi.md#act) | **POST** /act | 
-*ComponentApi* | [**answer_question**](assistant/component_api/docs/ComponentApi.md#answer_question) | **POST** /question | 
-*ComponentApi* | [**get_available_actions**](assistant/component_api/docs/ComponentApi.md#get_available_actions) | **GET** /availbale/actions | 
+*ComponentApi* | [**assist**](assistant/component_api/docs/ComponentApi.md#assist) | **POST** /assist | 
+*ComponentApi* | [**get_description**](assistant/component_api/docs/ComponentApi.md#get_description) | **GET** /description | 
 *ComponentApi* | [**upload_document**](assistant/component_api/docs/ComponentApi.md#upload_document) | **POST** /documents | 
 
 

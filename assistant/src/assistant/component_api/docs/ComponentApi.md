@@ -4,80 +4,13 @@ All URIs are relative to *http://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**act**](ComponentApi.md#act) | **POST** /act | 
-[**answer_question**](ComponentApi.md#answer_question) | **POST** /question | 
-[**get_available_actions**](ComponentApi.md#get_available_actions) | **GET** /availbale/actions | 
+[**assist**](ComponentApi.md#assist) | **POST** /assist | 
+[**get_description**](ComponentApi.md#get_description) | **GET** /description | 
 [**upload_document**](ComponentApi.md#upload_document) | **POST** /documents | 
 
 
-# **act**
-> str act(body)
-
-
-
-### Example
-
-
-```python
-import assistant.component_api
-from assistant.component_api.rest import ApiException
-from pprint import pprint
-
-# Defining the host is optional and defaults to http://localhost
-# See configuration.py for a list of all supported configuration parameters.
-configuration = assistant.component_api.Configuration(
-    host = "http://localhost"
-)
-
-
-# Enter a context with an instance of the API client
-with assistant.component_api.ApiClient(configuration) as api_client:
-    # Create an instance of the API class
-    api_instance = assistant.component_api.ComponentApi(api_client)
-    body = 'body_example' # str | 
-
-    try:
-        api_response = api_instance.act(body)
-        print("The response of ComponentApi->act:\n")
-        pprint(api_response)
-    except Exception as e:
-        print("Exception when calling ComponentApi->act: %s\n" % e)
-```
-
-
-
-### Parameters
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **body** | **str**|  | 
-
-### Return type
-
-**str**
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
- - **Content-Type**: application/json
- - **Accept**: application/json
-
-### HTTP response details
-
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**200** | Done |  -  |
-**500** | Something Somewhere went terribly wrong. |  -  |
-**501** | Not available for this component. |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-# **answer_question**
-> ChatResponse answer_question(body)
+# **assist**
+> ChatResponse assist(body)
 
 
 
@@ -104,11 +37,11 @@ with assistant.component_api.ApiClient(configuration) as api_client:
     body = 'body_example' # str | 
 
     try:
-        api_response = api_instance.answer_question(body)
-        print("The response of ComponentApi->answer_question:\n")
+        api_response = api_instance.assist(body)
+        print("The response of ComponentApi->assist:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling ComponentApi->answer_question: %s\n" % e)
+        print("Exception when calling ComponentApi->assist: %s\n" % e)
 ```
 
 
@@ -144,8 +77,8 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **get_available_actions**
-> List[KeyValue] get_available_actions()
+# **get_description**
+> List[KeyValue] get_description()
 
 
 
@@ -171,11 +104,11 @@ with assistant.component_api.ApiClient(configuration) as api_client:
     api_instance = assistant.component_api.ComponentApi(api_client)
 
     try:
-        api_response = api_instance.get_available_actions()
-        print("The response of ComponentApi->get_available_actions:\n")
+        api_response = api_instance.get_description()
+        print("The response of ComponentApi->get_description:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling ComponentApi->get_available_actions: %s\n" % e)
+        print("Exception when calling ComponentApi->get_description: %s\n" % e)
 ```
 
 
@@ -261,7 +194,7 @@ No authorization required
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **201** | Uploading |  -  |
-**422** | Unsupoorted document |  -  |
+**422** | Unsuported document |  -  |
 **501** | Not available for this componment |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

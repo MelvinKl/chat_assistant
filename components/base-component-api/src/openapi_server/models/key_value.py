@@ -13,34 +13,34 @@
 
 
 from __future__ import annotations
-
-import json
 import pprint
 import re  # noqa: F401
-from typing import Any, ClassVar, Dict, List
+import json
+
+
+
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
-
-from base_component_api.models.key_value import KeyValue
-
+from typing import Any, ClassVar, Dict, List
 try:
     from typing import Self
 except ImportError:
     from typing_extensions import Self
 
-
-class SourceDocument(BaseModel):
-    """ """  # noqa: E501
-
-    page_content: StrictStr
-    metadata: List[KeyValue] = Field(alias="Metadata")
-    __properties: ClassVar[List[str]] = ["page_content", "Metadata"]
+class KeyValue(BaseModel):
+    """
+    
+    """ # noqa: E501
+    name: StrictStr = Field(alias="Name")
+    value: StrictStr = Field(alias="Value")
+    __properties: ClassVar[List[str]] = ["Name", "Value"]
 
     model_config = {
         "populate_by_name": True,
         "validate_assignment": True,
         "protected_namespaces": (),
     }
+
 
     def to_str(self) -> str:
         """Returns the string representation of the model using alias"""
@@ -53,7 +53,7 @@ class SourceDocument(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Self:
-        """Create an instance of SourceDocument from a JSON string"""
+        """Create an instance of KeyValue from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -68,35 +68,25 @@ class SourceDocument(BaseModel):
         """
         _dict = self.model_dump(
             by_alias=True,
-            exclude={},
+            exclude={
+            },
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of each item in metadata (list)
-        _items = []
-        if self.metadata:
-            for _item in self.metadata:
-                if _item:
-                    _items.append(_item.to_dict())
-            _dict["Metadata"] = _items
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Dict) -> Self:
-        """Create an instance of SourceDocument from a dict"""
+        """Create an instance of KeyValue from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate(
-            {
-                "page_content": obj.get("page_content"),
-                "Metadata": (
-                    [KeyValue.from_dict(_item) for _item in obj.get("Metadata")]
-                    if obj.get("Metadata") is not None
-                    else None
-                ),
-            }
-        )
+        _obj = cls.model_validate({
+            "Name": obj.get("Name"),
+            "Value": obj.get("Value")
+        })
         return _obj
+
+
