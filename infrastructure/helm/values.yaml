@@ -3,6 +3,43 @@ ghcrIo:
   pat: github-pat # replace with your github personal access token
   email: email-address@domain.de # replace with your email address
 
+assistant:    
+  ingress: 
+    enabled: true
+    host: assistant.melvin.beer
+  debug: false
+  debugArgs:
+    - "python"
+    - "-m"
+    - "debugpy"
+    - "--listen"
+    - "0.0.0.0:5679"
+    - "--wait-for-client"
+    - "-m"
+    - "uvicorn"
+    - "src.main:app"
+    - "--host"
+    - "0.0.0.0"
+    - "--port"
+    - "8080"
+  args:
+    - "python"
+    - "-m"
+    - "uvicorn"
+    - "src.main:app"
+    - "--host"
+    - "0.0.0.0"
+    - "--port"
+    - "8080"
+  settings:
+    llm:
+      SETTINGS_LLM_PROVIDER: ollama
+    ollama:
+      SETTINGS_OLLAMA_MODEL: llama3.2:3b
+      SETTINGS_OLLAMA_URL: http://open-webui-ollama:11434
+    qdrant:
+      SETTINGS_QDRANT_COLLECTION_NAME: warhammer
+
 components:
   rag:
     - name: warhammer

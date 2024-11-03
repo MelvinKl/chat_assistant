@@ -595,7 +595,7 @@ class ComponentApi:
 
 
     @validate_call
-    def get_available_actions(
+    def get_description(
         self,
         _request_timeout: Union[
             None,

@@ -9,7 +9,8 @@ ENV PATH="/venv/bin:$PATH"
 
 RUN pip install --upgrade pip
 RUN pip install poetry
-COPY components/base-library /app/base-library
+
+COPY components/base-library /app/components/base-library
 COPY assistant /app/assistant
 
 WORKDIR /app/assistant

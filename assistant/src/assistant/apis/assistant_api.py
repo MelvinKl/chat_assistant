@@ -5,7 +5,7 @@ import importlib
 import pkgutil
 
 from assistant.apis.assistant_api_base import BaseAssistantApi
-import openapi_server.impl
+import assistant.impl
 
 from fastapi import (  # noqa: F401
     APIRouter,
@@ -29,7 +29,7 @@ from typing import Any
 
 router = APIRouter()
 
-ns_pkg = openapi_server.impl
+ns_pkg = assistant.impl
 for _, name, _ in pkgutil.iter_modules(ns_pkg.__path__, ns_pkg.__name__ + "."):
     importlib.import_module(name)
 
