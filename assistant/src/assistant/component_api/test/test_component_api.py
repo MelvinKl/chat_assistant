@@ -27,23 +27,17 @@ class TestComponentApi(unittest.TestCase):
         pass
 
     def test_assist(self) -> None:
-        """Test case for assist
-
-        """
+        """Test case for assist"""
         pass
 
     def test_get_description(self) -> None:
-        """Test case for get_description
-
-        """
+        """Test case for get_description"""
         pass
 
     def test_upload_document(self) -> None:
-        """Test case for upload_document
-
-        """
+        """Test case for upload_document"""
         pass
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

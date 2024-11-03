@@ -1,4 +1,5 @@
 from pydantic import StrictStr
+
 from assistant.apis.assistant_api_base import BaseAssistantApi
 
 

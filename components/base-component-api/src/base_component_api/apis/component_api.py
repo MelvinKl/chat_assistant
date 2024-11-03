@@ -2,7 +2,7 @@
 
 import importlib
 import pkgutil
-from typing import Dict, List  # noqa: F401
+from typing import Any, Dict, List  # noqa: F401
 
 from fastapi import (  # noqa: F401
     APIRouter,
@@ -20,6 +20,7 @@ from fastapi import (  # noqa: F401
     UploadFile,
     status,
 )
+from pydantic import StrictStr
 
 import base_component_api.impl
 from base_component_api.apis.component_api_base import BaseComponentApi
@@ -35,25 +36,7 @@ for _, name, _ in pkgutil.iter_modules(ns_pkg.__path__, ns_pkg.__name__ + "."):
 
 
 @router.post(
-    "/act",
-    responses={
-        200: {"model": str, "description": "Done"},
-        500: {"model": str, "description": "Something Somewhere went terribly wrong."},
-        501: {"description": "Not available for this component."},
-    },
-    tags=["component"],
-    response_model_by_alias=True,
-)
-async def act(
-    body: str = Body(None, description=""),
-) -> str:
-    if not BaseComponentApi.subclasses:
-        raise HTTPException(status_code=500, detail="Not implemented")
-    return await BaseComponentApi.subclasses[0]().act(body)
-
-
-@router.post(
-    "/question",
+    "/assist",
     responses={
         200: {"model": ChatResponse, "description": "Answer"},
         404: {"model": str, "description": "Couldn&#39;t answer your question."},
@@ -63,16 +46,16 @@ async def act(
     tags=["component"],
     response_model_by_alias=True,
 )
-async def answer_question(
-    body: str = Body(None, description=""),
+async def assist(
+    body: StrictStr = Body(None, description=""),
 ) -> ChatResponse:
     if not BaseComponentApi.subclasses:
         raise HTTPException(status_code=500, detail="Not implemented")
-    return await BaseComponentApi.subclasses[0]().answer_question(body)
+    return await BaseComponentApi.subclasses[0]().assist(body)
 
 
 @router.get(
-    "/availbale/actions",
+    "/description",
     responses={
         200: {"model": List[KeyValue], "description": "Available actions"},
         500: {"model": str, "description": "Something somewhere went terribly wrong"},
@@ -80,23 +63,25 @@ async def answer_question(
     tags=["component"],
     response_model_by_alias=True,
 )
-async def get_available_actions() -> List[KeyValue]:
+async def get_description() -> List[KeyValue]:
     if not BaseComponentApi.subclasses:
         raise HTTPException(status_code=500, detail="Not implemented")
-    return await BaseComponentApi.subclasses[0]().get_available_actions()
+    return await BaseComponentApi.subclasses[0]().get_description()
 
 
 @router.post(
     "/documents",
     responses={
         201: {"description": "Uploading"},
-        422: {"model": str, "description": "Unsupoorted document"},
+        422: {"model": str, "description": "Unsuported document"},
         501: {"description": "Not available for this componment"},
     },
     tags=["component"],
     response_model_by_alias=True,
 )
-async def upload_document(file: UploadFile = File(...)) -> None:
+async def upload_document(
+    file: UploadFile,
+) -> None:
     if not BaseComponentApi.subclasses:
         raise HTTPException(status_code=500, detail="Not implemented")
     return await BaseComponentApi.subclasses[0]().upload_document(file)

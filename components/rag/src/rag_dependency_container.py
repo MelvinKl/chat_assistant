@@ -1,6 +1,6 @@
 import inject
 from base_component_api.dependency_container import base_config
-from base_component_api.endpoints.answer_endpoint import AnswerEndpoint
+from base_component_api.endpoints.assist_endpoint import AssistEndpoint
 from base_component_api.endpoints.upload_document_endpoint import UploadDocumentEndpoint
 from base_library.document_extractor.extractor import Extractor
 from base_library.impl.document_extractor.pdf_extractor import PDFExtractor
@@ -15,7 +15,7 @@ from langchain_core.language_models.llms import LLM
 from langchain_ollama import OllamaEmbeddings
 from qdrant_client import QdrantClient
 
-from impl.endpoints.rag_answer_endpoint import RagAnswerEndpoint
+from impl.endpoints.rag_assist_endpoint import RagAssistEndpoint
 from impl.endpoints.rag_upload_document_endpoint import RagUploadDocument
 
 
@@ -52,11 +52,11 @@ def _di_config(binder):
         lambda: QdrantDatabase(
             collection_name=settings_qdrant.collection_name,
             url=settings_qdrant.url,
-        )
+        ),
     )
 
     binder.bind_to_constructor(Extractor, PDFExtractor)
-    binder.bind_to_constructor(AnswerEndpoint, RagAnswerEndpoint)
+    binder.bind_to_constructor(AssistEndpoint, RagAssistEndpoint)
     binder.bind_to_constructor(UploadDocumentEndpoint, RagUploadDocument)
 
 

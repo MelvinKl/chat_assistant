@@ -12,17 +12,15 @@
 """  # noqa: E501
 
 import warnings
-from pydantic import validate_call, Field, StrictFloat, StrictStr, StrictInt
 from typing import Any, Dict, List, Optional, Tuple, Union
-from typing_extensions import Annotated
 
-from pydantic import StrictStr
-from typing import List
-from assistant.component_api.models.chat_response import ChatResponse
-from assistant.component_api.models.key_value import KeyValue
+from pydantic import Field, StrictFloat, StrictInt, StrictStr, validate_call
+from typing_extensions import Annotated
 
 from assistant.component_api.api_client import ApiClient, RequestSerialized
 from assistant.component_api.api_response import ApiResponse
+from assistant.component_api.models.chat_response import ChatResponse
+from assistant.component_api.models.key_value import KeyValue
 from assistant.component_api.rest import RESTResponseType
 
 
@@ -38,7 +36,6 @@ class ComponentApi:
             api_client = ApiClient.get_default()
         self.api_client = api_client
 
-
     @validate_call
     def assist(
         self,
@@ -46,10 +43,7 @@ class ComponentApi:
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
+            Tuple[Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]],
         ] = None,
         _request_auth: Optional[Dict[StrictStr, Any]] = None,
         _content_type: Optional[StrictStr] = None,
@@ -81,32 +75,28 @@ class ComponentApi:
                             in the spec for a single request.
         :type _host_index: int, optional
         :return: Returns the result object.
-        """ # noqa: E501
+        """  # noqa: E501
 
         _param = self._assist_serialize(
             body=body,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
-            _host_index=_host_index
+            _host_index=_host_index,
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "ChatResponse",
-            '404': "str",
-            '500': "str",
-            '501': None,
+            "200": "ChatResponse",
+            "404": "str",
+            "500": "str",
+            "501": None,
         }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
+        response_data = self.api_client.call_api(*_param, _request_timeout=_request_timeout)
         response_data.read()
         return self.api_client.response_deserialize(
             response_data=response_data,
             response_types_map=_response_types_map,
         ).data
-
 
     @validate_call
     def assist_with_http_info(
@@ -115,10 +105,7 @@ class ComponentApi:
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
+            Tuple[Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]],
         ] = None,
         _request_auth: Optional[Dict[StrictStr, Any]] = None,
         _content_type: Optional[StrictStr] = None,
@@ -150,32 +137,28 @@ class ComponentApi:
                             in the spec for a single request.
         :type _host_index: int, optional
         :return: Returns the result object.
-        """ # noqa: E501
+        """  # noqa: E501
 
         _param = self._assist_serialize(
             body=body,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
-            _host_index=_host_index
+            _host_index=_host_index,
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "ChatResponse",
-            '404': "str",
-            '500': "str",
-            '501': None,
+            "200": "ChatResponse",
+            "404": "str",
+            "500": "str",
+            "501": None,
         }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
+        response_data = self.api_client.call_api(*_param, _request_timeout=_request_timeout)
         response_data.read()
         return self.api_client.response_deserialize(
             response_data=response_data,
             response_types_map=_response_types_map,
         )
-
 
     @validate_call
     def assist_without_preload_content(
@@ -184,10 +167,7 @@ class ComponentApi:
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
+            Tuple[Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]],
         ] = None,
         _request_auth: Optional[Dict[StrictStr, Any]] = None,
         _content_type: Optional[StrictStr] = None,
@@ -219,28 +199,24 @@ class ComponentApi:
                             in the spec for a single request.
         :type _host_index: int, optional
         :return: Returns the result object.
-        """ # noqa: E501
+        """  # noqa: E501
 
         _param = self._assist_serialize(
             body=body,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
-            _host_index=_host_index
+            _host_index=_host_index,
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "ChatResponse",
-            '404': "str",
-            '500': "str",
-            '501': None,
+            "200": "ChatResponse",
+            "404": "str",
+            "500": "str",
+            "501": None,
         }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
+        response_data = self.api_client.call_api(*_param, _request_timeout=_request_timeout)
         return response_data.response
-
 
     def _assist_serialize(
         self,
@@ -253,16 +229,13 @@ class ComponentApi:
 
         _host = None
 
-        _collection_formats: Dict[str, str] = {
-        }
+        _collection_formats: Dict[str, str] = {}
 
         _path_params: Dict[str, str] = {}
         _query_params: List[Tuple[str, str]] = []
         _header_params: Dict[str, Optional[str]] = _headers or {}
         _form_params: List[Tuple[str, str]] = []
-        _files: Dict[
-            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
-        ] = {}
+        _files: Dict[str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]] = {}
         _body_params: Optional[bytes] = None
 
         # process the path parameters
@@ -273,36 +246,24 @@ class ComponentApi:
         if body is not None:
             _body_params = body
 
-
         # set the HTTP header `Accept`
-        if 'Accept' not in _header_params:
-            _header_params['Accept'] = self.api_client.select_header_accept(
-                [
-                    'application/json'
-                ]
-            )
+        if "Accept" not in _header_params:
+            _header_params["Accept"] = self.api_client.select_header_accept(["application/json"])
 
         # set the HTTP header `Content-Type`
         if _content_type:
-            _header_params['Content-Type'] = _content_type
+            _header_params["Content-Type"] = _content_type
         else:
-            _default_content_type = (
-                self.api_client.select_header_content_type(
-                    [
-                        'application/json'
-                    ]
-                )
-            )
+            _default_content_type = self.api_client.select_header_content_type(["application/json"])
             if _default_content_type is not None:
-                _header_params['Content-Type'] = _default_content_type
+                _header_params["Content-Type"] = _default_content_type
 
         # authentication setting
-        _auth_settings: List[str] = [
-        ]
+        _auth_settings: List[str] = []
 
         return self.api_client.param_serialize(
-            method='POST',
-            resource_path='/assist',
+            method="POST",
+            resource_path="/assist",
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,
@@ -312,11 +273,8 @@ class ComponentApi:
             auth_settings=_auth_settings,
             collection_formats=_collection_formats,
             _host=_host,
-            _request_auth=_request_auth
+            _request_auth=_request_auth,
         )
-
-
-
 
     @validate_call
     def get_description(
@@ -324,10 +282,7 @@ class ComponentApi:
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
+            Tuple[Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]],
         ] = None,
         _request_auth: Optional[Dict[StrictStr, Any]] = None,
         _content_type: Optional[StrictStr] = None,
@@ -357,29 +312,22 @@ class ComponentApi:
                             in the spec for a single request.
         :type _host_index: int, optional
         :return: Returns the result object.
-        """ # noqa: E501
+        """  # noqa: E501
 
         _param = self._get_description_serialize(
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
+            _request_auth=_request_auth, _content_type=_content_type, _headers=_headers, _host_index=_host_index
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "List[KeyValue]",
-            '500': "str",
+            "200": "List[KeyValue]",
+            "500": "str",
         }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
+        response_data = self.api_client.call_api(*_param, _request_timeout=_request_timeout)
         response_data.read()
         return self.api_client.response_deserialize(
             response_data=response_data,
             response_types_map=_response_types_map,
         ).data
-
 
     @validate_call
     def get_description_with_http_info(
@@ -387,10 +335,7 @@ class ComponentApi:
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
+            Tuple[Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]],
         ] = None,
         _request_auth: Optional[Dict[StrictStr, Any]] = None,
         _content_type: Optional[StrictStr] = None,
@@ -420,29 +365,22 @@ class ComponentApi:
                             in the spec for a single request.
         :type _host_index: int, optional
         :return: Returns the result object.
-        """ # noqa: E501
+        """  # noqa: E501
 
         _param = self._get_description_serialize(
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
+            _request_auth=_request_auth, _content_type=_content_type, _headers=_headers, _host_index=_host_index
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "List[KeyValue]",
-            '500': "str",
+            "200": "List[KeyValue]",
+            "500": "str",
         }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
+        response_data = self.api_client.call_api(*_param, _request_timeout=_request_timeout)
         response_data.read()
         return self.api_client.response_deserialize(
             response_data=response_data,
             response_types_map=_response_types_map,
         )
-
 
     @validate_call
     def get_description_without_preload_content(
@@ -450,10 +388,7 @@ class ComponentApi:
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
+            Tuple[Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]],
         ] = None,
         _request_auth: Optional[Dict[StrictStr, Any]] = None,
         _content_type: Optional[StrictStr] = None,
@@ -483,25 +418,18 @@ class ComponentApi:
                             in the spec for a single request.
         :type _host_index: int, optional
         :return: Returns the result object.
-        """ # noqa: E501
+        """  # noqa: E501
 
         _param = self._get_description_serialize(
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
+            _request_auth=_request_auth, _content_type=_content_type, _headers=_headers, _host_index=_host_index
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "List[KeyValue]",
-            '500': "str",
+            "200": "List[KeyValue]",
+            "500": "str",
         }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
+        response_data = self.api_client.call_api(*_param, _request_timeout=_request_timeout)
         return response_data.response
-
 
     def _get_description_serialize(
         self,
@@ -513,16 +441,13 @@ class ComponentApi:
 
         _host = None
 
-        _collection_formats: Dict[str, str] = {
-        }
+        _collection_formats: Dict[str, str] = {}
 
         _path_params: Dict[str, str] = {}
         _query_params: List[Tuple[str, str]] = []
         _header_params: Dict[str, Optional[str]] = _headers or {}
         _form_params: List[Tuple[str, str]] = []
-        _files: Dict[
-            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
-        ] = {}
+        _files: Dict[str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]] = {}
         _body_params: Optional[bytes] = None
 
         # process the path parameters
@@ -531,23 +456,16 @@ class ComponentApi:
         # process the form parameters
         # process the body parameter
 
-
         # set the HTTP header `Accept`
-        if 'Accept' not in _header_params:
-            _header_params['Accept'] = self.api_client.select_header_accept(
-                [
-                    'application/json'
-                ]
-            )
-
+        if "Accept" not in _header_params:
+            _header_params["Accept"] = self.api_client.select_header_accept(["application/json"])
 
         # authentication setting
-        _auth_settings: List[str] = [
-        ]
+        _auth_settings: List[str] = []
 
         return self.api_client.param_serialize(
-            method='GET',
-            resource_path='/description',
+            method="GET",
+            resource_path="/description",
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,
@@ -557,11 +475,8 @@ class ComponentApi:
             auth_settings=_auth_settings,
             collection_formats=_collection_formats,
             _host=_host,
-            _request_auth=_request_auth
+            _request_auth=_request_auth,
         )
-
-
-
 
     @validate_call
     def upload_document(
@@ -569,10 +484,7 @@ class ComponentApi:
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
+            Tuple[Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]],
         ] = None,
         _request_auth: Optional[Dict[StrictStr, Any]] = None,
         _content_type: Optional[StrictStr] = None,
@@ -602,30 +514,23 @@ class ComponentApi:
                             in the spec for a single request.
         :type _host_index: int, optional
         :return: Returns the result object.
-        """ # noqa: E501
+        """  # noqa: E501
 
         _param = self._upload_document_serialize(
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
+            _request_auth=_request_auth, _content_type=_content_type, _headers=_headers, _host_index=_host_index
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '201': None,
-            '422': "str",
-            '501': None,
+            "201": None,
+            "422": "str",
+            "501": None,
         }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
+        response_data = self.api_client.call_api(*_param, _request_timeout=_request_timeout)
         response_data.read()
         return self.api_client.response_deserialize(
             response_data=response_data,
             response_types_map=_response_types_map,
         ).data
-
 
     @validate_call
     def upload_document_with_http_info(
@@ -633,10 +538,7 @@ class ComponentApi:
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
+            Tuple[Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]],
         ] = None,
         _request_auth: Optional[Dict[StrictStr, Any]] = None,
         _content_type: Optional[StrictStr] = None,
@@ -666,30 +568,23 @@ class ComponentApi:
                             in the spec for a single request.
         :type _host_index: int, optional
         :return: Returns the result object.
-        """ # noqa: E501
+        """  # noqa: E501
 
         _param = self._upload_document_serialize(
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
+            _request_auth=_request_auth, _content_type=_content_type, _headers=_headers, _host_index=_host_index
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '201': None,
-            '422': "str",
-            '501': None,
+            "201": None,
+            "422": "str",
+            "501": None,
         }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
+        response_data = self.api_client.call_api(*_param, _request_timeout=_request_timeout)
         response_data.read()
         return self.api_client.response_deserialize(
             response_data=response_data,
             response_types_map=_response_types_map,
         )
-
 
     @validate_call
     def upload_document_without_preload_content(
@@ -697,10 +592,7 @@ class ComponentApi:
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
+            Tuple[Annotated[StrictFloat, Field(gt=0)], Annotated[StrictFloat, Field(gt=0)]],
         ] = None,
         _request_auth: Optional[Dict[StrictStr, Any]] = None,
         _content_type: Optional[StrictStr] = None,
@@ -730,26 +622,19 @@ class ComponentApi:
                             in the spec for a single request.
         :type _host_index: int, optional
         :return: Returns the result object.
-        """ # noqa: E501
+        """  # noqa: E501
 
         _param = self._upload_document_serialize(
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
+            _request_auth=_request_auth, _content_type=_content_type, _headers=_headers, _host_index=_host_index
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '201': None,
-            '422': "str",
-            '501': None,
+            "201": None,
+            "422": "str",
+            "501": None,
         }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
+        response_data = self.api_client.call_api(*_param, _request_timeout=_request_timeout)
         return response_data.response
-
 
     def _upload_document_serialize(
         self,
@@ -761,16 +646,13 @@ class ComponentApi:
 
         _host = None
 
-        _collection_formats: Dict[str, str] = {
-        }
+        _collection_formats: Dict[str, str] = {}
 
         _path_params: Dict[str, str] = {}
         _query_params: List[Tuple[str, str]] = []
         _header_params: Dict[str, Optional[str]] = _headers or {}
         _form_params: List[Tuple[str, str]] = []
-        _files: Dict[
-            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
-        ] = {}
+        _files: Dict[str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]] = {}
         _body_params: Optional[bytes] = None
 
         # process the path parameters
@@ -779,36 +661,24 @@ class ComponentApi:
         # process the form parameters
         # process the body parameter
 
-
         # set the HTTP header `Accept`
-        if 'Accept' not in _header_params:
-            _header_params['Accept'] = self.api_client.select_header_accept(
-                [
-                    'application/json'
-                ]
-            )
+        if "Accept" not in _header_params:
+            _header_params["Accept"] = self.api_client.select_header_accept(["application/json"])
 
         # set the HTTP header `Content-Type`
         if _content_type:
-            _header_params['Content-Type'] = _content_type
+            _header_params["Content-Type"] = _content_type
         else:
-            _default_content_type = (
-                self.api_client.select_header_content_type(
-                    [
-                        'multipart/form-data'
-                    ]
-                )
-            )
+            _default_content_type = self.api_client.select_header_content_type(["multipart/form-data"])
             if _default_content_type is not None:
-                _header_params['Content-Type'] = _default_content_type
+                _header_params["Content-Type"] = _default_content_type
 
         # authentication setting
-        _auth_settings: List[str] = [
-        ]
+        _auth_settings: List[str] = []
 
         return self.api_client.param_serialize(
-            method='POST',
-            resource_path='/documents',
+            method="POST",
+            resource_path="/documents",
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,
@@ -818,7 +688,5 @@ class ComponentApi:
             auth_settings=_auth_settings,
             collection_formats=_collection_formats,
             _host=_host,
-            _request_auth=_request_auth
+            _request_auth=_request_auth,
         )
-
-

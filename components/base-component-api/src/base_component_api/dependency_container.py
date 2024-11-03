@@ -1,22 +1,19 @@
 import inject
 
-from base_component_api.endpoints.act_endpoint import ActEndpoint
-from base_component_api.endpoints.answer_endpoint import AnswerEndpoint
-from base_component_api.endpoints.get_actions_endpoint import GetActionsEndpoint
+from base_component_api.endpoints.assist_endpoint import AssistEndpoint
+from base_component_api.endpoints.get_description_endpoint import GetDescriptionEndpoint
 from base_component_api.endpoints.upload_document_endpoint import UploadDocumentEndpoint
-from base_component_api.impl.endpoints.default_act_endpoint import DefaultActEndpoint
-from base_component_api.impl.endpoints.default_answer_endpoint import (
+from base_component_api.impl.endpoints.default_assist_endpoint import (
     DefaultAnswerEndpoint,
 )
-from base_component_api.impl.endpoints.default_get_actions_endpoint import (
-    DefaultGetActionsEndpoint,
+from base_component_api.impl.endpoints.default_get_description_endpoint import (
+    DefaultGetDescriptionsEndpoint,
 )
 
 
 def base_config(binder):
-    binder.bind_to_constructor(ActEndpoint, DefaultActEndpoint)
-    binder.bind_to_constructor(AnswerEndpoint, DefaultAnswerEndpoint)
-    binder.bind_to_constructor(GetActionsEndpoint, DefaultGetActionsEndpoint)
+    binder.bind_to_constructor(AssistEndpoint, DefaultAnswerEndpoint)
+    binder.bind_to_constructor(GetDescriptionEndpoint, DefaultGetDescriptionsEndpoint)
     binder.bind_to_constructor(UploadDocumentEndpoint, UploadDocumentEndpoint)
 
 

@@ -5,7 +5,8 @@ docker  run --user $(id -u):$(id -g) --rm \
     -v $PWD/components:/local openapitools/openapi-generator-cli generate \
     -i /local/base-component-api/openapi.yaml \
     -g python-fastapi \
-    -o /local/base-component-api
+    -o /local/base-component-api \
+    --additional-properties=packageName="base_component_api"    
 
 # Component client
 docker  run --user $(id -u):$(id -g) --rm \

@@ -1,11 +1,8 @@
 # coding: utf-8
 
-from typing import Dict, List  # noqa: F401
 import importlib
 import pkgutil
-
-from assistant.apis.assistant_api_base import BaseAssistantApi
-import openapi_server.impl
+from typing import Any, Dict, List  # noqa: F401
 
 from fastapi import (  # noqa: F401
     APIRouter,
@@ -21,11 +18,11 @@ from fastapi import (  # noqa: F401
     Security,
     status,
 )
-
-from assistant.models.extra_models import TokenModel  # noqa: F401
 from pydantic import StrictStr
-from typing import Any
 
+import openapi_server.impl
+from assistant.apis.assistant_api_base import BaseAssistantApi
+from assistant.models.extra_models import TokenModel  # noqa: F401
 
 router = APIRouter()
 

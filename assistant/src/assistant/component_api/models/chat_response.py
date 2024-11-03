@@ -13,20 +13,21 @@
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
+from typing import Any, ClassVar, Dict, List, Optional, Set
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
-from typing import Any, ClassVar, Dict, List
-from assistant.component_api.models.source_document import SourceDocument
-from typing import Optional, Set
 from typing_extensions import Self
 
+from assistant.component_api.models.source_document import SourceDocument
+
+
 class ChatResponse(BaseModel):
-    """
-    
-    """ # noqa: E501
+    """ """  # noqa: E501
+
     sources: List[SourceDocument] = Field(alias="Sources")
     answer: StrictStr = Field(alias="Answer")
     __properties: ClassVar[List[str]] = ["Sources", "Answer"]
@@ -36,7 +37,6 @@ class ChatResponse(BaseModel):
         validate_assignment=True,
         protected_namespaces=(),
     )
-
 
     def to_str(self) -> str:
         """Returns the string representation of the model using alias"""
@@ -62,8 +62,7 @@ class ChatResponse(BaseModel):
           were set at model initialization. Other fields with value `None`
           are ignored.
         """
-        excluded_fields: Set[str] = set([
-        ])
+        excluded_fields: Set[str] = set([])
 
         _dict = self.model_dump(
             by_alias=True,
@@ -76,7 +75,7 @@ class ChatResponse(BaseModel):
             for _item_sources in self.sources:
                 if _item_sources:
                     _items.append(_item_sources.to_dict())
-            _dict['Sources'] = _items
+            _dict["Sources"] = _items
         return _dict
 
     @classmethod
@@ -88,10 +87,14 @@ class ChatResponse(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
-            "Sources": [SourceDocument.from_dict(_item) for _item in obj["Sources"]] if obj.get("Sources") is not None else None,
-            "Answer": obj.get("Answer")
-        })
+        _obj = cls.model_validate(
+            {
+                "Sources": (
+                    [SourceDocument.from_dict(_item) for _item in obj["Sources"]]
+                    if obj.get("Sources") is not None
+                    else None
+                ),
+                "Answer": obj.get("Answer"),
+            }
+        )
         return _obj
-
-
