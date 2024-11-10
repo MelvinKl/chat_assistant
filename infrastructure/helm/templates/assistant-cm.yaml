@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: assistant-cm
+data:
+  SETTINGS_COMPONENTS_APIS: '[{{- range $deploy :=  .Values.components.rag }}"http://{{ $deploy.name }}:8080"{{ end }}]'
+---

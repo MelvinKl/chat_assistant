@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: assistant
+  labels:
+    app: assistant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: assistant
+  template:
+    metadata:
+      labels:
+        app: assistant
+    spec:
+      imagePullSecrets:
+      - name: "pull-secret"
+      containers:
+      - name: assistant
+        imagePullPolicy: Always        
+        image: ghcr.io/melvinkl/chat_assistant/assistant:latest
+        envFrom:
+          - configMapRef:
+              name: assistant-cm
+        ports:
+        - containerPort: 8080
+        command: 
+          - "poetry"
+          - "run"
+        args:
+          {{- if .Values.assistant.debug }}
+          {{- range $arg :=  .Values.assistant.debugArgs }}
+          - {{ $arg | quote -}}
+          {{ end }}
+          {{- else }}
+          {{- range $arg :=  .Values.assistant.args }}
+          - {{ $arg | quote -}}
+          {{ end }}
+          {{- end }}
