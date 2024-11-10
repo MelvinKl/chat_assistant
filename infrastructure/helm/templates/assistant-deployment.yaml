@@ -20,6 +20,9 @@ spec:
       - name: assistant
         imagePullPolicy: Always        
         image: ghcr.io/melvinkl/chat_assistant/assistant:latest
+        envFrom:
+          - configMapRef:
+              name: assistant-cm
         ports:
         - containerPort: 8080
         command: 

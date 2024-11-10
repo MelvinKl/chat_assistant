@@ -20,7 +20,7 @@ from typing_extensions import Annotated
 from assistant.component_api.api_client import ApiClient, RequestSerialized
 from assistant.component_api.api_response import ApiResponse
 from assistant.component_api.models.chat_response import ChatResponse
-from assistant.component_api.models.key_value import KeyValue
+from assistant.component_api.models.description import Description
 from assistant.component_api.rest import RESTResponseType
 
 
@@ -288,7 +288,7 @@ class ComponentApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> List[KeyValue]:
+    ) -> Description:
         """get_description
 
 
@@ -319,7 +319,7 @@ class ComponentApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            "200": "List[KeyValue]",
+            "200": "Description",
             "500": "str",
         }
         response_data = self.api_client.call_api(*_param, _request_timeout=_request_timeout)
@@ -341,7 +341,7 @@ class ComponentApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[List[KeyValue]]:
+    ) -> ApiResponse[Description]:
         """get_description
 
 
@@ -372,7 +372,7 @@ class ComponentApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            "200": "List[KeyValue]",
+            "200": "Description",
             "500": "str",
         }
         response_data = self.api_client.call_api(*_param, _request_timeout=_request_timeout)
@@ -425,7 +425,7 @@ class ComponentApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            "200": "List[KeyValue]",
+            "200": "Description",
             "500": "str",
         }
         response_data = self.api_client.call_api(*_param, _request_timeout=_request_timeout)

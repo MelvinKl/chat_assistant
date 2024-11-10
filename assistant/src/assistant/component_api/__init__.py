@@ -34,5 +34,6 @@ from assistant.component_api.exceptions import (
 
 # import models into sdk package
 from assistant.component_api.models.chat_response import ChatResponse
+from assistant.component_api.models.description import Description
 from assistant.component_api.models.key_value import KeyValue
 from assistant.component_api.models.source_document import SourceDocument

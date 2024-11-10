@@ -71,6 +71,7 @@ Class | Method | HTTP request | Description
 ## Documentation For Models
 
  - [ChatResponse](assistant/component_api/docs/ChatResponse.md)
+ - [Description](assistant/component_api/docs/Description.md)
  - [KeyValue](assistant/component_api/docs/KeyValue.md)
  - [SourceDocument](assistant/component_api/docs/SourceDocument.md)
 

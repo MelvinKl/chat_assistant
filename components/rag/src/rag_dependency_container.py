@@ -9,7 +9,7 @@ from base_library.impl.settings.ollama_settings import OllamaSettings
 from base_library.impl.settings.qdrant_settings import QdrantSetttings
 from base_library.impl.vector_database.qdrant_database import QdrantDatabase
 from base_library.vector_database.vector_database import VectorDatabase
-from langchain.llms import Ollama
+from langchain_community.llms import Ollama
 from langchain_core.embeddings.embeddings import Embeddings
 from langchain_core.language_models.llms import LLM
 from langchain_ollama import OllamaEmbeddings

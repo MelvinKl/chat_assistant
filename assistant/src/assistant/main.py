@@ -12,9 +12,16 @@
 """  # noqa: E501
 
 
+import os
+import sys
+
 from fastapi import FastAPI
 
+file_dir = os.path.dirname(__file__)
+sys.path.append(file_dir)
+
 from assistant.apis.assistant_api import router as AssistantApiRouter
+from assistant.assistant_container import configure
 
 app = FastAPI(
     title="Assistant API",
@@ -23,3 +30,4 @@ app = FastAPI(
 )
 
 app.include_router(AssistantApiRouter)
+configure()

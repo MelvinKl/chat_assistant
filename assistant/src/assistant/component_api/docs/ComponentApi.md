@@ -78,7 +78,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **get_description**
-> List[KeyValue] get_description()
+> Description get_description()
 
 
 
@@ -87,7 +87,7 @@ No authorization required
 
 ```python
 import assistant.component_api
-from assistant.component_api.models.key_value import KeyValue
+from assistant.component_api.models.description import Description
 from assistant.component_api.rest import ApiException
 from pprint import pprint
 
@@ -119,7 +119,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**List[KeyValue]**](KeyValue.md)
+[**Description**](Description.md)
 
 ### Authorization
 
