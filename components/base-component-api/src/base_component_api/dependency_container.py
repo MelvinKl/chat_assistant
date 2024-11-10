@@ -1,4 +1,5 @@
 import inject
+from inject import Binder
 
 from base_component_api.endpoints.assist_endpoint import AssistEndpoint
 from base_component_api.endpoints.get_description_endpoint import GetDescriptionEndpoint
@@ -11,7 +12,7 @@ from base_component_api.impl.endpoints.default_get_description_endpoint import (
 )
 
 
-def base_config(binder):
+def base_config(binder: Binder):
     binder.bind_to_constructor(AssistEndpoint, DefaultAnswerEndpoint)
     binder.bind_to_constructor(GetDescriptionEndpoint, DefaultGetDescriptionsEndpoint)
     binder.bind_to_constructor(UploadDocumentEndpoint, UploadDocumentEndpoint)
