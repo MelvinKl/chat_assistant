@@ -47,6 +47,30 @@
                     "remoteRoot": "/app//base-library"
                 }
             ]
+        },
+        {
+            "name": "home-assistant-componen",
+            "type": "debugpy",
+            "request": "attach",
+            "justMyCode": false,
+            "connect": {
+                "host": "localhost",
+                "port": 5680
+            },
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}/components/home-assistant",
+                    "remoteRoot": "/app/home-assistant"
+                },
+                {
+                    "localRoot": "${workspaceFolder}/components/base-library",
+                    "remoteRoot": "/app//base-library"
+                },
+                {
+                    "localRoot": "${workspaceFolder}/components/base-component-api",
+                    "remoteRoot": "/app//base-component-api"
+                }
+            ]
         }
     ]
 }

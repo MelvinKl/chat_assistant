@@ -39,6 +39,49 @@ assistant:
       SETTINGS_OLLAMA_URL: http://open-webui-ollama:11434    
 
 components:
+  homeAssistantComponent:
+    name: home-assistant-component
+    ingress: 
+      enabled: false
+      host: home-assistant-component.melvin.beer
+    debug: false
+    debugArgs:
+      - "python"
+      - "-m"
+      - "debugpy"
+      - "--listen"
+      - "0.0.0.0:5680"
+      - "--wait-for-client"
+      - "-m"
+      - "uvicorn"
+      - "src.main:component_app"
+      - "--host"
+      - "0.0.0.0"
+      - "--port"
+      - "8080"
+    args:
+      - "python"
+      - "-m"
+      - "uvicorn"
+      - "src.main:component_app"
+      - "--host"
+      - "0.0.0.0"
+      - "--port"
+      - "8080"
+    secrets:
+      homeassistant:
+        SETTINGS_HOMEASSISTANT_APIKEY: yourapikey
+    settings:
+      api:
+        SETTINGS_API_NAME: home-assistant-component
+        SETTINGS_API_DESCRIPTION: "Can answer questions and perform actions in the home. This includes things like light, temperature, blinds, etc."
+      llm:
+        SETTINGS_LLM_PROVIDER: ollama
+      ollama:
+        SETTINGS_OLLAMA_MODEL: llama3.2:3b
+        SETTINGS_OLLAMA_URL: http://open-webui-ollama:11434
+      homeassistant:
+        SETTINGS_HOMEASSISTANT_URL: http://http://192.168.5.88:8123/api
   rag:
     - name: warhammer
       ingress: 

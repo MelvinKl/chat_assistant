@@ -4,6 +4,8 @@
 ## Overview
 
 This repository contains the source code for a chat assistant application, including a Kubernetes Helm chart and a setup script for developing locally using k3d.
+The chat assistant API is located in the `assistant` directory and provides endpoints for user interaction.
+
 
 ## Directory Structure
 
@@ -29,9 +31,21 @@ To get started with the chat assistant, follow these steps:
 2. Use Tiltfile to start the chat assistant application.
 3. When using Tiltfile, the APIs will wait for the debugger to connect.
 
+## Components
+
+### Home Assistant Component
+
+### Rag Component
+
+The rag component implements a simple rag solution. You can have as many of them as you like, the definition in the helm-chart is an array.
+You can have a separate instance for every topic you want to cover.
+
 ## Development
 
-The chat assistant API is located in the `assistant` directory and provides endpoints for user interaction.
+This repository provides a `Tiltfile` for local development.
+It is required to have a `.env` file in the root of the repositrory with the following values:
+- `SETTINGS_HOMEASSISTANT_APIKEY`: The apikey for your homeassistant installation.
+
 
 ### Extending the Chat Assistant
 
