@@ -1,12 +1,19 @@
 {
   "name": "Basic Python",
-  "build": { "dockerfile": "Dockerfile" },
+
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/devcontainers/python:1-3.12-bullseye",
+
   "remoteUser": "vscode",
   "customizations": {
     "vscode": {
       "extensions": [
         "ms-python.python",
         "Tim-Koehler.helm-intellisense",
+        "k--kato.intellij-idea-keybindings",
+				"vscode-icons-team.vscode-icons",
+        "EditorConfig.EditorConfig",
+        "hbenl.vscode-test-explorer",
         "ms-vscode.makefile-tools"
       ]
     }
