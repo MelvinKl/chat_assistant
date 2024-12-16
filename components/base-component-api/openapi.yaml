@@ -21,14 +21,32 @@ paths:
             application/json:
               schema:
                 type: string
-          description: Unsupoorted document
+          description: Unsupported document
         "501":
           description: Not available for this componment
       tags:
       - component
-  /question:
+  /description:
+    get:
+      operationId: get_description
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Description'
+          description: Available actions
+        "500":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: Something somewhere went terribly wrong
+      tags:
+      - component
+  /assist:
     post:
-      operationId: answer_question
+      operationId: assist
       requestBody:
         content:
           application/json:
@@ -56,52 +74,6 @@ paths:
           description: Something somewhere went terribly wrong.
         "501":
           description: Doesn't exist for this component
-      tags:
-      - component
-  /act:
-    post:
-      operationId: act
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: string
-        required: true
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                type: string
-          description: Done
-        "500":
-          content:
-            application/json:
-              schema:
-                type: string
-          description: Something Somewhere went terribly wrong.
-        "501":
-          description: Not available for this component.
-      tags:
-      - component
-  /availbale/actions:
-    get:
-      operationId: get_available_actions
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: '#/components/schemas/KeyValue'
-                type: array
-          description: Available actions
-        "500":
-          content:
-            application/json:
-              schema:
-                type: string
-          description: Something somewhere went terribly wrong
       tags:
       - component
 components:
@@ -182,4 +154,23 @@ components:
       - Answer
       - Sources
       title: ChatResponse
+      type: object
+    Description:
+      description: ""
+      example:
+        Description: Description
+        Name: Name
+      properties:
+        Name:
+          description: ""
+          title: Name
+          type: string
+        Description:
+          description: ""
+          title: Description
+          type: string
+      required:
+      - Description
+      - Name
+      title: Description
       type: object

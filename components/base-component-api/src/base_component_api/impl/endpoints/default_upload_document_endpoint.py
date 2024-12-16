@@ -1,6 +1,6 @@
-from base_component_api.endpoints.upload_document_endpoint import UploadDocumentEndpoint
-
 from fastapi import File, UploadFile
+
+from base_component_api.endpoints.upload_document_endpoint import UploadDocumentEndpoint
 
 
 class UploadDocumentEndpoint(UploadDocumentEndpoint):

@@ -6,7 +6,8 @@
     "vscode": {
       "extensions": [
         "ms-python.python",
-        "Tim-Koehler.helm-intellisense"
+        "Tim-Koehler.helm-intellisense",
+        "ms-vscode.makefile-tools"
       ]
     }
   },
