@@ -7,7 +7,7 @@ data:
   {{- range $key, $value := $deploy.settings.llm }}
   {{ $key }}: {{ $value | quote }}
   {{- end }}
----  
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -35,4 +35,4 @@ data:
   {{ $key }}: {{ $value | quote }}
   {{- end }}
 ---
-{{ end }}  
+{{ end }}

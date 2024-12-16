@@ -32,10 +32,10 @@ metadata:
   name: tls-certificate
 spec:
   dnsNames:
-    - {{ $deploy.ingress.host }}    
+    - {{ $deploy.ingress.host }}
   secretName: tls-certificate
   issuerRef:
     name: cert-issuer
-    kind: ClusterIssuer    
+    kind: ClusterIssuer
 {{- end }}
-{{ end }}          
+{{ end }}

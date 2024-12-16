@@ -13,12 +13,27 @@ load("ext://dotenv", "dotenv")
 docker_build('ghcr.io/melvinkl/chat_assistant/rag:latest',
              '.',
              dockerfile='components/rag/Dockerfile',
-             build_args={'DEV': '1'})
+             build_args={'DEV': '1'},
+             live_update=[
+                 sync("base-library",
+                      "/app/base-library"),
+                 sync("base-component-api",
+                      "/app/base-component-api"),
+                 sync("rag",
+                      "/app/rag"),
+             ],
+             )
 
 docker_build('ghcr.io/melvinkl/chat_assistant/assistant:latest',
              '.',
              dockerfile='assistant/Dockerfile',
-             build_args={'DEV': '1'})
+             build_args={'DEV': '1'},
+             live_update=[
+                 sync("assistant", "/app/assistant"),
+                 sync("components/base-library",
+                      "/app/components/base-library"),                 
+             ],
+             )
 
 
 
@@ -37,9 +52,9 @@ k8s_resource('warhammer', port_forwards=[
     port_forward(8080, 8080, link_path="/docs"),
     '5678:5678']
     )
-k8s_resource('assistant', port_forwards=['8081:8080','5679:5679'])
+k8s_resource('assistant', port_forwards=[port_forward(8081,8080, link_path="/docs"),'5679:5679'])
 
-k8s_resource('assistant-qdrant', port_forwards=['6333:6333'])
+k8s_resource('assistant-qdrant', port_forwards=[port_forward(6333, link_path="/dashboard")])
 
 k8s_resource('unstructured', port_forwards=['8000:8000'])
 

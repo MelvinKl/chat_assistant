@@ -21,7 +21,7 @@ paths:
             application/json:
               schema:
                 type: string
-          description: Unsuported document
+          description: Unsupported document
         "501":
           description: Not available for this componment
       tags:
