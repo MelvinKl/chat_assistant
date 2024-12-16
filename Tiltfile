@@ -33,7 +33,10 @@ values = [
 
 k8s_yaml(helm('infrastructure/helm', name='assistant', values='infrastructure/helm/values.yaml',set=values))
 # 'busybox-deployment' is the name of the Kubernetes resource we're deploying.
-k8s_resource('warhammer', port_forwards=['8080:8080','5678:5678'])
+k8s_resource('warhammer', port_forwards=[
+    port_forward(8080, 8080, link_path="/docs"),
+    '5678:5678']
+    )
 k8s_resource('assistant', port_forwards=['8081:8080','5679:5679'])
 
 k8s_resource('assistant-qdrant', port_forwards=['6333:6333'])

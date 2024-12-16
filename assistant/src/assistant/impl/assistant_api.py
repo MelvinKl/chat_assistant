@@ -13,5 +13,5 @@ class AssistantAPI(BaseAssistantApi):
         body: StrictStr,
         component_handler: ComponentHandler,
     ) -> str:
-        # TODO: handl personality of assistant, language, etc. This should be done using langgraph
+        # TODO: handle personality of assistant, language, etc. This should be done using langgraph
         return await component_handler.aanswer_question(body)
