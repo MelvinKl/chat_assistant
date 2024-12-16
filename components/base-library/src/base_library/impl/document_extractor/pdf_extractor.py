@@ -1,7 +1,7 @@
 from typing import Any
 
-from langchain_core.documents import Document
 from langchain_community.document_loaders import PDFPlumberLoader
+from langchain_core.documents import Document
 
 from base_library.document_extractor.document_type import DocumentType
 from base_library.document_extractor.extractor import Extractor

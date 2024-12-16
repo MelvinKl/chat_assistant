@@ -1,7 +1,7 @@
-from base_component_api.endpoints.upload_document_endpoint import UploadDocumentEndpoint
-
 from tracely import trace_event
 from fastapi import File, UploadFile
+
+from base_component_api.endpoints.upload_document_endpoint import UploadDocumentEndpoint
 
 
 class UploadDocumentEndpoint(UploadDocumentEndpoint):

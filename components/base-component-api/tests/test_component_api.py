@@ -3,10 +3,6 @@
 from fastapi.testclient import TestClient
 
 
-from base_component_api.models.chat_response import ChatResponse  # noqa: F401
-from base_component_api.models.key_value import KeyValue  # noqa: F401
-
-
 def test_act(client: TestClient):
     """Test case for act"""
     body = "body_example"

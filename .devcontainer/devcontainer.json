@@ -14,6 +14,7 @@
 				"vscode-icons-team.vscode-icons",
         "EditorConfig.EditorConfig",
         "hbenl.vscode-test-explorer",
+        "ms-vscode.makefile-tools"
       ]
     }
   },
