@@ -14,10 +14,18 @@
 
 from fastapi import FastAPI
 from dependency_injector.containers import DeclarativeContainer
+from tracely import init_tracing
+from tracely import trace_event
 
 from base_component_api.apis.component_api import router as ComponentApiRouter
 from base_component_api.dependency_container import DependencyContainer
 
+init_tracing(
+    address="http://evidently:8000",
+    # api_key=”YOUR_EVIDENTLY_TOKEN”,
+    project_id="0193ce87-92b2-7c6c-a429-b414d9710b5d",
+    export_name="chat_assistant",
+)
 
 container = DependencyContainer()
 app = FastAPI(

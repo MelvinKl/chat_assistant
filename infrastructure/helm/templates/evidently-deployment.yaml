@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: evidently
+  labels:
+    app: evidently
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: evidently
+  template:
+    metadata:
+      labels:
+        app: evidently
+    spec:
+      containers:
+      - name: evidently
+        imagePullPolicy: Always
+        image: evidently/evidently-service:latest
+        ports:
+        - containerPort: 8000

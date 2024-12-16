@@ -30,3 +30,5 @@ k8s_resource('assistant-qdrant', port_forwards=['6333:6333'])
 
 k8s_resource('unstructured', port_forwards=['8000:8000'])
 
+
+k8s_resource('evidently', port_forwards=['8088:8000'])

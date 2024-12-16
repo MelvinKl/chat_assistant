@@ -1,4 +1,5 @@
 from inspect import getdoc
+from tracely import trace_event
 
 from base_component_api.endpoints.act_endpoint import ActEndpoint
 from base_component_api.endpoints.answer_endpoint import AnswerEndpoint
@@ -19,5 +20,6 @@ class DefaultGetActionsEndpoint(GetActionsEndpoint):
 
         self._action_dict = action_dict
 
+    @trace_event
     def get_actions(self) -> dict:
         return self._action_dict

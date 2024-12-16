@@ -2,6 +2,7 @@ from pathlib import Path
 from shutil import copyfileobj
 from tempfile import SpooledTemporaryFile, TemporaryDirectory
 
+from tracely import trace_event
 import asyncio
 from langchain_unstructured import UnstructuredLoader
 from unstructured_client import UnstructuredClient
@@ -25,6 +26,7 @@ class RagUploadDocument(UploadDocumentEndpoint):
         self._vector_database = vector_database
         self._unstructured_client = UnstructuredClient(server_url="http://unstructured:8000")
 
+    @trace_event
     def upload_documents(self, file: UploadFile = File(...)) -> None:
         try:
             with TemporaryDirectory() as tmpdirname:
