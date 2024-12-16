@@ -21,3 +21,12 @@
 #docs/*.md
 # Then explicitly reverse the ignore rule for a single file:
 #!docs/README.md
+Dockerfile
+pyproject.toml
+setup.cfg
+setup.py
+README.md
+docker-compose.yaml
+.flake8
+.gitignore
+requirements.txt

@@ -1,0 +1,30 @@
+openapi: 3.0.2
+info:
+  description: A modular chat assistant.
+  title: Assistant API
+  version: 1.0.0
+servers:
+- url: /
+paths:
+  /assist:
+    post:
+      operationId: assist
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: answer
+        "500":
+          description: Something somewhere went terribly wrong.
+      tags:
+      - assistant
+components:
+  schemas: {}

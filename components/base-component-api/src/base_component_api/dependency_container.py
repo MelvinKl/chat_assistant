@@ -1,24 +1,25 @@
-from dependency_injector.containers import DeclarativeContainer, WiringConfiguration
-from dependency_injector.providers import Configuration, Singleton
+import inject
+from inject import Binder
 
+from base_component_api.endpoints.assist_endpoint import AssistEndpoint
+from base_component_api.endpoints.get_description_endpoint import GetDescriptionEndpoint
 from base_component_api.endpoints.upload_document_endpoint import UploadDocumentEndpoint
-from base_component_api.impl.endpoints.default_act_endpoint import DefaultActEndpoint
-from base_component_api.impl.endpoints.default_answer_endpoint import DefaultAnswerEndpoint
-from base_component_api.impl.endpoints.default_get_actions_endpoint import DefaultGetActionsEndpoint
-from base_component_api.impl import component_api_implementation
+from base_component_api.impl.endpoints.default_assist_endpoint import (
+    DefaultAnswerEndpoint,
+)
+from base_component_api.impl.endpoints.default_get_description_endpoint import (
+    DefaultGetDescriptionsEndpoint,
+)
 
 
-class DependencyContainer(DeclarativeContainer):
+def base_config(binder: Binder):
+    binder.bind_to_constructor(AssistEndpoint, DefaultAnswerEndpoint)
+    binder.bind_to_constructor(GetDescriptionEndpoint, DefaultGetDescriptionsEndpoint)
+    binder.bind_to_constructor(UploadDocumentEndpoint, UploadDocumentEndpoint)
 
-    wiring_config = WiringConfiguration(modules=[component_api_implementation])
 
-    config = Configuration(yaml_files=["config.yml"])
-
-    act_endpoint = Singleton(DefaultActEndpoint)
-    answer_endpoint = Singleton(DefaultAnswerEndpoint)
-    get_actions_endpoint = Singleton(
-        DefaultGetActionsEndpoint,
-        answer_endpoint_implementation=answer_endpoint,
-        act_endpoint_implementation=act_endpoint,
+def configure():
+    inject.configure(
+        base_config,
+        allow_override=True,
     )
-    upload_document_endpoint = Singleton(UploadDocumentEndpoint)

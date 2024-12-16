@@ -1,11 +1,12 @@
 # coding: utf-8
 
-from typing import ClassVar, Dict, List, Tuple  # noqa: F401
+from typing import Any, ClassVar, Dict, List, Tuple  # noqa: F401
 
-from fastapi import File, UploadFile
+from fastapi import UploadFile
+from pydantic import StrictStr
 
 from base_component_api.models.chat_response import ChatResponse
-from base_component_api.models.key_value import KeyValue
+from base_component_api.models.description import Description
 
 
 class BaseComponentApi:
@@ -15,18 +16,16 @@ class BaseComponentApi:
         super().__init_subclass__(**kwargs)
         BaseComponentApi.subclasses = BaseComponentApi.subclasses + (cls,)
 
-    async def act(
+    async def assist(
         self,
-        body: str,
-    ) -> str: ...
-
-    async def answer_question(
-        self,
-        body: str,
+        body: StrictStr,
     ) -> ChatResponse: ...
 
-    async def get_available_actions(
+    async def get_description(
         self,
-    ) -> List[KeyValue]: ...
+    ) -> Description: ...
 
-    async def upload_document(self, file: UploadFile = File(...)) -> None: ...
+    async def upload_document(
+        self,
+        file: UploadFile,
+    ) -> None: ...

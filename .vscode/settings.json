@@ -4,6 +4,7 @@
         "components/warhammer/src",
         "components/home-assistant/src",
         "components/base-library/src",
+        "assistant/src",
     ],
  
 }

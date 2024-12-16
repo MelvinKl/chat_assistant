@@ -27,3 +27,7 @@ main.py
 pyproject.toml
 Dockerfile
 setup.cfg
+.flake8
+.gitignore
+README.md
+**/main.py
