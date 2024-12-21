@@ -257,7 +257,7 @@ langtrace:
   clickhouse:
     enabled: true
     name: langtrace-clickhouse
-    image: clickhouse/clickhouse-server:24.5.1.1763-alpine
+    image: clickhouse/clickhouse-server:24.12.1.1614-alpine
     imagePullPolicy: IfNotPresent
     containerPorts:
       - 8123
