@@ -249,7 +249,7 @@ langtrace:
   postgres:
     enabled: true
     name: langtrace-postgres
-    image: postgres:16.2-bookworm
+    image: postgres:16.6-bookworm
     imagePullPolicy: IfNotPresent
     containerPort: 5432
     storageSize: 10Gi
