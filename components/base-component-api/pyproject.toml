@@ -34,7 +34,7 @@ authors = ["Melvin Klein"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.11,<3.13"
+python = ">=3.13,<3.14"
 base-library = { path = "../base-library/" }
 inject = "^5.2.1"
 uvicorn = "^0.30.6"

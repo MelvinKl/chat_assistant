@@ -33,7 +33,7 @@ description = ""
 authors = ["Melvin Klein"]
 
 [tool.poetry.dependencies]
-python = ">=3.11,<3.13"
+python = ">=3.13,<3.14"
 base-library = { path = "../components/base-library/" }
 inject = "^5.2.1"
 uvicorn = "^0.30.6"
