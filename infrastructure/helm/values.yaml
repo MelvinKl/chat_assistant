@@ -109,6 +109,7 @@ open-webui:
       #  type: 'nvidia'
       #  number: 1
       models:
+       pull:
       #  - llama3.2:1b
         - llama3.2:3b
     runtimeClassName: nvidia
