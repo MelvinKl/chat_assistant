@@ -8,7 +8,7 @@ keywords:
   - ollama
 dependencies:
   - name: open-webui
-    version: 4.1.0
+    version: 5.4.0
     repository: "https://helm.openwebui.com/"
   - name: qdrant
     repository: https://qdrant.github.io/qdrant-helm
