@@ -98,6 +98,7 @@ open-webui:
   ollama:
     image:
       tag: "latest"
+      pullPolicy: "Always"
     # -- Automatically install Ollama Helm chart from https://otwld.github.io/ollama-helm/. Use [Helm Values](https://github.com/otwld/ollama-helm/#helm-values) to configure
     enabled: true
     # -- If enabling embedded Ollama, update fullnameOverride to your desired Ollama name value, or else it will use the default ollama.name value from the Ollama chart
@@ -136,7 +137,7 @@ open-webui:
   image:
     repository: ghcr.io/open-webui/open-webui
     tag: "latest"
-    pullPolicy: "IfNotPresent"
+    pullPolicy: "Always"
   resources: {}
   ingress:
       # -- Enable ingress controller resource
