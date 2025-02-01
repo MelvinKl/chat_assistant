@@ -40,7 +40,7 @@ uvicorn = "^0.34.0"
 fastapi = "^0.114.0"
 langchain = "^0.3.0"
 langchain-openai = "^0.3.0"
-python-multipart = "^0.0.9"
+python-multipart = "^0.0.20"
 python-dateutil = "^2.9.0.post0"
 langchain-ollama = "^0.2.0"
 
