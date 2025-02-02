@@ -202,7 +202,7 @@ langchain-qdrant = "^0.2.0"
 pdfplumber = "^0.11.4"
 pydantic = "^2.9.0"
 pydantic-settings = "^2.4.0"
-qdrant-client = {version = "^1.11.2", extras = ["fastembed"]}
+qdrant-client = "^1.11.2"
 
 [package.source]
 type = "directory"
@@ -1157,8 +1157,6 @@ langchain-core = ">=0.2.43,<0.3.0 || >0.3.0,<0.3.1 || >0.3.1,<0.3.2 || >0.3.2,<0
 pydantic = ">=2.7.4,<3.0.0"
 qdrant-client = ">=1.10.1,<2.0.0"
 
-[package.extras]
-fastembed = ["fastembed (>=0.3.3,<0.4.0)"]
 
 [[package]]
 name = "langchain-text-splitters"
@@ -2087,9 +2085,6 @@ portalocker = ">=2.7.0,<3.0.0"
 pydantic = ">=1.10.8"
 urllib3 = ">=1.26.14,<3"
 
-[package.extras]
-fastembed = ["fastembed (==0.3.6)"]
-fastembed-gpu = ["fastembed-gpu (==0.3.6)"]
 
 [[package]]
 name = "regex"

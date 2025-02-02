@@ -15,7 +15,7 @@ COPY assistant /app/assistant
 
 WORKDIR /app/assistant
 
-RUN poetry lock --no-update
+# RUN poetry lock --no-update
 
 RUN if [ "$DEV" = 1 ] ; then poetry install --with dev; else poetry install ; fi
 

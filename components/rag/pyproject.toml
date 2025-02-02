@@ -35,11 +35,10 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.13,<3.14"
-fastembed = "^0.5.0"
 langchain-ollama = "^0.2.0"
 base-component-api = { path = "../base-component-api/" }
 langchain-unstructured = "^0.1.5"
-unstructured-client = "0.29.0"
+unstructured-client = "0.25.9"
 
 [tool.poetry.group.dev.dependencies]
 debugpy = "^1.8.5"

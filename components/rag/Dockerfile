@@ -13,7 +13,7 @@ COPY components/. /app/
 
 WORKDIR /app/rag
 
-RUN poetry lock --no-update
+# RUN poetry lock --no-update
 
 RUN if [ "$DEV" = 1 ] ; then poetry install --no-root --with dev; else poetry install --no-root; fi
 
