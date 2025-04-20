@@ -18,5 +18,4 @@ assistant/component_api/models/key_value.py
 assistant/component_api/models/source_document.py
 assistant/component_api/rest.py
 assistant/component_api/test/__init__.py
-assistant/component_api/test/test_description.py
 assistant/component_api_README.md

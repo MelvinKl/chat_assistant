@@ -20,7 +20,8 @@ docker  run --user $(id -u):$(id -g) --rm \
 # Assistant API
 docker  run --user $(id -u):$(id -g) --rm \
     -v $PWD:/local openapitools/openapi-generator-cli generate \
-    -i /local/assistant/openapi.yaml \
+    -i /local/openapi.yaml \
     -g python-fastapi \
     -o /local/assistant \
+    --skip-validate-spec \
     --additional-properties=generateSourceCodeOnly="true",packageName="assistant"
