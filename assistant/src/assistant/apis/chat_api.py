@@ -5,7 +5,7 @@ import importlib
 import pkgutil
 
 from assistant.apis.chat_api_base import BaseChatApi
-import openapi_server.impl
+import assistant.impl
 
 from fastapi import (  # noqa: F401
     APIRouter,
@@ -18,7 +18,7 @@ from fastapi import (  # noqa: F401
     Path,
     Query,
     Response,
-    Security,
+    Security,    
     status,
 )
 
@@ -36,7 +36,7 @@ from assistant.security_api import get_token_ApiKeyAuth
 
 router = APIRouter()
 
-ns_pkg = openapi_server.impl
+ns_pkg = assistant.impl
 for _, name, _ in pkgutil.iter_modules(ns_pkg.__path__, ns_pkg.__name__ + "."):
     importlib.import_module(name)
 
@@ -114,7 +114,7 @@ async def get_chat_completion_messages(
     completion_id: Annotated[StrictStr, Field(description="The ID of the chat completion to retrieve messages from.")] = Path(..., description="The ID of the chat completion to retrieve messages from."),
     after: Annotated[Optional[StrictStr], Field(description="Identifier for the last message from the previous pagination request.")] = Query(None, description="Identifier for the last message from the previous pagination request.", alias="after"),
     limit: Annotated[Optional[StrictInt], Field(description="Number of messages to retrieve.")] = Query(20, description="Number of messages to retrieve.", alias="limit"),
-    order: Annotated[Optional[StrictStr], Field(description="Sort order for messages by timestamp. Use `asc` for ascending order or `desc` for descending order. Defaults to `asc`.")] = Query(asc, description="Sort order for messages by timestamp. Use &#x60;asc&#x60; for ascending order or &#x60;desc&#x60; for descending order. Defaults to &#x60;asc&#x60;.", alias="order"),
+    order: Annotated[Optional[StrictStr], Field(description="Sort order for messages by timestamp. Use `asc` for ascending order or `desc` for descending order. Defaults to `asc`.")] = Query("asc", description="Sort order for messages by timestamp. Use &#x60;asc&#x60; for ascending order or &#x60;desc&#x60; for descending order. Defaults to &#x60;asc&#x60;.", alias="order"),
     token_ApiKeyAuth: TokenModel = Security(
         get_token_ApiKeyAuth
     ),
@@ -138,7 +138,7 @@ async def list_chat_completions(
     metadata: Annotated[Optional[Dict[str, StrictStr]], Field(description="A list of metadata keys to filter the Chat Completions by. Example:  `metadata[key1]=value1&metadata[key2]=value2` ")] = Query(None, description="A list of metadata keys to filter the Chat Completions by. Example:  &#x60;metadata[key1]&#x3D;value1&amp;metadata[key2]&#x3D;value2&#x60; ", alias="metadata"),
     after: Annotated[Optional[StrictStr], Field(description="Identifier for the last chat completion from the previous pagination request.")] = Query(None, description="Identifier for the last chat completion from the previous pagination request.", alias="after"),
     limit: Annotated[Optional[StrictInt], Field(description="Number of Chat Completions to retrieve.")] = Query(20, description="Number of Chat Completions to retrieve.", alias="limit"),
-    order: Annotated[Optional[StrictStr], Field(description="Sort order for Chat Completions by timestamp. Use `asc` for ascending order or `desc` for descending order. Defaults to `asc`.")] = Query(asc, description="Sort order for Chat Completions by timestamp. Use &#x60;asc&#x60; for ascending order or &#x60;desc&#x60; for descending order. Defaults to &#x60;asc&#x60;.", alias="order"),
+    order: Annotated[Optional[StrictStr], Field(description="Sort order for Chat Completions by timestamp. Use `asc` for ascending order or `desc` for descending order. Defaults to `asc`.")] = Query("asc", description="Sort order for Chat Completions by timestamp. Use &#x60;asc&#x60; for ascending order or &#x60;desc&#x60; for descending order. Defaults to &#x60;asc&#x60;.", alias="order"),
     token_ApiKeyAuth: TokenModel = Security(
         get_token_ApiKeyAuth
     ),

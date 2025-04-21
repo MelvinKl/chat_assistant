@@ -1,5 +1,6 @@
 from http.client import HTTPException
 import time
+from assistant.impl.graph.chat_graph import ChatGraph
 from assistant.models.chat_completion_request_assistant_message import ChatCompletionRequestAssistantMessage
 from assistant.models.chat_completion_request_developer_message import ChatCompletionRequestDeveloperMessage
 from assistant.models.chat_completion_request_function_message import ChatCompletionRequestFunctionMessage
@@ -17,36 +18,35 @@ from assistant.models.create_chat_completion_request import CreateChatCompletion
 from assistant.models.create_chat_completion_response import CreateChatCompletionResponse
 from assistant.models.update_chat_completion_request import UpdateChatCompletionRequest
 from assistant.apis.chat_api_base import BaseChatApi
-from assistant.impl.component_handler import ComponentHandler
 
 class ChatApi(BaseChatApi):
 
-    @inject.autoparams("component_handler")
+    @inject.autoparams("chat_graph")
     async def create_chat_completion(
         self,
         create_chat_completion_request: CreateChatCompletionRequest,
-        component_handler: ComponentHandler,
+        chat_graph: ChatGraph,
     ) -> CreateChatCompletionResponse:
         history = []
 
         for message in create_chat_completion_request.messages:
             match message.actual_instance:
                 case ChatCompletionRequestDeveloperMessage() as message:
-                    history.append(f"{message.role}: {message.content}")
+                    history.append((message.role, message.content))
                 case ChatCompletionRequestSystemMessage()as message:
-                    history.append(f"{message.role}: {message.content}")
+                    history.append((message.role, message.content))
                 case ChatCompletionRequestUserMessage() as message:
-                    history.append(f"{message.role}: {message.content}")
+                    history.append((message.role, message.content))
                 case ChatCompletionRequestAssistantMessage()as message:
-                    history.append(f"{message.role}: {message.content}")
+                    history.append((message.role, message.content))
                 case ChatCompletionRequestToolMessage()as message:
-                    history.append(f"{message.role}: {message.content}")
+                    history.append((message.role, message.content))
                 case ChatCompletionRequestFunctionMessage() as message:
-                    history.append(f"{message.role}: {message.content}")
+                    history.append((message.role, message.content))
                 case message:
                     raise HTTPException(status_code=422, detail=f"Received unknown message of type {type(message)}")
         
-        result_message = await component_handler.aanswer_question("test")
+        result_message = await chat_graph.ainvoke(history)
 
         result = CreateChatCompletionResponse(
             id="create_chat_completion_request.id",

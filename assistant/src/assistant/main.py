@@ -14,27 +14,9 @@
 
 from fastapi import FastAPI
 
-from assistant.apis.assistants_api import router as AssistantsApiRouter
-from assistant.apis.audio_api import router as AudioApiRouter
-from assistant.apis.audit_logs_api import router as AuditLogsApiRouter
-from assistant.apis.batch_api import router as BatchApiRouter
 from assistant.apis.chat_api import router as ChatApiRouter
-from assistant.apis.completions_api import router as CompletionsApiRouter
-from assistant.apis.embeddings_api import router as EmbeddingsApiRouter
-from assistant.apis.files_api import router as FilesApiRouter
-from assistant.apis.fine_tuning_api import router as FineTuningApiRouter
-from assistant.apis.images_api import router as ImagesApiRouter
-from assistant.apis.invites_api import router as InvitesApiRouter
 from assistant.apis.models_api import router as ModelsApiRouter
-from assistant.apis.moderations_api import router as ModerationsApiRouter
-from assistant.apis.projects_api import router as ProjectsApiRouter
-from assistant.apis.realtime_api import router as RealtimeApiRouter
-from assistant.apis.responses_api import router as ResponsesApiRouter
-from assistant.apis.uploads_api import router as UploadsApiRouter
-from assistant.apis.usage_api import router as UsageApiRouter
-from assistant.apis.users_api import router as UsersApiRouter
-from assistant.apis.vector_stores_api import router as VectorStoresApiRouter
-from assistant.apis.default_api import router as DefaultApiRouter
+from assistant_container import configure
 
 app = FastAPI(
     title="OpenAI API",
@@ -42,24 +24,9 @@ app = FastAPI(
     version="2.3.0",
 )
 
-app.include_router(AssistantsApiRouter)
-app.include_router(AudioApiRouter)
-app.include_router(AuditLogsApiRouter)
-app.include_router(BatchApiRouter)
+
 app.include_router(ChatApiRouter)
-app.include_router(CompletionsApiRouter)
-app.include_router(EmbeddingsApiRouter)
-app.include_router(FilesApiRouter)
-app.include_router(FineTuningApiRouter)
-app.include_router(ImagesApiRouter)
-app.include_router(InvitesApiRouter)
 app.include_router(ModelsApiRouter)
-app.include_router(ModerationsApiRouter)
-app.include_router(ProjectsApiRouter)
-app.include_router(RealtimeApiRouter)
-app.include_router(ResponsesApiRouter)
-app.include_router(UploadsApiRouter)
-app.include_router(UsageApiRouter)
-app.include_router(UsersApiRouter)
-app.include_router(VectorStoresApiRouter)
-app.include_router(DefaultApiRouter)
+
+
+configure()

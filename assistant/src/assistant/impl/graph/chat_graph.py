@@ -9,6 +9,9 @@ from time import time
 from tkinter import Image
 from typing import Any, Optional
 
+import inject
+from langgraph.prebuilt import create_react_agent
+from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_core.prompts import PromptTemplate
 from langdetect import detect
 from assistant.impl.graph.graph_state import GraphState
@@ -16,7 +19,8 @@ from fastapi import HTTPException, status
 from langchain_core.runnables import RunnableConfig
 from langchain_core.runnables.graph import MermaidDrawMethod
 from langgraph.graph import END, START, StateGraph
-
+from langchain_core.language_models.chat_models import BaseChatModel
+from assistant.impl.settings.mcp_server_settings import MCPSettings
 
 logger = logging.getLogger(__name__)
 
@@ -31,11 +35,13 @@ class GraphNodeNames(StrEnum):
     ADD_ADDITIONAL_INFORMATION = "add_additional_information"
 
 
-class DefaultChatGraph:
+class ChatGraph:
 
+    @inject.autoparams()
     def __init__(
         self,
-        llm,
+        llm: BaseChatModel,
+        mcp_settings: MCPSettings,
     ):
         rephrase_question_prompt = PromptTemplate.from_template("""
 Rephrase the question so it containts all the relevant information from the history required to answer the question.
@@ -52,6 +58,10 @@ Rephrase the question so it containts all the relevant information from the hist
         
         self._question_rephraser = rephrase_question_prompt | llm
         self._answer_rephraser = rephrase_answer_prompt | llm
+        mcp_client = MultiServerMCPClient(
+            {server.name:{"url":server.url,"transport":"sse"} for server in mcp_settings.servers}
+        )# TODO: don't do this here.
+        self._mcp_agent = create_react_agent(llm, mcp_client.get_tools())# TODO: don't do this here.
         self._state_graph = StateGraph(GraphState)
         self._rephrase_node_builder = partial(self._rephrase_node)
         self._generate_node_builder = partial(self._generate_node)
@@ -129,8 +139,8 @@ Rephrase the question so it containts all the relevant information from the hist
         return {"processed_answer": rephrased_answer}
 
     async def _decide_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
-        # TODO: use mcp to allow the llm to answer the question/perform the required tasks
-        return {}
+        answer = await self._mcp_agent.ainvoke({"messages": state["question"]}, config)
+        return {"raw_answer": answer}
 
     async def _add_additional_information_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
         # TODO: add additional information about the user that was inferred by previous interactions
