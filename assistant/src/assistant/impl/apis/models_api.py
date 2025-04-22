@@ -5,14 +5,14 @@ from assistant.models.delete_model_response import DeleteModelResponse
 from assistant.models.list_models_response import ListModelsResponse
 from assistant.models.model import Model
 from assistant.apis.models_api_base import BaseModelsApi
-from assistant.security_api import get_token_ApiKeyAuth
 
 class ModelsApi(BaseModelsApi):
 
     model = Model(
         id="chat_assistant",
         created=0,
-        owend_by="No one. This is model is a free spirit",
+        owned_by="No one. This model is a free spirit",
+        object="model"
     )
 
     async def delete_model(

@@ -1,5 +1,5 @@
 from assistant.impl.graph.chat_graph import ChatGraph
-from assistant.impl.settings.mcp_server_settings import MCPSettings
+from assistant.impl.settings.mcp_server_settings import MCPSettings, load_mcp_settings_from_json
 from base_library.impl.settings.openai_settings import OpenAISetttings
 import inject
 from base_library.impl.settings.llm_settings import LLMSetttings
@@ -15,11 +15,11 @@ def _di_config(binder: Binder):
         BaseChatModel,
         ChatOpenAI(
             model=settings_openai.model,
-            base_url=settings_openai.url,
-            api_key=settings_openai.openai_api_key,
+            base_url=settings_openai.base_url,
+            api_key=settings_openai.api_key,
         ),
     )
-    binder.bind_to_constructor(MCPSettings, MCPSettings)
+    binder.bind(MCPSettings, load_mcp_settings_from_json())
     binder.bind_to_constructor(ChatGraph, ChatGraph)
 
 

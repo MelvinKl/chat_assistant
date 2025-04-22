@@ -1,13 +1,26 @@
 from pydantic import Field
 from pydantic_settings import BaseSettings
 from pydantic import BaseModel
+import json
 
 class MCPServer(BaseModel):
     url: str
     name: str
+    command: str
+    args: list[str]
+    env: str
+    transport:str
 
 class MCPSettings(BaseSettings):
     class Config:
         env_prefix = "SETTINGS_MCP_"
 
     servers: list[MCPServer] = Field()
+
+
+def load_mcp_settings_from_json(json_file_path="/config/mcp/SETTINGS_MCP_SERVERS"):
+    with open(json_file_path, 'r') as f:
+        data = json.load(f)
+    
+    # Convert dictionary keys to snake_case if necessary (if you prefer that format)
+    return MCPSettings(**data)

@@ -1,9 +1,6 @@
 dependencies:
-- name: open-webui
-  repository: https://helm.openwebui.com/
-  version: 3.3.0
-- name: qdrant
-  repository: https://qdrant.github.io/qdrant-helm
-  version: 0.10.1
-digest: sha256:07ee08157f91ac82b16759ed6c3ee792657aa7f90fe82062e1c25e4a4668541a
-generated: "2024-10-05T22:02:43.923067297+02:00"
+- name: ollama
+  repository: https://otwld.github.io/ollama-helm/
+  version: 1.14.0
+digest: sha256:9aacc0c2bbc21d87cc16000f02c47cd92b22e35d4aee43e595419937318e089f
+generated: "2025-04-21T11:35:32.624303613+02:00"

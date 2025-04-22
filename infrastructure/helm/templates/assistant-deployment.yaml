@@ -14,15 +14,22 @@ spec:
       labels:
         app: assistant
     spec:
+      volumes:
+      - name: config-volume
+        configMap:
+          name: assistant-cm
       imagePullSecrets:
       - name: "pull-secret"
       containers:
       - name: assistant
+        volumeMounts:
+        - mountPath: /config/mcp
+          name: config-volume
         imagePullPolicy: Always        
         image: ghcr.io/melvinkl/chat_assistant/assistant:latest
         envFrom:
-          - configMapRef:
-              name: assistant-cm
+          - secretRef:
+              name: assistant-secret
         ports:
         - containerPort: 8080
         command: 

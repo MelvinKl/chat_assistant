@@ -36,205 +36,44 @@ assistant:
     - "0.0.0.0"
     - "--port"
     - "8080"
-  settings:
-    llm:
-      SETTINGS_LLM_PROVIDER: ollama
-    ollama:
-      SETTINGS_OLLAMA_MODEL: llama3.2:3b
-      SETTINGS_OLLAMA_URL: http://open-webui-ollama:11434    
+  settings:    
+    openai:
+      SETTINGS_OPENAI_MODEL: Qwen2.5:3b
+      SETTINGS_OPENAI_BASE_URL: http://ollama:11434/v1
+      SETTINGS_OPENAI_API_KEY: "changeme"
 
-components:
-  rag:
-    - name: warhammer
-      ingress: 
-        enabled: true
-        host: warhammer.melvin.beer
-      debug: false
-      debugArgs:
-        - "python"
-        - "-m"
-        - "debugpy"
-        - "--listen"
-        - "0.0.0.0:5678"
-        - "--wait-for-client"
-        - "-m"
-        - "uvicorn"
-        - "src.main:component_app"
-        - "--host"
-        - "0.0.0.0"
-        - "--port"
-        - "8080"
-        - "--reload"
-        - "--reload-dir"
-        - "/app/rag"
-        - "--reload-dir"
-        - "/app/base-library"
-        - "--reload-dir"
-        - "/app/base-component-api"
-      args:
-        - "python"
-        - "-m"
-        - "uvicorn"
-        - "src.main:component_app"
-        - "--host"
-        - "0.0.0.0"
-        - "--port"
-        - "8080"
-      settings:
-        api:
-          SETTINGS_API_NAME: warhammer
-          SETTINGS_API_DESCRIPTION: "Can answer question about the Warhammer Fantasy Role Playing Game. This includes rules and lore."
-        llm:
-          SETTINGS_LLM_PROVIDER: ollama
-        ollama:
-          SETTINGS_OLLAMA_MODEL: llama3.2:3b
-          SETTINGS_OLLAMA_URL: http://open-webui-ollama:11434
-        qdrant:
-          SETTINGS_QDRANT_COLLECTION_NAME: warhammer
 
-open-webui:
-  nameOverride: ""
+mcpServers:  
+  servers:
+    - name: timeserver
+      url: ""
+      command: "uvx"
+      env: ""
+      transport: "stdio"
+      args: 
+        - "MCP-timeserver"
 
-  ollama:
-    image:
-      tag: "latest"
-      pullPolicy: "Always"
-    # -- Automatically install Ollama Helm chart from https://otwld.github.io/ollama-helm/. Use [Helm Values](https://github.com/otwld/ollama-helm/#helm-values) to configure
-    enabled: true
-    # -- If enabling embedded Ollama, update fullnameOverride to your desired Ollama name value, or else it will use the default ollama.name value from the Ollama chart
-    fullnameOverride: "open-webui-ollama"
-    # -- Example Ollama configuration with nvidia GPU enabled, automatically downloading a model, and deploying a PVC for model persistence
-    #ollama:
-    #  #gpu:
-    #  #  enabled: true
-    #  #  type: 'nvidia'
-    #  #  number: 1
-    #  #models:
-    #   #pull:
-    #  #  - llama3.2:1b
-    #    - llama3.2:3b
-    runtimeClassName: nvidia
-    persistentVolume:
-      enabled: true
 
-  pipelines:
-    # -- Automatically install Pipelines chart to extend Open WebUI functionality using Pipelines: https://github.com/open-webui/pipelines
-    enabled: true
-    # -- This section can be used to pass required environment variables to your pipelines (e.g. Langfuse hostname)
-    extraEnvVars: []
-
-  # -- A list of Ollama API endpoints. These can be added in lieu of automatically installing the Ollama Helm chart, or in addition to it.
-  #ollamaUrls: 
-  #  - "http://192.168.5.23:11434"
-
-  # -- Value of cluster domain
-  clusterDomain: cluster.local
-
-  annotations: {}
-  podAnnotations: {}
-  replicaCount: 1
-  # -- Open WebUI image tags can be found here: https://github.com/open-webui/open-webui/pkgs/container/open-webui
+ollama:
   image:
-    repository: ghcr.io/open-webui/open-webui
     tag: "latest"
     pullPolicy: "Always"
-  resources: {}
-  ingress:
-      # -- Enable ingress controller resource
+  # -- Automatically install Ollama Helm chart from https://otwld.github.io/ollama-helm/. Use [Helm Values](https://github.com/otwld/ollama-helm/#helm-values) to configure
+  enabled: true
+  # -- If enabling embedded Ollama, update fullnameOverride to your desired Ollama name value, or else it will use the default ollama.name value from the Ollama chart
+  fullnameOverride: "ollama"
+  # -- Example Ollama configuration with nvidia GPU enabled, automatically downloading a model, and deploying a PVC for model persistence
+  ollama:
+  #  #gpu:
+  #  #  enabled: true
+  #  #  type: 'nvidia'
+  #  #  number: 1
+    models:
+      pull:
+        - Qwen2.5:3b
+  #  #  - llama3.2:1b
+  #    - llama3.2:3b
+  runtimeClassName: nvidia
+  persistentVolume:
     enabled: true
 
-    # -- IngressClass that will be used to implement the Ingress (Kubernetes 1.18+)
-    class: "nginx"
-
-    # -- Additional annotations for the Ingress resource.
-    annotations: 
-      #ingress.kubernetes.io/whitelist-source-range: 192.168.0.1/16
-      cert-manager.io/cluster-issuer: cert-issuer
-      kubernetes.io/tls-acme: "true"
-
-    # The list of hostnames to be covered with this ingress record.
-    hosts:
-      - host: chat.melvin.beer
-        paths:
-          - path: /
-            pathType: Prefix
-    
-    host: "chat.melvin.beer"
-    tls: true
-
-    # existingSecret: "tls-certificate"
-  persistence:
-    enabled: true
-    size: 2Gi
-    # -- Use existingClaim if you want to re-use an existing Open WebUI PVC instead of creating a new one
-    existingClaim: ""
-    # -- If using multiple replicas, you must update accessModes to ReadWriteMany
-    accessModes:
-      - ReadWriteOnce
-    storageClass: ""
-    selector: {}
-    annotations: {}
-
-  # -- Node labels for pod assignment.
-  nodeSelector: {}
-
-  # -- Tolerations for pod assignment
-  tolerations: []
-
-  # -- Affinity for pod assignment
-  affinity: {}
-
-  # -- Service values to expose Open WebUI pods to cluster
-  service:
-    type: ClusterIP
-    annotations: {}
-    port: 80
-    containerPort: 8080
-    nodePort: ""
-    labels: {}
-    loadBalancerClass: ""
-
-  # -- OpenAI base API URL to use. Defaults to the Pipelines service endpoint when Pipelines are enabled, and "https://api.openai.com/v1" if Pipelines are not enabled and this value is blank
-  openaiBaseApiUrl: ""
-
-  # -- Additional environments variables on the output Deployment definition. Most up-to-date environment variables can be found here: https://docs.openwebui.com/getting-started/env-configuration/
-  extraEnvVars:
-    # -- Default API key value for Pipelines. Should be updated in a production deployment, or be changed to the required API key if not using Pipelines
-    - name: OPENAI_API_KEY
-      value: "0p3n-w3bu!"
-    # valueFrom:
-    #   secretKeyRef:
-    #     name: pipelines-api-key
-    #     key: api-key
-    # - name: OPENAI_API_KEY
-    #   valueFrom:
-    #     secretKeyRef:
-    #       name: openai-api-key
-    #       key: api-key
-    # - name: OLLAMA_DEBUG
-    #   value: "1"
-
-  # -- Configure pod security context
-  # ref: <https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-containe>
-  podSecurityContext:
-    {}
-    # fsGroupChangePolicy: Always
-    # sysctls: []
-    # supplementalGroups: []
-    # fsGroup: 1001
-
-  # -- Configure container security context
-  # ref: <https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-containe>
-  containerSecurityContext:
-    {}
-    # runAsUser: 1001
-    # runAsGroup: 1001
-    # runAsNonRoot: true
-    # privileged: false
-    # allowPrivilegeEscalation: false
-    # readOnlyRootFilesystem: false
-    # capabilities:
-    #   drop:
-    #     - ALL
-    # seccompProfile:
-    #   type: "RuntimeDefault"

@@ -16,7 +16,7 @@ from fastapi import FastAPI
 
 from assistant.apis.chat_api import router as ChatApiRouter
 from assistant.apis.models_api import router as ModelsApiRouter
-from assistant_container import configure
+from assistant.assistant_container import configure
 
 app = FastAPI(
     title="OpenAI API",

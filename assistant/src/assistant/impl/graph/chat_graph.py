@@ -58,13 +58,18 @@ Rephrase the question so it containts all the relevant information from the hist
         
         self._question_rephraser = rephrase_question_prompt | llm
         self._answer_rephraser = rephrase_answer_prompt | llm
-        mcp_client = MultiServerMCPClient(
-            {server.name:{"url":server.url,"transport":"sse"} for server in mcp_settings.servers}
-        )# TODO: don't do this here.
+        server_dict = {}
+        for server_definition in mcp_settings.servers:
+            if server_definition.transport == "stdio":
+                server_dict[server_definition.name]={"command":server_definition.command,"args":server_definition.args,"transport":server_definition.transport}
+            else:
+                server_dict[server_definition.name]={"url":server_definition.url,"transport":server_definition.transport}
+        mcp_client = MultiServerMCPClient(server_dict)# TODO: don't do this here.
+
         self._mcp_agent = create_react_agent(llm, mcp_client.get_tools())# TODO: don't do this here.
         self._state_graph = StateGraph(GraphState)
-        self._rephrase_node_builder = partial(self._rephrase_node)
-        self._generate_node_builder = partial(self._generate_node)
+        #self._rephrase_node_builder = partial(self._rephrase_node)
+        #self._generate_node_builder = partial(self._generate_node)
         self._graph = self._setup_graph()
 
     async def ainvoke(
@@ -129,17 +134,19 @@ Rephrase the question so it containts all the relevant information from the hist
         question = state["history"][-1][1] # TODO: ensure this exists
         history = [f"{message[0]}: {message[1]}" for message in state["history"][0:-1]]
 
-        rephrased_question = await self._question_rephraser.ainvoke({"question":question,history:history}, config)
-
+        rephrased_question = await self._question_rephraser.ainvoke({"question":question,"history":history}, config)
+        rephrased_question=rephrased_question.content
         logger.info("Rephrased question \"%s\" with history \"%s\" to %s",question, history, rephrased_question)
         return {"question": rephrased_question}
 
     async def _answer_rephraser_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
         rephrased_answer = await self._answer_rephraser.ainvoke(state, config)
+        rephrased_answer=rephrased_answer.content
         return {"processed_answer": rephrased_answer}
 
     async def _decide_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
         answer = await self._mcp_agent.ainvoke({"messages": state["question"]}, config)
+        answer=answer["messages"][-1].content
         return {"raw_answer": answer}
 
     async def _add_additional_information_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
@@ -172,3 +179,8 @@ Rephrase the question so it containts all the relevant information from the hist
         self._state_graph.add_edge([GraphNodeNames.DECIDE, GraphNodeNames.DETERMINE_LANGUAGE], GraphNodeNames.REPHRASE_ANSWER)
         self._state_graph.add_edge(GraphNodeNames.REPHRASE_ANSWER, END)
         self._state_graph.add_edge(GraphNodeNames.ERROR_NODE, END)
+
+    def _setup_graph(self):
+        self._add_nodes()
+        self._wire_graph()
+        return self._state_graph.compile()        

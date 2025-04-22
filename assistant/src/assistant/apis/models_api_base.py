@@ -7,7 +7,7 @@ from typing_extensions import Annotated
 from assistant.models.delete_model_response import DeleteModelResponse
 from assistant.models.list_models_response import ListModelsResponse
 from assistant.models.model import Model
-from assistant.security_api import get_token_ApiKeyAuth
+
 
 class BaseModelsApi:
     subclasses: ClassVar[Tuple] = ()

@@ -4,18 +4,4 @@ metadata:
   name: assistant-cm
 data:
   SETTINGS_MCP_SERVERS: |
-    {
-      {{- range $server := .Values.mcpServers -}}
-      {
-        "name": "{{ $server.name }}",
-        "env": "{{ $server.env }}",
-        "args": [
-          {{- range $arg := $server.args }}
-          "{{ $arg }}",
-          {{ end }}
-        ],
-        "command": "{{ $server.command }}",
-        "url": "{{ $server.url }}"
-      },
-      {{ end -}}
-    }
+    {{ toJson .Values.mcpServers }}
