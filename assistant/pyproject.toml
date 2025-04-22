@@ -45,6 +45,7 @@ python-dateutil = "^2.9.0.post0"
 langchain-ollama = "^0.2.0"
 langdetect = "^1.0.9"
 langchain-mcp-adapters = "^0.0.9"
+langgraph = "^0.3.31"
 
 [tool.poetry.group.dev.dependencies]
 debugpy = "^1.8.5"
