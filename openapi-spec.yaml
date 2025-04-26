@@ -63,6 +63,7 @@ components:
                 - model
                 - created
                 - object
+                - choices
             type: object
             properties:
                 id:
@@ -83,6 +84,11 @@ components:
                 system_fingerprint:
                     description: ''
                     type: string
+                choices:
+                    description: ''
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/chat_completion_choice'
         chat_completion_choice:
             description: ''
             required:

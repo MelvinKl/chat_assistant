@@ -1,6 +1,8 @@
 from http.client import HTTPException
 import time
 from assistant.impl.graph.chat_graph import ChatGraph
+from assistant.models.chat_completion_choice import ChatCompletionChoice
+from assistant.models.chat_completion_choice_message import ChatCompletionChoiceMessage
 from assistant.models.chat_completion_request import ChatCompletionRequest
 from assistant.models.chat_completion_request_assistant_message import ChatCompletionRequestAssistantMessage
 from assistant.models.chat_completion_request_developer_message import ChatCompletionRequestDeveloperMessage
@@ -38,9 +40,10 @@ class ChatApi(BaseChatApi):
 
         result = ChatCompletionResponse(
             id="create_chat_completion_request.id",
-            choices=[result_message],
+            choices=[ChatCompletionChoice(finish_reason="stop",index=0,message=ChatCompletionChoiceMessage(content=result_message,role="assistant"))],
             created=int(time.time()),
             model=chat_completion_request.model,
             object="chat.completion",
+            
         )
         return result

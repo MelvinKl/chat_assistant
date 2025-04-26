@@ -22,6 +22,7 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
+from assistant.models.chat_completion_choice import ChatCompletionChoice
 try:
     from typing import Self
 except ImportError:
@@ -37,7 +38,8 @@ class ChatCompletionResponse(BaseModel):
     object: StrictStr = Field(description="chat.completion")
     service_tier: Optional[StrictStr] = Field(default=None, description="default")
     system_fingerprint: Optional[StrictStr] = None
-    __properties: ClassVar[List[str]] = ["id", "model", "created", "object", "service_tier", "system_fingerprint"]
+    choices: List[ChatCompletionChoice]
+    __properties: ClassVar[List[str]] = ["id", "model", "created", "object", "service_tier", "system_fingerprint", "choices"]
 
     model_config = {
         "populate_by_name": True,
@@ -76,6 +78,13 @@ class ChatCompletionResponse(BaseModel):
             },
             exclude_none=True,
         )
+        # override the default output from pydantic by calling `to_dict()` of each item in choices (list)
+        _items = []
+        if self.choices:
+            for _item in self.choices:
+                if _item:
+                    _items.append(_item.to_dict())
+            _dict['choices'] = _items
         return _dict
 
     @classmethod
@@ -93,7 +102,8 @@ class ChatCompletionResponse(BaseModel):
             "created": obj.get("created"),
             "object": obj.get("object"),
             "service_tier": obj.get("service_tier"),
-            "system_fingerprint": obj.get("system_fingerprint")
+            "system_fingerprint": obj.get("system_fingerprint"),
+            "choices": [ChatCompletionChoice.from_dict(_item) for _item in obj.get("choices")] if obj.get("choices") is not None else None
         })
         return _obj
 
