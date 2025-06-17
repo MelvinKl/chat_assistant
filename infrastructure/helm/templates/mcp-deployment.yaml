@@ -1,0 +1,30 @@
+{{- range $server :=  .Values.mcpServers.deployments }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $server.name }}
+  labels:
+    app: {{ $server.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ $server.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ $server.name }}
+    spec:
+      containers:
+      - name: {{ $server.name }}
+        imagePullPolicy: Always
+        command: ["tail", "-f", "/dev/null"]
+        envFrom:
+          - configMapRef:
+              name: {{ $server.name }}
+          - secretRef:
+              name: {{ $server.name }}          
+        image:  {{ $server.image }}
+        ports:
+        - containerPort: {{ $server.port }}            
+{{ end }}          

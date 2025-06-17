@@ -25,3 +25,11 @@ docker  run --user $(id -u):$(id -g) --rm \
     -o /local/assistant \
     --skip-validate-spec \
     --additional-properties=generateSourceCodeOnly="true",packageName="assistant"
+
+
+docker  run --user $(id -u):$(id -g) --rm \
+    -v $PWD:/local openapitools/openapi-generator-cli:latest generate \
+    -i /local/openapi.yml \
+    -g python \
+    -o /local/src \
+    --additional-properties=generateSourceCodeOnly="true",packageName="weather"

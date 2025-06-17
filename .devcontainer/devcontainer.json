@@ -11,10 +11,11 @@
         "ms-python.python",
         "Tim-Koehler.helm-intellisense",
         "k--kato.intellij-idea-keybindings",
-				"vscode-icons-team.vscode-icons",
+        "vscode-icons-team.vscode-icons",
         "EditorConfig.EditorConfig",
         "hbenl.vscode-test-explorer",
-        "ms-vscode.makefile-tools"
+        "ms-vscode.makefile-tools",
+        "DhananjaySenday.mcp--inspector"
       ]
     }
   },

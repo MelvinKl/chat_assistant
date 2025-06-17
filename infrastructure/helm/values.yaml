@@ -43,15 +43,22 @@ assistant:
       SETTINGS_OPENAI_API_KEY: "changeme"
 
 
-mcpServers:  
+mcpServers: 
+  deployments:
+    - name: weather
+      port: 8080
+      image: ghcr.io/melvinkl/mcp-weather/server:latest
+      config: {}
+      secrets: 
+        YOUR_ENV_VAR: a
   servers:
-    - name: timeserver
-      url: ""
-      command: "uvx"
+    - name: weather
+      url: "http://weather:8080/mcp"
+      command: ""
       env: ""
-      transport: "stdio"
-      args: 
-        - "MCP-timeserver"
+      transport: "streamable_http"
+      args: []
+
 
 
 ollama:

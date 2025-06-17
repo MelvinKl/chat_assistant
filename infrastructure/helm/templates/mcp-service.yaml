@@ -1,0 +1,15 @@
+{{- range $server :=  .Values.mcpServers.deployments }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $server.name }}
+spec:
+  ports:
+  - port: {{ $server.port }}
+    protocol: TCP
+    targetPort: {{ $server.port }}
+  selector:
+    app: {{ $server.name }}
+  sessionAffinity: None
+  type: ClusterIP
+{{ end }}

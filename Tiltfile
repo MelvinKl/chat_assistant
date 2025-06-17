@@ -22,9 +22,7 @@ docker_build('ghcr.io/melvinkl/chat_assistant/assistant:latest',
 
 
 
-values = [
-    "components.rag[0].ingress.enabled=false",
-    "components.rag[0].debug=true",
+values = [    
     "assistant.ingress.enabled=false",
     "assistant.debug=true",
     "ollama.runtimeClassName=",
@@ -34,6 +32,5 @@ values = [
 k8s_yaml(helm('infrastructure/helm', name='assistant', values='infrastructure/helm/values.yaml',set=values))
 # 'busybox-deployment' is the name of the Kubernetes resource we're deploying.
 
-k8s_resource('assistant', port_forwards=[port_forward(8081,8080, link_path="/docs"),'5679:5679'])
-
+k8s_resource('assistant', port_forwards=[port_forward(8080,8080, link_path="/docs"),'5679:5679'])
 

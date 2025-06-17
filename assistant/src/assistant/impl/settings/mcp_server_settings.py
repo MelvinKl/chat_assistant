@@ -22,5 +22,5 @@ def load_mcp_settings_from_json(json_file_path="/config/mcp/SETTINGS_MCP_SERVERS
     with open(json_file_path, 'r') as f:
         data = json.load(f)
     
-    # Convert dictionary keys to snake_case if necessary (if you prefer that format)
-    return MCPSettings(**data)
+    cleaned_data = {"servers":data["servers"]} if "servers" in data.keys() else {}
+    return MCPSettings(**cleaned_data)
