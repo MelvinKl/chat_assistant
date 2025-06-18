@@ -42,7 +42,7 @@ langchain = "^0.3.0"
 langchain-openai = "^0.3.0"
 python-multipart = "^0.0.20"
 python-dateutil = "^2.9.0.post0"
-langchain-ollama = "^0.2.0"
+langchain-ollama = "^0.3.0"
 
 [tool.poetry.group.dev.dependencies]
 debugpy = "^1.8.5"
