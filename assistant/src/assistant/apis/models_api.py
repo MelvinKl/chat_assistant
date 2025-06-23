@@ -1,31 +1,13 @@
-# coding: utf-8
-
-from typing import Dict, List  # noqa: F401
 import importlib
 import pkgutil
+from typing_extensions import Annotated
+
+from pydantic import Field, StrictStr
+from fastapi import APIRouter, HTTPException, Path
+
 
 from assistant.apis.models_api_base import BaseModelsApi
 import assistant.impl.apis
-
-import assistant.impl.apis
-from fastapi import (  # noqa: F401
-    APIRouter,
-    Body,
-    Cookie,
-    Depends,
-    Form,
-    Header,
-    HTTPException,
-    Path,
-    Query,
-    Response,
-    Security,
-    status,
-)
-
-from assistant.models.extra_models import TokenModel  # noqa: F401
-from pydantic import Field, StrictStr
-from typing_extensions import Annotated
 from assistant.models.delete_model_response import DeleteModelResponse
 from assistant.models.list_models_response import ListModelsResponse
 from assistant.models.model import Model
@@ -63,7 +45,7 @@ async def delete_model(
         200: {"model": ListModelsResponse, "description": "OK"},
     },
     tags=["Models"],
-    summary="Lists the currently available models, and provides basic information about each one such as the owner and availability.",
+    summary="Lists the currently available models, and provides basic information about each one such as the owner and availability.",  # noqa: E501
     response_model_by_alias=True,
 )
 async def list_models() -> ListModelsResponse:
@@ -78,7 +60,7 @@ async def list_models() -> ListModelsResponse:
         200: {"model": Model, "description": "OK"},
     },
     tags=["Models"],
-    summary="Retrieves a model instance, providing basic information about the model such as the owner and permissioning.",
+    summary="Retrieves a model instance, providing basic information about the model such as the owner and permissioning.",  # noqa: E501
     response_model_by_alias=True,
 )
 async def retrieve_model(

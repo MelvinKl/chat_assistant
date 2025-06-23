@@ -135,9 +135,10 @@ class ChatGraph:
         return {}
 
     async def _error_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
-        logger.error("\n".join([x for x in state["error_messages"]]))
+        logger.error("\n".join(state["error_messages"]))
         return {
-            "processed_answer": f"I'm sorry, there have been some errors and your request could not be handled. Errors: {'\n'.join([x for x in state['error_messages']])}"
+            "processed_answer": "I'm sorry, there have been some errors and your request could not be handled. "
+            + f"Errors: {'\n'.join(state['error_messages'])}"
         }
 
     #####################

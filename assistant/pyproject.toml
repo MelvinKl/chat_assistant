@@ -18,7 +18,7 @@ exclude = '''
 '''
 
 [tool.flake8]
-exclude= ["infrstructure*", ".eggs", ".git", ".hg", ".mypy_cache", ".tox", ".venv", ".devcontainer", "venv", "_build", "buck-out", "build", "dist", "**/__init__.py"]
+exclude= ["src/assistant/models", ".eggs", ".git", ".hg", ".mypy_cache", ".tox", ".venv", ".devcontainer", "venv", "_build", "buck-out", "build", "dist", "**/__init__.py"]
 statistics = true
 show-source = false
 max-complexity = 8
@@ -32,6 +32,9 @@ multiline-quotes = '"""'
 dictionaries = ["en_US", "python", "technical", "pandas"]
 ban-relative-imports = true
 per-file-ignores = """
+  ./src/assistant/impl/settings/prompt_settings.py: E501,W293
+  ./src/assistant/apis/models_api.py: B008
+  ./src/assistant/apis/chat_api.py: B008
 """
 
 [tool.isort]

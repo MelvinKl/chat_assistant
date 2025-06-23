@@ -1,29 +1,10 @@
-# coding: utf-8
-
-from typing import Dict, List  # noqa: F401
 import importlib
 import pkgutil
 
-from assistant.apis.chat_api_base import BaseChatApi
+from fastapi import APIRouter, Body, HTTPException
+
 import assistant.impl.apis
-
-from fastapi import (  # noqa: F401
-    APIRouter,
-    Body,
-    Cookie,
-    Depends,
-    Form,
-    Header,
-    HTTPException,
-    Path,
-    Query,
-    Response,
-    Security,
-    status,
-)
-
-from assistant.models.extra_models import TokenModel  # noqa: F401
-from typing import Any
+from assistant.apis.chat_api_base import BaseChatApi
 from assistant.models.chat_completion_request import ChatCompletionRequest
 from assistant.models.chat_completion_response import ChatCompletionResponse
 

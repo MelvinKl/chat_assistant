@@ -1,16 +1,17 @@
 # coding: utf-8
 
-from typing import ClassVar, Dict, List, Tuple  # noqa: F401
+from typing import ClassVar
+from typing_extensions import Annotated
 
 from pydantic import Field, StrictStr
-from typing_extensions import Annotated
+
 from assistant.models.delete_model_response import DeleteModelResponse
 from assistant.models.list_models_response import ListModelsResponse
 from assistant.models.model import Model
 
 
 class BaseModelsApi:
-    subclasses: ClassVar[Tuple] = ()
+    subclasses: ClassVar[tuple] = ()
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)

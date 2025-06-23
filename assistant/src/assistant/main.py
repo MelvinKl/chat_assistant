@@ -14,8 +14,8 @@ Do not edit the class manually.
 
 from fastapi import FastAPI
 
-from assistant.apis.chat_api import router as ChatApiRouter
-from assistant.apis.models_api import router as ModelsApiRouter
+from assistant.apis.chat_api import router as chat_api_router
+from assistant.apis.models_api import router as models_api_router
 from assistant.assistant_container import configure
 
 app = FastAPI(
@@ -25,8 +25,8 @@ app = FastAPI(
 )
 
 
-app.include_router(ChatApiRouter)
-app.include_router(ModelsApiRouter)
+app.include_router(chat_api_router)
+app.include_router(models_api_router)
 
 
 configure()
