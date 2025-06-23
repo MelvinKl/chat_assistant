@@ -22,15 +22,15 @@ def test_admin_api_keys_create(client: TestClient):
         "Authorization": "Bearer special-key",
     }
     # uncomment below to make a request
-    #response = client.request(
+    # response = client.request(
     #    "POST",
     #    "/organization/admin_api_keys",
     #    headers=headers,
     #    json=admin_api_keys_create_request,
-    #)
+    # )
 
     # uncomment below to assert the status code of the HTTP response
-    #assert response.status_code == 200
+    # assert response.status_code == 200
 
 
 def test_admin_api_keys_delete(client: TestClient):
@@ -43,14 +43,14 @@ def test_admin_api_keys_delete(client: TestClient):
         "Authorization": "Bearer special-key",
     }
     # uncomment below to make a request
-    #response = client.request(
+    # response = client.request(
     #    "DELETE",
     #    "/organization/admin_api_keys/{key_id}".format(key_id='key_id_example'),
     #    headers=headers,
-    #)
+    # )
 
     # uncomment below to assert the status code of the HTTP response
-    #assert response.status_code == 200
+    # assert response.status_code == 200
 
 
 def test_admin_api_keys_get(client: TestClient):
@@ -63,14 +63,14 @@ def test_admin_api_keys_get(client: TestClient):
         "Authorization": "Bearer special-key",
     }
     # uncomment below to make a request
-    #response = client.request(
+    # response = client.request(
     #    "GET",
     #    "/organization/admin_api_keys/{key_id}".format(key_id='key_id_example'),
     #    headers=headers,
-    #)
+    # )
 
     # uncomment below to assert the status code of the HTTP response
-    #assert response.status_code == 200
+    # assert response.status_code == 200
 
 
 def test_admin_api_keys_list(client: TestClient):
@@ -78,18 +78,17 @@ def test_admin_api_keys_list(client: TestClient):
 
     List organization API keys
     """
-    params = [("after", 'after_example'),     ("order", asc),     ("limit", 20)]
+    params = [("after", "after_example"), ("order", asc), ("limit", 20)]
     headers = {
         "Authorization": "Bearer special-key",
     }
     # uncomment below to make a request
-    #response = client.request(
+    # response = client.request(
     #    "GET",
     #    "/organization/admin_api_keys",
     #    headers=headers,
     #    params=params,
-    #)
+    # )
 
     # uncomment below to assert the status code of the HTTP response
-    #assert response.status_code == 200
-
+    # assert response.status_code == 200

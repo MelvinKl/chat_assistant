@@ -14,26 +14,23 @@ from assistant.models.open_ai_file import OpenAIFile  # noqa: F401
 def test_create_file(client: TestClient):
     """Test case for create_file
 
-    Upload a file that can be used across various endpoints. Individual files can be up to 512 MB, and the size of all files uploaded by one organization can be up to 100 GB.  The Assistants API supports files up to 2 million tokens and of specific file types. See the [Assistants Tools guide](/docs/assistants/tools) for details.  The Fine-tuning API only supports `.jsonl` files. The input also has certain required formats for fine-tuning [chat](/docs/api-reference/fine-tuning/chat-input) or [completions](/docs/api-reference/fine-tuning/completions-input) models.  The Batch API only supports `.jsonl` files up to 200 MB in size. The input also has a specific required [format](/docs/api-reference/batch/request-input).  Please [contact us](https://help.openai.com/) if you need to increase these storage limits. 
+    Upload a file that can be used across various endpoints. Individual files can be up to 512 MB, and the size of all files uploaded by one organization can be up to 100 GB.  The Assistants API supports files up to 2 million tokens and of specific file types. See the [Assistants Tools guide](/docs/assistants/tools) for details.  The Fine-tuning API only supports `.jsonl` files. The input also has certain required formats for fine-tuning [chat](/docs/api-reference/fine-tuning/chat-input) or [completions](/docs/api-reference/fine-tuning/completions-input) models.  The Batch API only supports `.jsonl` files up to 200 MB in size. The input also has a specific required [format](/docs/api-reference/batch/request-input).  Please [contact us](https://help.openai.com/) if you need to increase these storage limits.
     """
 
     headers = {
         "Authorization": "Bearer special-key",
     }
-    data = {
-        "file": '/path/to/file',
-        "purpose": 'purpose_example'
-    }
+    data = {"file": "/path/to/file", "purpose": "purpose_example"}
     # uncomment below to make a request
-    #response = client.request(
+    # response = client.request(
     #    "POST",
     #    "/files",
     #    headers=headers,
     #    data=data,
-    #)
+    # )
 
     # uncomment below to assert the status code of the HTTP response
-    #assert response.status_code == 200
+    # assert response.status_code == 200
 
 
 def test_delete_file(client: TestClient):
@@ -46,14 +43,14 @@ def test_delete_file(client: TestClient):
         "Authorization": "Bearer special-key",
     }
     # uncomment below to make a request
-    #response = client.request(
+    # response = client.request(
     #    "DELETE",
     #    "/files/{file_id}".format(file_id='file_id_example'),
     #    headers=headers,
-    #)
+    # )
 
     # uncomment below to assert the status code of the HTTP response
-    #assert response.status_code == 200
+    # assert response.status_code == 200
 
 
 def test_download_file(client: TestClient):
@@ -66,14 +63,14 @@ def test_download_file(client: TestClient):
         "Authorization": "Bearer special-key",
     }
     # uncomment below to make a request
-    #response = client.request(
+    # response = client.request(
     #    "GET",
     #    "/files/{file_id}/content".format(file_id='file_id_example'),
     #    headers=headers,
-    #)
+    # )
 
     # uncomment below to assert the status code of the HTTP response
-    #assert response.status_code == 200
+    # assert response.status_code == 200
 
 
 def test_list_files(client: TestClient):
@@ -81,20 +78,20 @@ def test_list_files(client: TestClient):
 
     Returns a list of files.
     """
-    params = [("purpose", 'purpose_example'),     ("limit", 10000),     ("order", desc),     ("after", 'after_example')]
+    params = [("purpose", "purpose_example"), ("limit", 10000), ("order", desc), ("after", "after_example")]
     headers = {
         "Authorization": "Bearer special-key",
     }
     # uncomment below to make a request
-    #response = client.request(
+    # response = client.request(
     #    "GET",
     #    "/files",
     #    headers=headers,
     #    params=params,
-    #)
+    # )
 
     # uncomment below to assert the status code of the HTTP response
-    #assert response.status_code == 200
+    # assert response.status_code == 200
 
 
 def test_retrieve_file(client: TestClient):
@@ -107,12 +104,11 @@ def test_retrieve_file(client: TestClient):
         "Authorization": "Bearer special-key",
     }
     # uncomment below to make a request
-    #response = client.request(
+    # response = client.request(
     #    "GET",
     #    "/files/{file_id}".format(file_id='file_id_example'),
     #    headers=headers,
-    #)
+    # )
 
     # uncomment below to assert the status code of the HTTP response
-    #assert response.status_code == 200
-
+    # assert response.status_code == 200

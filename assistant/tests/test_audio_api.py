@@ -20,21 +20,28 @@ def test_create_speech(client: TestClient):
 
     Generates audio from the input text.
     """
-    create_speech_request = {"voice":"ash","input":"input","instructions":"instructions","response_format":"mp3","model":"CreateSpeechRequest_model","speed":0.5503105714228793}
+    create_speech_request = {
+        "voice": "ash",
+        "input": "input",
+        "instructions": "instructions",
+        "response_format": "mp3",
+        "model": "CreateSpeechRequest_model",
+        "speed": 0.5503105714228793,
+    }
 
     headers = {
         "Authorization": "Bearer special-key",
     }
     # uncomment below to make a request
-    #response = client.request(
+    # response = client.request(
     #    "POST",
     #    "/audio/speech",
     #    headers=headers,
     #    json=create_speech_request,
-    #)
+    # )
 
     # uncomment below to assert the status code of the HTTP response
-    #assert response.status_code == 200
+    # assert response.status_code == 200
 
 
 def test_create_transcription(client: TestClient):
@@ -47,26 +54,26 @@ def test_create_transcription(client: TestClient):
         "Authorization": "Bearer special-key",
     }
     data = {
-        "file": '/path/to/file',
+        "file": "/path/to/file",
         "model": assistant.CreateTranscriptionRequestModel(),
-        "language": 'language_example',
-        "prompt": 'prompt_example',
+        "language": "language_example",
+        "prompt": "prompt_example",
         "response_format": json,
         "temperature": 0,
         "include": [assistant.TranscriptionInclude()],
-        "timestamp_granularities": ['timestamp_granularities_example'],
-        "stream": False
+        "timestamp_granularities": ["timestamp_granularities_example"],
+        "stream": False,
     }
     # uncomment below to make a request
-    #response = client.request(
+    # response = client.request(
     #    "POST",
     #    "/audio/transcriptions",
     #    headers=headers,
     #    data=data,
-    #)
+    # )
 
     # uncomment below to assert the status code of the HTTP response
-    #assert response.status_code == 200
+    # assert response.status_code == 200
 
 
 def test_create_translation(client: TestClient):
@@ -79,20 +86,19 @@ def test_create_translation(client: TestClient):
         "Authorization": "Bearer special-key",
     }
     data = {
-        "file": '/path/to/file',
+        "file": "/path/to/file",
         "model": assistant.CreateTranslationRequestModel(),
-        "prompt": 'prompt_example',
+        "prompt": "prompt_example",
         "response_format": json,
-        "temperature": 0
+        "temperature": 0,
     }
     # uncomment below to make a request
-    #response = client.request(
+    # response = client.request(
     #    "POST",
     #    "/audio/translations",
     #    headers=headers,
     #    data=data,
-    #)
+    # )
 
     # uncomment below to assert the status code of the HTTP response
-    #assert response.status_code == 200
-
+    # assert response.status_code == 200

@@ -17,13 +17,28 @@ exclude = '''
 )
 '''
 
+[tool.flake8]
+exclude= ["infrstructure*", ".eggs", ".git", ".hg", ".mypy_cache", ".tox", ".venv", ".devcontainer", "venv", "_build", "buck-out", "build", "dist", "**/__init__.py"]
+statistics = true
+show-source = false
+max-complexity = 8
+max-annotations-complexity = 3
+docstring-convention = 'numpy'
+max-line-length = 120
+ignore = ["E203", "W503", "E704"]
+inline-quotes = '"'
+docstring-quotes = '"""'
+multiline-quotes = '"""'
+dictionaries = ["en_US", "python", "technical", "pandas"]
+ban-relative-imports = true
+per-file-ignores = """
+"""
+
 [tool.isort]
 profile = "black"
-skip = [
-    '.eggs', '.git', '.hg', '.mypy_cache', '.nox', '.pants.d', '.tox',
-    '.venv', '_build', 'buck-out', 'build', 'dist', 'node_modules', 'venv',
-]
+skip = ['.eggs', '.git', '.hg', '.mypy_cache', '.nox', '.pants.d', '.tox', '.venv', '_build', 'buck-out', 'build', 'dist', 'node_modules', 'venv']
 skip_gitignore = true
+known_local_folder = []
 
 
 [tool.poetry]
@@ -34,21 +49,45 @@ authors = ["Melvin Klein"]
 
 [tool.poetry.dependencies]
 python = ">=3.13,<3.14"
-base-library = { path = "../components/base-library/" }
+pydantic-settings = "^2.4.0"
+langchain-openai = "^0.3.0"
+langchain-community = "^0.3.4"
+pydantic = "^2.9.0"
 inject = "^5.2.1"
 uvicorn = "^0.34.0"
 fastapi = "^0.115.0"
 langchain = "^0.3.0"
-langchain-openai = "^0.3.0"
 python-multipart = "^0.0.20"
 python-dateutil = "^2.9.0.post0"
-langchain-ollama = "^0.2.0"
 langdetect = "^1.0.9"
 langchain-mcp-adapters = "^0.1.1"
 langgraph = "^0.3.31"
 
 [tool.poetry.group.dev.dependencies]
-debugpy = "^1.8.5"
+debugpy = "^1.8.14"
+pytest = "^8.3.5"
+coverage = "^7.8.0"
+flake8 = "^7.2.0"
+flake8-black = "^0.3.6"
+flake8-pyproject = "^1.2.3"
+flake8-quotes = "^3.4.0"
+flake8-return = "^1.2.0"
+flake8-annotations-complexity = "^0.1.0"
+flake8-bandit = "^4.1.1"
+flake8-bugbear = "^24.12.12"
+flake8-builtins = "^2.5.0"
+flake8-comprehensions = "^3.15.0"
+flake8-eradicate = "^1.5.0"
+flake8-expression-complexity = "^0.0.11"
+flake8-pytest-style = "^2.1.0"
+pep8-naming = "^0.15.1"
+flake8-eol = "^0.0.8"
+flake8-exceptions = "^0.0.1a0"
+flake8-simplify = "^0.22.0"
+flake8-wot = "^0.2.0"
+flake8-function-order = "^0.0.5"
+flake8-tidy-imports = "^4.10.0"
+black = "^25.1.0"
 
 [build-system]
 requires = ["poetry-core"]

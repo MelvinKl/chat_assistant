@@ -23,6 +23,7 @@ from assistant.models.create_chat_completion_response import CreateChatCompletio
 from assistant.models.update_chat_completion_request import UpdateChatCompletionRequest
 from assistant.apis.chat_api_base import BaseChatApi
 
+
 class ChatApi(BaseChatApi):
 
     @inject.autoparams("chat_graph")
@@ -30,20 +31,25 @@ class ChatApi(BaseChatApi):
         self,
         chat_completion_request: ChatCompletionRequest,
         chat_graph: ChatGraph,
-    ) -> ChatCompletionResponse:        
+    ) -> ChatCompletionResponse:
         history = []
 
         for message in chat_completion_request.messages:
             history.append((message.role, message.content))
-        
+
         result_message = await chat_graph.ainvoke(history)
 
         result = ChatCompletionResponse(
             id="create_chat_completion_request.id",
-            choices=[ChatCompletionChoice(finish_reason="stop",index=0,message=ChatCompletionChoiceMessage(content=result_message,role="assistant"))],
+            choices=[
+                ChatCompletionChoice(
+                    finish_reason="stop",
+                    index=0,
+                    message=ChatCompletionChoiceMessage(content=result_message, role="assistant"),
+                )
+            ],
             created=int(time.time()),
             model=chat_completion_request.model,
             object="chat.completion",
-            
         )
         return result

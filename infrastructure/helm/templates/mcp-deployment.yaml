@@ -15,10 +15,14 @@ spec:
       labels:
         app: {{ $server.name }}
     spec:
+      imagePullSecrets:
+      - name: "pull-secret"
       containers:
       - name: {{ $server.name }}
         imagePullPolicy: Always
-        command: ["tail", "-f", "/dev/null"]
+        {{- if $server.command }}
+        command: {{ $server.command | toJson }}
+        {{- end }}
         envFrom:
           - configMapRef:
               name: {{ $server.name }}

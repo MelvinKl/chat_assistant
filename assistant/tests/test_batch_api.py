@@ -21,14 +21,14 @@ def test_cancel_batch(client: TestClient):
         "Authorization": "Bearer special-key",
     }
     # uncomment below to make a request
-    #response = client.request(
+    # response = client.request(
     #    "POST",
     #    "/batches/{batch_id}/cancel".format(batch_id='batch_id_example'),
     #    headers=headers,
-    #)
+    # )
 
     # uncomment below to assert the status code of the HTTP response
-    #assert response.status_code == 200
+    # assert response.status_code == 200
 
 
 def test_create_batch(client: TestClient):
@@ -42,15 +42,15 @@ def test_create_batch(client: TestClient):
         "Authorization": "Bearer special-key",
     }
     # uncomment below to make a request
-    #response = client.request(
+    # response = client.request(
     #    "POST",
     #    "/batches",
     #    headers=headers,
     #    json=create_batch_request,
-    #)
+    # )
 
     # uncomment below to assert the status code of the HTTP response
-    #assert response.status_code == 200
+    # assert response.status_code == 200
 
 
 def test_list_batches(client: TestClient):
@@ -58,20 +58,20 @@ def test_list_batches(client: TestClient):
 
     List your organization's batches.
     """
-    params = [("after", 'after_example'),     ("limit", 20)]
+    params = [("after", "after_example"), ("limit", 20)]
     headers = {
         "Authorization": "Bearer special-key",
     }
     # uncomment below to make a request
-    #response = client.request(
+    # response = client.request(
     #    "GET",
     #    "/batches",
     #    headers=headers,
     #    params=params,
-    #)
+    # )
 
     # uncomment below to assert the status code of the HTTP response
-    #assert response.status_code == 200
+    # assert response.status_code == 200
 
 
 def test_retrieve_batch(client: TestClient):
@@ -84,12 +84,11 @@ def test_retrieve_batch(client: TestClient):
         "Authorization": "Bearer special-key",
     }
     # uncomment below to make a request
-    #response = client.request(
+    # response = client.request(
     #    "GET",
     #    "/batches/{batch_id}".format(batch_id='batch_id_example'),
     #    headers=headers,
-    #)
+    # )
 
     # uncomment below to assert the status code of the HTTP response
-    #assert response.status_code == 200
-
+    # assert response.status_code == 200

@@ -20,14 +20,14 @@ def test_delete_model(client: TestClient):
         "Authorization": "Bearer special-key",
     }
     # uncomment below to make a request
-    #response = client.request(
+    # response = client.request(
     #    "DELETE",
     #    "/models/{model}".format(model='ft:gpt-4o-mini:acemeco:suffix:abc123'),
     #    headers=headers,
-    #)
+    # )
 
     # uncomment below to assert the status code of the HTTP response
-    #assert response.status_code == 200
+    # assert response.status_code == 200
 
 
 def test_list_models(client: TestClient):
@@ -40,14 +40,14 @@ def test_list_models(client: TestClient):
         "Authorization": "Bearer special-key",
     }
     # uncomment below to make a request
-    #response = client.request(
+    # response = client.request(
     #    "GET",
     #    "/models",
     #    headers=headers,
-    #)
+    # )
 
     # uncomment below to assert the status code of the HTTP response
-    #assert response.status_code == 200
+    # assert response.status_code == 200
 
 
 def test_retrieve_model(client: TestClient):
@@ -60,12 +60,11 @@ def test_retrieve_model(client: TestClient):
         "Authorization": "Bearer special-key",
     }
     # uncomment below to make a request
-    #response = client.request(
+    # response = client.request(
     #    "GET",
     #    "/models/{model}".format(model='gpt-4o-mini'),
     #    headers=headers,
-    #)
+    # )
 
     # uncomment below to assert the status code of the HTTP response
-    #assert response.status_code == 200
-
+    # assert response.status_code == 200

@@ -1,11 +1,10 @@
-name: rag
-description: RAG solution to rule them all
+name: assistant
+description: Chat assistant
 version: 0.0.1
-apiVersion: v1
+apiVersion: v2
 keywords:
-  - rag
   - llm
-  - ollama
+  - assistant
 dependencies:
   - name: ollama
     version: 1.14.0

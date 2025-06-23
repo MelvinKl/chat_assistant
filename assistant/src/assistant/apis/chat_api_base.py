@@ -13,8 +13,8 @@ class BaseChatApi:
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
         BaseChatApi.subclasses = BaseChatApi.subclasses + (cls,)
+
     async def chat_completions(
         self,
         chat_completion_request: ChatCompletionRequest,
-    ) -> ChatCompletionResponse:
-        ...
+    ) -> ChatCompletionResponse: ...

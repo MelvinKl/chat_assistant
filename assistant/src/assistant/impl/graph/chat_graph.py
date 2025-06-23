@@ -10,6 +10,7 @@ from tkinter import Image
 from typing import Any, Optional
 
 import inject
+from langchain_core.runnables.base import RunnableSequence
 from langgraph.prebuilt import create_react_agent
 from langchain_mcp_adapters.client import MultiServerMCPClient, StdioConnection, SSEConnection
 from mcp import ClientSession, StdioServerParameters
@@ -38,52 +39,49 @@ class GraphNodeNames(StrEnum):
 
 class ChatGraph:
 
-    @inject.autoparams()
+    @inject.params(llm=BaseChatModel, question_rephraser="question_rephraser", answer_rephraser="answer_rephraser", mcp_settings=MCPSettings)
     def __init__(
         self,
         llm: BaseChatModel,
+        question_rephraser: RunnableSequence,
+        answer_rephraser: RunnableSequence,
         mcp_settings: MCPSettings,
     ):
-        rephrase_question_prompt = PromptTemplate.from_template("""
-Rephrase the question so it containts all the relevant information from the history required to answer the question.
-                                                       
-                                                       Question: {question}
-                                                       History: {history}
-                                                       """) # TODO: don't do this here. Also make it adjustable
-        
-        self._question_rephraser = rephrase_question_prompt | llm
-        rephrase_answer_prompt = PromptTemplate.from_template("""
-                                                              You are James, a butler of the aristocracy. You were told to do {question}. You determined that the correct answer is {raw_answer}.
-                                                              Rephrase this answer. Answer in the following language: {question_language}.
-                                                       """) # TODO: don't do this here. Also make it adjustable
-        
-        self._question_rephraser = rephrase_question_prompt | llm
-        self._answer_rephraser = rephrase_answer_prompt | llm
+
+        self._question_rephraser = question_rephraser
+        self._answer_rephraser = answer_rephraser
+
         self._server_dict = {}
         for server_definition in mcp_settings.servers:
             if server_definition.transport == "stdio":
-                self._server_dict[server_definition.name]={"command":server_definition.command,"args":server_definition.args,"transport":"stdio"}
+                self._server_dict[server_definition.name] = {
+                    "command": server_definition.command,
+                    "args": server_definition.args,
+                    "transport": "stdio",
+                }
             else:
-                self._server_dict[server_definition.name]={"url":server_definition.url, "transport":server_definition.transport}
+                self._server_dict[server_definition.name] = {
+                    "url": server_definition.url,
+                    "transport": server_definition.transport,
+                }
         self._llm = llm
         self._mcp_client = MultiServerMCPClient(self._server_dict)
         self._state_graph = StateGraph(GraphState)
-        #self._rephrase_node_builder = partial(self._rephrase_node)
-        #self._generate_node_builder = partial(self._generate_node)
+        # self._rephrase_node_builder = partial(self._rephrase_node)
+        # self._generate_node_builder = partial(self._generate_node)
         self._graph = self._setup_graph()
 
     async def ainvoke(
-        self, graph_input: list[tuple[str,str]], config: Optional[RunnableConfig] = None, **kwargs: Any
-    ) -> str:      
+        self, graph_input: list[tuple[str, str]], config: Optional[RunnableConfig] = None, **kwargs: Any
+    ) -> str:
         if not graph_input:
             return ""
-        
 
         state = GraphState.create(
-            history=graph_input,            
+            history=graph_input,
         )
 
-        #logger.info("RECEIVED question: %s", state["question"])
+        # logger.info("RECEIVED question: %s", state["question"])
 
         response_state = await self._graph.ainvoke(input=state, config=config)
 
@@ -125,30 +123,30 @@ Rephrase the question so it containts all the relevant information from the hist
     # nodes #
     #########
     async def _determine_language_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
-        question = state["history"][-1][1] # TODO: ensure this exists
+        question = state["history"][-1][1]  # TODO: ensure this exists
         question_language = detect(question)
-        logger.info("Detected langauge for question \"%s\": %s",question, question_language)
+        logger.info('Detected langauge for question "%s": %s', question, question_language)
         return {"question_language": question_language}
-    
+
     async def _rephrase_question_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
-        question = state["history"][-1][1] # TODO: ensure this exists
+        question = state["history"][-1][1]  # TODO: ensure this exists
         history = [f"{message[0]}: {message[1]}" for message in state["history"][0:-1]]
 
-        rephrased_question = await self._question_rephraser.ainvoke({"question":question,"history":history}, config)
-        rephrased_question=rephrased_question.content
-        logger.info("Rephrased question \"%s\" with history \"%s\" to %s",question, history, rephrased_question)
+        rephrased_question = await self._question_rephraser.ainvoke({"question": question, "history": history}, config)
+        rephrased_question = rephrased_question.content
+        logger.info('Rephrased question "%s" with history "%s" to %s', question, history, rephrased_question)
         return {"question": rephrased_question}
 
     async def _answer_rephraser_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
         rephrased_answer = await self._answer_rephraser.ainvoke(state, config)
-        rephrased_answer=rephrased_answer.content
+        rephrased_answer = rephrased_answer.content
         return {"processed_answer": rephrased_answer}
 
-    async def _decide_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:        
-        tools = await  self._mcp_client.get_tools()
-        self._mcp_agent = create_react_agent(self._llm, tools)# TODO: don't do this here.
+    async def _decide_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
+        tools = await self._mcp_client.get_tools()
+        self._mcp_agent = create_react_agent(self._llm, tools)  # TODO: don't do this here.
         answer = await self._mcp_agent.ainvoke({"messages": state["question"]}, config)
-        answer=answer["messages"][-1].content
+        answer = answer["messages"][-1].content
         return {"raw_answer": answer}
 
     async def _add_additional_information_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
@@ -156,14 +154,14 @@ Rephrase the question so it containts all the relevant information from the hist
         return {}
 
     async def _error_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
-        logger.error('\n'.join([x for x in state['error_messages']]))
-        return {"processed_answer": f"I'm sorry, there have been some errors and your request could not be handled. Errors: {'\n'.join([x for x in state['error_messages']])}"}
+        logger.error("\n".join([x for x in state["error_messages"]]))
+        return {
+            "processed_answer": f"I'm sorry, there have been some errors and your request could not be handled. Errors: {'\n'.join([x for x in state['error_messages']])}"
+        }
 
     #####################
     # conditional edges #
     #####################
-
-
 
     def _add_nodes(self):
         self._state_graph.add_node(GraphNodeNames.REPHRASE_QUESTION, self._rephrase_question_node)
@@ -178,11 +176,13 @@ Rephrase the question so it containts all the relevant information from the hist
         self._state_graph.add_edge(START, GraphNodeNames.REPHRASE_QUESTION)
         self._state_graph.add_edge(GraphNodeNames.REPHRASE_QUESTION, GraphNodeNames.ADD_ADDITIONAL_INFORMATION)
         self._state_graph.add_edge(GraphNodeNames.ADD_ADDITIONAL_INFORMATION, GraphNodeNames.DECIDE)
-        self._state_graph.add_edge([GraphNodeNames.DECIDE, GraphNodeNames.DETERMINE_LANGUAGE], GraphNodeNames.REPHRASE_ANSWER)
+        self._state_graph.add_edge(
+            [GraphNodeNames.DECIDE, GraphNodeNames.DETERMINE_LANGUAGE], GraphNodeNames.REPHRASE_ANSWER
+        )
         self._state_graph.add_edge(GraphNodeNames.REPHRASE_ANSWER, END)
         self._state_graph.add_edge(GraphNodeNames.ERROR_NODE, END)
 
     def _setup_graph(self):
         self._add_nodes()
         self._wire_graph()
-        return self._state_graph.compile()        
+        return self._state_graph.compile()

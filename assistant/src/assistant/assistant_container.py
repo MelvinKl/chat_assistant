@@ -1,26 +1,37 @@
-from assistant.impl.graph.chat_graph import ChatGraph
-from assistant.impl.settings.mcp_server_settings import MCPSettings, load_mcp_settings_from_json
-from base_library.impl.settings.openai_settings import OpenAISetttings
 import inject
-from base_library.impl.settings.llm_settings import LLMSetttings
-from base_library.impl.settings.ollama_settings import OllamaSettings
 from inject import Binder
+
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_openai import ChatOpenAI
+from langchain.prompts import PromptTemplate
+
+from assistant.impl.graph.chat_graph import ChatGraph
+from assistant.impl.settings.mcp_server_settings import MCPSettings, load_mcp_settings_from_json
+from assistant.impl.settings.openai_settings import OpenAISetttings
+from assistant.impl.settings.prompt_settings import PromptSettings
 
 
 def _di_config(binder: Binder):
     settings_openai = OpenAISetttings()
-    binder.bind(
-        BaseChatModel,
-        ChatOpenAI(
-            model=settings_openai.model,
-            base_url=settings_openai.base_url,
-            api_key=settings_openai.api_key,
-        ),
+    settings_prompt = PromptSettings()
+
+    rephrase_question_prompt_template = PromptTemplate(
+        template=settings_prompt.rephrase_question_prompt, input_variables=["question", "history"]
     )
+    rephrase_answer_prompt_template = PromptTemplate(
+        template=settings_prompt.rephrase_answer_prompt, input_variables=["question", "question_language", "raw_answer"]
+    )
+    llm = ChatOpenAI(
+        model=settings_openai.model,
+        base_url=settings_openai.base_url,
+        api_key=settings_openai.api_key,
+    )
+
+    binder.bind("question_rephraser", rephrase_question_prompt_template | llm)
+    binder.bind("answer_rephraser", rephrase_answer_prompt_template | llm)
+    binder.bind(BaseChatModel, llm)
     binder.bind(MCPSettings, load_mcp_settings_from_json())
-    binder.bind_to_constructor(ChatGraph, ChatGraph)
+    binder.bind_to_constructor(ChatGraph, ChatGraph)    
 
 
 def configure():

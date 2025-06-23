@@ -6,14 +6,10 @@ from assistant.models.list_models_response import ListModelsResponse
 from assistant.models.model import Model
 from assistant.apis.models_api_base import BaseModelsApi
 
+
 class ModelsApi(BaseModelsApi):
 
-    model = Model(
-        id="chat_assistant",
-        created=0,
-        owned_by="No one. This model is a free spirit",
-        object="model"
-    )
+    model = Model(id="chat_assistant", created=0, owned_by="No one. This model is a free spirit", object="model")
 
     async def delete_model(
         self,
@@ -21,12 +17,10 @@ class ModelsApi(BaseModelsApi):
     ) -> DeleteModelResponse:
         raise HTTPException(status_code=500, detail="Not implemented")
 
-
     async def list_models(
         self,
     ) -> ListModelsResponse:
         return ListModelsResponse(data=[self.model])
-
 
     async def retrieve_model(
         self,

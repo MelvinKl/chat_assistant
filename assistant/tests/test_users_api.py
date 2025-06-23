@@ -22,14 +22,14 @@ def test_delete_user(client: TestClient):
         "Authorization": "Bearer special-key",
     }
     # uncomment below to make a request
-    #response = client.request(
+    # response = client.request(
     #    "DELETE",
     #    "/organization/users/{user_id}".format(user_id='user_id_example'),
     #    headers=headers,
-    #)
+    # )
 
     # uncomment below to assert the status code of the HTTP response
-    #assert response.status_code == 200
+    # assert response.status_code == 200
 
 
 def test_list_users(client: TestClient):
@@ -37,20 +37,20 @@ def test_list_users(client: TestClient):
 
     Lists all of the users in the organization.
     """
-    params = [("limit", 20),     ("after", 'after_example'),     ("emails", ['emails_example'])]
+    params = [("limit", 20), ("after", "after_example"), ("emails", ["emails_example"])]
     headers = {
         "Authorization": "Bearer special-key",
     }
     # uncomment below to make a request
-    #response = client.request(
+    # response = client.request(
     #    "GET",
     #    "/organization/users",
     #    headers=headers,
     #    params=params,
-    #)
+    # )
 
     # uncomment below to assert the status code of the HTTP response
-    #assert response.status_code == 200
+    # assert response.status_code == 200
 
 
 def test_modify_user(client: TestClient):
@@ -58,21 +58,21 @@ def test_modify_user(client: TestClient):
 
     Modifies a user's role in the organization.
     """
-    user_role_update_request = {"role":"owner"}
+    user_role_update_request = {"role": "owner"}
 
     headers = {
         "Authorization": "Bearer special-key",
     }
     # uncomment below to make a request
-    #response = client.request(
+    # response = client.request(
     #    "POST",
     #    "/organization/users/{user_id}".format(user_id='user_id_example'),
     #    headers=headers,
     #    json=user_role_update_request,
-    #)
+    # )
 
     # uncomment below to assert the status code of the HTTP response
-    #assert response.status_code == 200
+    # assert response.status_code == 200
 
 
 def test_retrieve_user(client: TestClient):
@@ -85,12 +85,11 @@ def test_retrieve_user(client: TestClient):
         "Authorization": "Bearer special-key",
     }
     # uncomment below to make a request
-    #response = client.request(
+    # response = client.request(
     #    "GET",
     #    "/organization/users/{user_id}".format(user_id='user_id_example'),
     #    headers=headers,
-    #)
+    # )
 
     # uncomment below to assert the status code of the HTTP response
-    #assert response.status_code == 200
-
+    # assert response.status_code == 200

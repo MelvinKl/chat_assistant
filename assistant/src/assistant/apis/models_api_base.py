@@ -15,21 +15,17 @@ class BaseModelsApi:
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
         BaseModelsApi.subclasses = BaseModelsApi.subclasses + (cls,)
+
     async def delete_model(
         self,
         model: Annotated[StrictStr, Field(description="The model to delete")],
-    ) -> DeleteModelResponse:
-        ...
-
+    ) -> DeleteModelResponse: ...
 
     async def list_models(
         self,
-    ) -> ListModelsResponse:
-        ...
-
+    ) -> ListModelsResponse: ...
 
     async def retrieve_model(
         self,
         model: Annotated[StrictStr, Field(description="The ID of the model to use for this request")],
-    ) -> Model:
-        ...
+    ) -> Model: ...

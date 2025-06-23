@@ -16,18 +16,27 @@ def test_list_audit_logs(client: TestClient):
 
     List user actions and configuration changes within this organization.
     """
-    params = [("effective_at", assistant.ListAuditLogsEffectiveAtParameter()),     ("project_ids", ['project_ids_example']),     ("event_types", [assistant.AuditLogEventType()]),     ("actor_ids", ['actor_ids_example']),     ("actor_emails", ['actor_emails_example']),     ("resource_ids", ['resource_ids_example']),     ("limit", 20),     ("after", 'after_example'),     ("before", 'before_example')]
+    params = [
+        ("effective_at", assistant.ListAuditLogsEffectiveAtParameter()),
+        ("project_ids", ["project_ids_example"]),
+        ("event_types", [assistant.AuditLogEventType()]),
+        ("actor_ids", ["actor_ids_example"]),
+        ("actor_emails", ["actor_emails_example"]),
+        ("resource_ids", ["resource_ids_example"]),
+        ("limit", 20),
+        ("after", "after_example"),
+        ("before", "before_example"),
+    ]
     headers = {
         "Authorization": "Bearer special-key",
     }
     # uncomment below to make a request
-    #response = client.request(
+    # response = client.request(
     #    "GET",
     #    "/organization/audit_logs",
     #    headers=headers,
     #    params=params,
-    #)
+    # )
 
     # uncomment below to assert the status code of the HTTP response
-    #assert response.status_code == 200
-
+    # assert response.status_code == 200
