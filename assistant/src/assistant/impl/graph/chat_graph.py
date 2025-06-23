@@ -3,7 +3,6 @@
 import io
 import logging
 from enum import StrEnum
-from functools import partial
 from pathlib import Path
 from time import time
 from tkinter import Image
@@ -11,18 +10,13 @@ from typing import Any, Optional
 
 import inject
 from langchain_core.runnables.base import RunnableSequence
-from langgraph.prebuilt import create_react_agent
-from langchain_mcp_adapters.client import MultiServerMCPClient, StdioConnection, SSEConnection
-from mcp import ClientSession, StdioServerParameters
-from langchain_core.prompts import PromptTemplate
 from langdetect import detect
-from assistant.impl.graph.graph_state import GraphState
-from fastapi import HTTPException, status
 from langchain_core.runnables import RunnableConfig
 from langchain_core.runnables.graph import MermaidDrawMethod
 from langgraph.graph import END, START, StateGraph
 from langchain_core.language_models.chat_models import BaseChatModel
-from assistant.impl.settings.mcp_server_settings import MCPSettings
+
+from assistant.impl.graph.graph_state import GraphState
 
 logger = logging.getLogger(__name__)
 
@@ -39,36 +33,20 @@ class GraphNodeNames(StrEnum):
 
 class ChatGraph:
 
-    @inject.params(llm=BaseChatModel, question_rephraser="question_rephraser", answer_rephraser="answer_rephraser", mcp_settings=MCPSettings)
+    @inject.params(llm=BaseChatModel, question_rephraser="question_rephraser", answer_rephraser="answer_rephraser", mcp_agent="mcp_agent")
     def __init__(
         self,
         llm: BaseChatModel,
         question_rephraser: RunnableSequence,
         answer_rephraser: RunnableSequence,
-        mcp_settings: MCPSettings,
+        mcp_agent: RunnableSequence,
     ):
 
         self._question_rephraser = question_rephraser
         self._answer_rephraser = answer_rephraser
-
-        self._server_dict = {}
-        for server_definition in mcp_settings.servers:
-            if server_definition.transport == "stdio":
-                self._server_dict[server_definition.name] = {
-                    "command": server_definition.command,
-                    "args": server_definition.args,
-                    "transport": "stdio",
-                }
-            else:
-                self._server_dict[server_definition.name] = {
-                    "url": server_definition.url,
-                    "transport": server_definition.transport,
-                }
         self._llm = llm
-        self._mcp_client = MultiServerMCPClient(self._server_dict)
+        self._mcp_agent = mcp_agent
         self._state_graph = StateGraph(GraphState)
-        # self._rephrase_node_builder = partial(self._rephrase_node)
-        # self._generate_node_builder = partial(self._generate_node)
         self._graph = self._setup_graph()
 
     async def ainvoke(
@@ -81,7 +59,7 @@ class ChatGraph:
             history=graph_input,
         )
 
-        # logger.info("RECEIVED question: %s", state["question"])
+        logger.info("RECEIVED question: %s", state["question"])
 
         response_state = await self._graph.ainvoke(input=state, config=config)
 
@@ -143,8 +121,6 @@ class ChatGraph:
         return {"processed_answer": rephrased_answer}
 
     async def _decide_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
-        tools = await self._mcp_client.get_tools()
-        self._mcp_agent = create_react_agent(self._llm, tools)  # TODO: don't do this here.
         answer = await self._mcp_agent.ainvoke({"messages": state["question"]}, config)
         answer = answer["messages"][-1].content
         return {"raw_answer": answer}

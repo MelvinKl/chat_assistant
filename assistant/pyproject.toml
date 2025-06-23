@@ -62,6 +62,7 @@ python-dateutil = "^2.9.0.post0"
 langdetect = "^1.0.9"
 langchain-mcp-adapters = "^0.1.1"
 langgraph = "^0.3.31"
+nest-asyncio = "^1.6.0"
 
 [tool.poetry.group.dev.dependencies]
 debugpy = "^1.8.14"
