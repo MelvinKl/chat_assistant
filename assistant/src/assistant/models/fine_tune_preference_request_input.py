@@ -13,15 +13,18 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
+from typing import Any, ClassVar, Dict, List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
-from typing import Any, ClassVar, Dict, List, Optional
 from typing_extensions import Annotated
-from assistant.models.fine_tune_preference_request_input_input import FineTunePreferenceRequestInputInput
+
+from assistant.models.fine_tune_preference_request_input_input import (
+    FineTunePreferenceRequestInputInput,
+)
 from assistant.models.fine_tune_preference_request_input_preferred_completion_inner import (
     FineTunePreferenceRequestInputPreferredCompletionInner,
 )

@@ -13,15 +13,20 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
+from typing import Any, ClassVar, Dict, List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, StrictInt
-from typing import Any, ClassVar, Dict, List, Optional
-from assistant.models.completion_usage_completion_tokens_details import CompletionUsageCompletionTokensDetails
-from assistant.models.completion_usage_prompt_tokens_details import CompletionUsagePromptTokensDetails
+
+from assistant.models.completion_usage_completion_tokens_details import (
+    CompletionUsageCompletionTokensDetails,
+)
+from assistant.models.completion_usage_prompt_tokens_details import (
+    CompletionUsagePromptTokensDetails,
+)
 
 try:
     from typing import Self

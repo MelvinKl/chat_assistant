@@ -13,13 +13,14 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
+from typing import Any, ClassVar, Dict, List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional
+
 from assistant.models.message_delta_content_text_object_text_annotations_inner import (
     MessageDeltaContentTextObjectTextAnnotationsInner,
 )

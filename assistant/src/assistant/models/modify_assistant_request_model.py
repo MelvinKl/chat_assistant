@@ -13,18 +13,24 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
-from inspect import getfullargspec
+
 import json
 import pprint
 import re  # noqa: F401
+from inspect import getfullargspec
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
-
-from pydantic import BaseModel, ConfigDict, Field, StrictStr, ValidationError, field_validator
-from typing import Optional
-from assistant.models.assistant_supported_models import AssistantSupportedModels
-from typing import Union, Any, List, TYPE_CHECKING, Optional, Dict
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StrictStr,
+    ValidationError,
+    field_validator,
+)
 from typing_extensions import Literal
-from pydantic import StrictStr, Field
+
+from assistant.models.assistant_supported_models import AssistantSupportedModels
 
 try:
     from typing import Self

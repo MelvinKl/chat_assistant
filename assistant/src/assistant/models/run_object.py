@@ -13,18 +13,32 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
-
-from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictFloat, StrictInt, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional, Union
+
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StrictBool,
+    StrictFloat,
+    StrictInt,
+    StrictStr,
+    field_validator,
+)
 from typing_extensions import Annotated
+
 from assistant.models.assistant_object_tools_inner import AssistantObjectToolsInner
-from assistant.models.assistants_api_response_format_option import AssistantsApiResponseFormatOption
+from assistant.models.assistants_api_response_format_option import (
+    AssistantsApiResponseFormatOption,
+)
 from assistant.models.create_run_request_tool_choice import CreateRunRequestToolChoice
-from assistant.models.create_run_request_truncation_strategy import CreateRunRequestTruncationStrategy
+from assistant.models.create_run_request_truncation_strategy import (
+    CreateRunRequestTruncationStrategy,
+)
 from assistant.models.run_completion_usage import RunCompletionUsage
 from assistant.models.run_object_incomplete_details import RunObjectIncompleteDetails
 from assistant.models.run_object_last_error import RunObjectLastError

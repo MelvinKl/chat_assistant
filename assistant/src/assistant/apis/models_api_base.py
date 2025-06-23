@@ -1,9 +1,9 @@
 # coding: utf-8
 
 from typing import ClassVar
-from typing_extensions import Annotated
 
 from pydantic import Field, StrictStr
+from typing_extensions import Annotated
 
 from assistant.models.delete_model_response import DeleteModelResponse
 from assistant.models.list_models_response import ListModelsResponse

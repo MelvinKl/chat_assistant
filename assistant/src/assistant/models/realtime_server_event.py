@@ -13,17 +13,32 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
-from inspect import getfullargspec
+
 import json
 import pprint
 import re  # noqa: F401
+from inspect import getfullargspec
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StrictStr,
+    ValidationError,
+    field_validator,
+)
+from typing_extensions import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr, ValidationError, field_validator
-from typing import Optional
-from assistant.models.realtime_server_event_conversation_created import RealtimeServerEventConversationCreated
-from assistant.models.realtime_server_event_conversation_item_created import RealtimeServerEventConversationItemCreated
-from assistant.models.realtime_server_event_conversation_item_deleted import RealtimeServerEventConversationItemDeleted
+from assistant.models.realtime_server_event_conversation_created import (
+    RealtimeServerEventConversationCreated,
+)
+from assistant.models.realtime_server_event_conversation_item_created import (
+    RealtimeServerEventConversationItemCreated,
+)
+from assistant.models.realtime_server_event_conversation_item_deleted import (
+    RealtimeServerEventConversationItemDeleted,
+)
 from assistant.models.realtime_server_event_conversation_item_input_audio_transcription_completed import (
     RealtimeServerEventConversationItemInputAudioTranscriptionCompleted,
 )
@@ -40,7 +55,9 @@ from assistant.models.realtime_server_event_conversation_item_truncated import (
     RealtimeServerEventConversationItemTruncated,
 )
 from assistant.models.realtime_server_event_error import RealtimeServerEventError
-from assistant.models.realtime_server_event_input_audio_buffer_cleared import RealtimeServerEventInputAudioBufferCleared
+from assistant.models.realtime_server_event_input_audio_buffer_cleared import (
+    RealtimeServerEventInputAudioBufferCleared,
+)
 from assistant.models.realtime_server_event_input_audio_buffer_committed import (
     RealtimeServerEventInputAudioBufferCommitted,
 )
@@ -50,9 +67,15 @@ from assistant.models.realtime_server_event_input_audio_buffer_speech_started im
 from assistant.models.realtime_server_event_input_audio_buffer_speech_stopped import (
     RealtimeServerEventInputAudioBufferSpeechStopped,
 )
-from assistant.models.realtime_server_event_rate_limits_updated import RealtimeServerEventRateLimitsUpdated
-from assistant.models.realtime_server_event_response_audio_delta import RealtimeServerEventResponseAudioDelta
-from assistant.models.realtime_server_event_response_audio_done import RealtimeServerEventResponseAudioDone
+from assistant.models.realtime_server_event_rate_limits_updated import (
+    RealtimeServerEventRateLimitsUpdated,
+)
+from assistant.models.realtime_server_event_response_audio_delta import (
+    RealtimeServerEventResponseAudioDelta,
+)
+from assistant.models.realtime_server_event_response_audio_done import (
+    RealtimeServerEventResponseAudioDone,
+)
 from assistant.models.realtime_server_event_response_audio_transcript_delta import (
     RealtimeServerEventResponseAudioTranscriptDelta,
 )
@@ -62,27 +85,42 @@ from assistant.models.realtime_server_event_response_audio_transcript_done impor
 from assistant.models.realtime_server_event_response_content_part_added import (
     RealtimeServerEventResponseContentPartAdded,
 )
-from assistant.models.realtime_server_event_response_content_part_done import RealtimeServerEventResponseContentPartDone
-from assistant.models.realtime_server_event_response_created import RealtimeServerEventResponseCreated
-from assistant.models.realtime_server_event_response_done import RealtimeServerEventResponseDone
+from assistant.models.realtime_server_event_response_content_part_done import (
+    RealtimeServerEventResponseContentPartDone,
+)
+from assistant.models.realtime_server_event_response_created import (
+    RealtimeServerEventResponseCreated,
+)
+from assistant.models.realtime_server_event_response_done import (
+    RealtimeServerEventResponseDone,
+)
 from assistant.models.realtime_server_event_response_function_call_arguments_delta import (
     RealtimeServerEventResponseFunctionCallArgumentsDelta,
 )
 from assistant.models.realtime_server_event_response_function_call_arguments_done import (
     RealtimeServerEventResponseFunctionCallArgumentsDone,
 )
-from assistant.models.realtime_server_event_response_output_item_added import RealtimeServerEventResponseOutputItemAdded
-from assistant.models.realtime_server_event_response_output_item_done import RealtimeServerEventResponseOutputItemDone
-from assistant.models.realtime_server_event_response_text_delta import RealtimeServerEventResponseTextDelta
-from assistant.models.realtime_server_event_response_text_done import RealtimeServerEventResponseTextDone
-from assistant.models.realtime_server_event_session_created import RealtimeServerEventSessionCreated
-from assistant.models.realtime_server_event_session_updated import RealtimeServerEventSessionUpdated
+from assistant.models.realtime_server_event_response_output_item_added import (
+    RealtimeServerEventResponseOutputItemAdded,
+)
+from assistant.models.realtime_server_event_response_output_item_done import (
+    RealtimeServerEventResponseOutputItemDone,
+)
+from assistant.models.realtime_server_event_response_text_delta import (
+    RealtimeServerEventResponseTextDelta,
+)
+from assistant.models.realtime_server_event_response_text_done import (
+    RealtimeServerEventResponseTextDone,
+)
+from assistant.models.realtime_server_event_session_created import (
+    RealtimeServerEventSessionCreated,
+)
+from assistant.models.realtime_server_event_session_updated import (
+    RealtimeServerEventSessionUpdated,
+)
 from assistant.models.realtime_server_event_transcription_session_updated import (
     RealtimeServerEventTranscriptionSessionUpdated,
 )
-from typing import Union, Any, List, TYPE_CHECKING, Optional, Dict
-from typing_extensions import Literal
-from pydantic import StrictStr, Field
 
 try:
     from typing import Self

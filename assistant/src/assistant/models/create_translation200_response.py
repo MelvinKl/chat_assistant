@@ -13,19 +13,29 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
-from inspect import getfullargspec
+
 import json
 import pprint
 import re  # noqa: F401
+from inspect import getfullargspec
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
-
-from pydantic import BaseModel, ConfigDict, Field, StrictStr, ValidationError, field_validator
-from typing import Any, List, Optional
-from assistant.models.create_translation_response_json import CreateTranslationResponseJson
-from assistant.models.create_translation_response_verbose_json import CreateTranslationResponseVerboseJson
-from typing import Union, Any, List, TYPE_CHECKING, Optional, Dict
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StrictStr,
+    ValidationError,
+    field_validator,
+)
 from typing_extensions import Literal
-from pydantic import StrictStr, Field
+
+from assistant.models.create_translation_response_json import (
+    CreateTranslationResponseJson,
+)
+from assistant.models.create_translation_response_verbose_json import (
+    CreateTranslationResponseVerboseJson,
+)
 
 try:
     from typing import Self

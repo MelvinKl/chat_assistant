@@ -13,14 +13,15 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
+from typing import Any, ClassVar, Dict, List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
-from typing import Any, ClassVar, Dict, List, Optional
 from typing_extensions import Annotated
+
 from assistant.models.create_embedding_request_input import CreateEmbeddingRequestInput
 from assistant.models.create_embedding_request_model import CreateEmbeddingRequestModel
 

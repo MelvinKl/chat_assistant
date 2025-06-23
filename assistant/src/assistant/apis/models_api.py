@@ -1,17 +1,15 @@
 import importlib
 import pkgutil
+
+from fastapi import APIRouter, HTTPException, Path
+from pydantic import Field, StrictStr
 from typing_extensions import Annotated
 
-from pydantic import Field, StrictStr
-from fastapi import APIRouter, HTTPException, Path
-
-
-from assistant.apis.models_api_base import BaseModelsApi
 import assistant.impl.apis
+from assistant.apis.models_api_base import BaseModelsApi
 from assistant.models.delete_model_response import DeleteModelResponse
 from assistant.models.list_models_response import ListModelsResponse
 from assistant.models.model import Model
-
 
 router = APIRouter()
 

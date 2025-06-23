@@ -13,17 +13,20 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
+from typing import Any, ClassVar, Dict, List, Optional
 
 from pydantic import BaseModel, ConfigDict
-from typing import Any, ClassVar, Dict, List, Optional
+
 from assistant.models.create_assistant_request_tool_resources_code_interpreter import (
     CreateAssistantRequestToolResourcesCodeInterpreter,
 )
-from assistant.models.create_thread_request_tool_resources_file_search import CreateThreadRequestToolResourcesFileSearch
+from assistant.models.create_thread_request_tool_resources_file_search import (
+    CreateThreadRequestToolResourcesFileSearch,
+)
 
 try:
     from typing import Self

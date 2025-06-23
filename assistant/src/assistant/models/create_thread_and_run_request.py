@@ -13,20 +13,31 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
+from typing import Any, ClassVar, Dict, List, Optional, Union
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional, Union
 from typing_extensions import Annotated
-from assistant.models.assistants_api_response_format_option import AssistantsApiResponseFormatOption
+
+from assistant.models.assistants_api_response_format_option import (
+    AssistantsApiResponseFormatOption,
+)
 from assistant.models.create_run_request_tool_choice import CreateRunRequestToolChoice
-from assistant.models.create_run_request_truncation_strategy import CreateRunRequestTruncationStrategy
-from assistant.models.create_thread_and_run_request_model import CreateThreadAndRunRequestModel
-from assistant.models.create_thread_and_run_request_tool_resources import CreateThreadAndRunRequestToolResources
-from assistant.models.create_thread_and_run_request_tools_inner import CreateThreadAndRunRequestToolsInner
+from assistant.models.create_run_request_truncation_strategy import (
+    CreateRunRequestTruncationStrategy,
+)
+from assistant.models.create_thread_and_run_request_model import (
+    CreateThreadAndRunRequestModel,
+)
+from assistant.models.create_thread_and_run_request_tool_resources import (
+    CreateThreadAndRunRequestToolResources,
+)
+from assistant.models.create_thread_and_run_request_tools_inner import (
+    CreateThreadAndRunRequestToolsInner,
+)
 from assistant.models.create_thread_request import CreateThreadRequest
 
 try:

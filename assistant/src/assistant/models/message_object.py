@@ -13,16 +13,21 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
+from typing import Any, ClassVar, Dict, List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
-from typing import Any, ClassVar, Dict, List, Optional
-from assistant.models.create_message_request_attachments_inner import CreateMessageRequestAttachmentsInner
+
+from assistant.models.create_message_request_attachments_inner import (
+    CreateMessageRequestAttachmentsInner,
+)
 from assistant.models.message_object_content_inner import MessageObjectContentInner
-from assistant.models.message_object_incomplete_details import MessageObjectIncompleteDetails
+from assistant.models.message_object_incomplete_details import (
+    MessageObjectIncompleteDetails,
+)
 
 try:
     from typing import Self

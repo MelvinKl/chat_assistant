@@ -13,13 +13,14 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
+from typing import Any, ClassVar, Dict, List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
-from typing import Any, ClassVar, Dict, List, Optional
+
 from assistant.models.run_step_details_tool_calls_file_search_ranking_options_object import (
     RunStepDetailsToolCallsFileSearchRankingOptionsObject,
 )

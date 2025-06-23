@@ -13,34 +13,56 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
-from inspect import getfullargspec
+
 import json
 import pprint
 import re  # noqa: F401
+from inspect import getfullargspec
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StrictStr,
+    ValidationError,
+    field_validator,
+)
+from typing_extensions import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr, ValidationError, field_validator
-from typing import Optional
-from assistant.models.realtime_client_event_conversation_item_create import RealtimeClientEventConversationItemCreate
-from assistant.models.realtime_client_event_conversation_item_delete import RealtimeClientEventConversationItemDelete
+from assistant.models.realtime_client_event_conversation_item_create import (
+    RealtimeClientEventConversationItemCreate,
+)
+from assistant.models.realtime_client_event_conversation_item_delete import (
+    RealtimeClientEventConversationItemDelete,
+)
 from assistant.models.realtime_client_event_conversation_item_retrieve import (
     RealtimeClientEventConversationItemRetrieve,
 )
 from assistant.models.realtime_client_event_conversation_item_truncate import (
     RealtimeClientEventConversationItemTruncate,
 )
-from assistant.models.realtime_client_event_input_audio_buffer_append import RealtimeClientEventInputAudioBufferAppend
-from assistant.models.realtime_client_event_input_audio_buffer_clear import RealtimeClientEventInputAudioBufferClear
-from assistant.models.realtime_client_event_input_audio_buffer_commit import RealtimeClientEventInputAudioBufferCommit
-from assistant.models.realtime_client_event_response_cancel import RealtimeClientEventResponseCancel
-from assistant.models.realtime_client_event_response_create import RealtimeClientEventResponseCreate
-from assistant.models.realtime_client_event_session_update import RealtimeClientEventSessionUpdate
+from assistant.models.realtime_client_event_input_audio_buffer_append import (
+    RealtimeClientEventInputAudioBufferAppend,
+)
+from assistant.models.realtime_client_event_input_audio_buffer_clear import (
+    RealtimeClientEventInputAudioBufferClear,
+)
+from assistant.models.realtime_client_event_input_audio_buffer_commit import (
+    RealtimeClientEventInputAudioBufferCommit,
+)
+from assistant.models.realtime_client_event_response_cancel import (
+    RealtimeClientEventResponseCancel,
+)
+from assistant.models.realtime_client_event_response_create import (
+    RealtimeClientEventResponseCreate,
+)
+from assistant.models.realtime_client_event_session_update import (
+    RealtimeClientEventSessionUpdate,
+)
 from assistant.models.realtime_client_event_transcription_session_update import (
     RealtimeClientEventTranscriptionSessionUpdate,
 )
-from typing import Union, Any, List, TYPE_CHECKING, Optional, Dict
-from typing_extensions import Literal
-from pydantic import StrictStr, Field
 
 try:
     from typing import Self

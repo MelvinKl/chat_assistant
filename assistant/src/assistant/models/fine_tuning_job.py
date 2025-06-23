@@ -13,18 +13,23 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
+from typing import Any, ClassVar, Dict, List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
-from typing import Any, ClassVar, Dict, List, Optional
 from typing_extensions import Annotated
+
 from assistant.models.fine_tune_method import FineTuneMethod
 from assistant.models.fine_tuning_job_error import FineTuningJobError
-from assistant.models.fine_tuning_job_hyperparameters import FineTuningJobHyperparameters
-from assistant.models.fine_tuning_job_integrations_inner import FineTuningJobIntegrationsInner
+from assistant.models.fine_tuning_job_hyperparameters import (
+    FineTuningJobHyperparameters,
+)
+from assistant.models.fine_tuning_job_integrations_inner import (
+    FineTuningJobIntegrationsInner,
+)
 
 try:
     from typing import Self

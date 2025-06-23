@@ -13,17 +13,22 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
+from typing import Any, ClassVar, Dict, List, Optional, Union
 
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
-from typing import Any, ClassVar, Dict, List, Optional, Union
 from typing_extensions import Annotated
-from assistant.models.assistant_object_tool_resources import AssistantObjectToolResources
+
+from assistant.models.assistant_object_tool_resources import (
+    AssistantObjectToolResources,
+)
 from assistant.models.assistant_object_tools_inner import AssistantObjectToolsInner
-from assistant.models.assistants_api_response_format_option import AssistantsApiResponseFormatOption
+from assistant.models.assistants_api_response_format_option import (
+    AssistantsApiResponseFormatOption,
+)
 
 try:
     from typing import Self

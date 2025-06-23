@@ -1,10 +1,12 @@
 from http.client import HTTPException
+
 from pydantic import Field, StrictStr
 from typing_extensions import Annotated
+
+from assistant.apis.models_api_base import BaseModelsApi
 from assistant.models.delete_model_response import DeleteModelResponse
 from assistant.models.list_models_response import ListModelsResponse
 from assistant.models.model import Model
-from assistant.apis.models_api_base import BaseModelsApi
 
 
 class ModelsApi(BaseModelsApi):

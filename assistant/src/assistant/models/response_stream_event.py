@@ -13,51 +13,93 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
-from inspect import getfullargspec
+
 import json
 import pprint
 import re  # noqa: F401
+from inspect import getfullargspec
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StrictStr,
+    ValidationError,
+    field_validator,
+)
+from typing_extensions import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr, ValidationError, field_validator
-from typing import Optional
 from assistant.models.response_audio_delta_event import ResponseAudioDeltaEvent
 from assistant.models.response_audio_done_event import ResponseAudioDoneEvent
-from assistant.models.response_audio_transcript_delta_event import ResponseAudioTranscriptDeltaEvent
-from assistant.models.response_audio_transcript_done_event import ResponseAudioTranscriptDoneEvent
-from assistant.models.response_code_interpreter_call_code_delta_event import ResponseCodeInterpreterCallCodeDeltaEvent
-from assistant.models.response_code_interpreter_call_code_done_event import ResponseCodeInterpreterCallCodeDoneEvent
-from assistant.models.response_code_interpreter_call_completed_event import ResponseCodeInterpreterCallCompletedEvent
-from assistant.models.response_code_interpreter_call_in_progress_event import ResponseCodeInterpreterCallInProgressEvent
+from assistant.models.response_audio_transcript_delta_event import (
+    ResponseAudioTranscriptDeltaEvent,
+)
+from assistant.models.response_audio_transcript_done_event import (
+    ResponseAudioTranscriptDoneEvent,
+)
+from assistant.models.response_code_interpreter_call_code_delta_event import (
+    ResponseCodeInterpreterCallCodeDeltaEvent,
+)
+from assistant.models.response_code_interpreter_call_code_done_event import (
+    ResponseCodeInterpreterCallCodeDoneEvent,
+)
+from assistant.models.response_code_interpreter_call_completed_event import (
+    ResponseCodeInterpreterCallCompletedEvent,
+)
+from assistant.models.response_code_interpreter_call_in_progress_event import (
+    ResponseCodeInterpreterCallInProgressEvent,
+)
 from assistant.models.response_code_interpreter_call_interpreting_event import (
     ResponseCodeInterpreterCallInterpretingEvent,
 )
 from assistant.models.response_completed_event import ResponseCompletedEvent
-from assistant.models.response_content_part_added_event import ResponseContentPartAddedEvent
-from assistant.models.response_content_part_done_event import ResponseContentPartDoneEvent
+from assistant.models.response_content_part_added_event import (
+    ResponseContentPartAddedEvent,
+)
+from assistant.models.response_content_part_done_event import (
+    ResponseContentPartDoneEvent,
+)
 from assistant.models.response_created_event import ResponseCreatedEvent
 from assistant.models.response_error_event import ResponseErrorEvent
 from assistant.models.response_failed_event import ResponseFailedEvent
-from assistant.models.response_file_search_call_completed_event import ResponseFileSearchCallCompletedEvent
-from assistant.models.response_file_search_call_in_progress_event import ResponseFileSearchCallInProgressEvent
-from assistant.models.response_file_search_call_searching_event import ResponseFileSearchCallSearchingEvent
-from assistant.models.response_function_call_arguments_delta_event import ResponseFunctionCallArgumentsDeltaEvent
-from assistant.models.response_function_call_arguments_done_event import ResponseFunctionCallArgumentsDoneEvent
+from assistant.models.response_file_search_call_completed_event import (
+    ResponseFileSearchCallCompletedEvent,
+)
+from assistant.models.response_file_search_call_in_progress_event import (
+    ResponseFileSearchCallInProgressEvent,
+)
+from assistant.models.response_file_search_call_searching_event import (
+    ResponseFileSearchCallSearchingEvent,
+)
+from assistant.models.response_function_call_arguments_delta_event import (
+    ResponseFunctionCallArgumentsDeltaEvent,
+)
+from assistant.models.response_function_call_arguments_done_event import (
+    ResponseFunctionCallArgumentsDoneEvent,
+)
 from assistant.models.response_in_progress_event import ResponseInProgressEvent
 from assistant.models.response_incomplete_event import ResponseIncompleteEvent
-from assistant.models.response_output_item_added_event import ResponseOutputItemAddedEvent
+from assistant.models.response_output_item_added_event import (
+    ResponseOutputItemAddedEvent,
+)
 from assistant.models.response_output_item_done_event import ResponseOutputItemDoneEvent
 from assistant.models.response_refusal_delta_event import ResponseRefusalDeltaEvent
 from assistant.models.response_refusal_done_event import ResponseRefusalDoneEvent
-from assistant.models.response_text_annotation_delta_event import ResponseTextAnnotationDeltaEvent
+from assistant.models.response_text_annotation_delta_event import (
+    ResponseTextAnnotationDeltaEvent,
+)
 from assistant.models.response_text_delta_event import ResponseTextDeltaEvent
 from assistant.models.response_text_done_event import ResponseTextDoneEvent
-from assistant.models.response_web_search_call_completed_event import ResponseWebSearchCallCompletedEvent
-from assistant.models.response_web_search_call_in_progress_event import ResponseWebSearchCallInProgressEvent
-from assistant.models.response_web_search_call_searching_event import ResponseWebSearchCallSearchingEvent
-from typing import Union, Any, List, TYPE_CHECKING, Optional, Dict
-from typing_extensions import Literal
-from pydantic import StrictStr, Field
+from assistant.models.response_web_search_call_completed_event import (
+    ResponseWebSearchCallCompletedEvent,
+)
+from assistant.models.response_web_search_call_in_progress_event import (
+    ResponseWebSearchCallInProgressEvent,
+)
+from assistant.models.response_web_search_call_searching_event import (
+    ResponseWebSearchCallSearchingEvent,
+)
 
 try:
     from typing import Self

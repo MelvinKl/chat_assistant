@@ -13,22 +13,37 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
-
-from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional, Union
+
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StrictFloat,
+    StrictInt,
+    StrictStr,
+    field_validator,
+)
+
 from assistant.models.realtime_response_create_params_max_response_output_tokens import (
     RealtimeResponseCreateParamsMaxResponseOutputTokens,
 )
-from assistant.models.realtime_response_create_params_tools_inner import RealtimeResponseCreateParamsToolsInner
-from assistant.models.realtime_session_create_response_client_secret import RealtimeSessionCreateResponseClientSecret
+from assistant.models.realtime_response_create_params_tools_inner import (
+    RealtimeResponseCreateParamsToolsInner,
+)
+from assistant.models.realtime_session_create_response_client_secret import (
+    RealtimeSessionCreateResponseClientSecret,
+)
 from assistant.models.realtime_session_create_response_input_audio_transcription import (
     RealtimeSessionCreateResponseInputAudioTranscription,
 )
-from assistant.models.realtime_session_create_response_turn_detection import RealtimeSessionCreateResponseTurnDetection
+from assistant.models.realtime_session_create_response_turn_detection import (
+    RealtimeSessionCreateResponseTurnDetection,
+)
 from assistant.models.voice_ids_shared import VoiceIdsShared
 
 try:

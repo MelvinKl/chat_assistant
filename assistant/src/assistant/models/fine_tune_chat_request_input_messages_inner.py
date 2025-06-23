@@ -13,24 +13,38 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
-from inspect import getfullargspec
+
 import json
 import pprint
 import re  # noqa: F401
+from inspect import getfullargspec
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StrictStr,
+    ValidationError,
+    field_validator,
+)
+from typing_extensions import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr, ValidationError, field_validator
-from typing import Any, List, Optional
-from assistant.models.chat_completion_request_function_message import ChatCompletionRequestFunctionMessage
-from assistant.models.chat_completion_request_system_message import ChatCompletionRequestSystemMessage
-from assistant.models.chat_completion_request_tool_message import ChatCompletionRequestToolMessage
-from assistant.models.chat_completion_request_user_message import ChatCompletionRequestUserMessage
+from assistant.models.chat_completion_request_function_message import (
+    ChatCompletionRequestFunctionMessage,
+)
+from assistant.models.chat_completion_request_system_message import (
+    ChatCompletionRequestSystemMessage,
+)
+from assistant.models.chat_completion_request_tool_message import (
+    ChatCompletionRequestToolMessage,
+)
+from assistant.models.chat_completion_request_user_message import (
+    ChatCompletionRequestUserMessage,
+)
 from assistant.models.fine_tune_chat_completion_request_assistant_message import (
     FineTuneChatCompletionRequestAssistantMessage,
 )
-from typing import Union, Any, List, TYPE_CHECKING, Optional, Dict
-from typing_extensions import Literal
-from pydantic import StrictStr, Field
 
 try:
     from typing import Self

@@ -13,14 +13,17 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
+from typing import Any, ClassVar, Dict, List
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
-from typing import Any, ClassVar, Dict, List
-from assistant.models.message_content_image_url_object_image_url import MessageContentImageUrlObjectImageUrl
+
+from assistant.models.message_content_image_url_object_image_url import (
+    MessageContentImageUrlObjectImageUrl,
+)
 
 try:
     from typing import Self

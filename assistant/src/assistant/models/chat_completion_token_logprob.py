@@ -13,14 +13,17 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
+from typing import Any, ClassVar, Dict, List, Optional, Union
 
 from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional, Union
-from assistant.models.chat_completion_token_logprob_top_logprobs_inner import ChatCompletionTokenLogprobTopLogprobsInner
+
+from assistant.models.chat_completion_token_logprob_top_logprobs_inner import (
+    ChatCompletionTokenLogprobTopLogprobsInner,
+)
 
 try:
     from typing import Self

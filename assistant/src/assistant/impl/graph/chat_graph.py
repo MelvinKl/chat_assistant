@@ -9,12 +9,12 @@ from tkinter import Image
 from typing import Any, Optional
 
 import inject
-from langchain_core.runnables.base import RunnableSequence
-from langdetect import detect
-from langchain_core.runnables import RunnableConfig
-from langchain_core.runnables.graph import MermaidDrawMethod
-from langgraph.graph import END, START, StateGraph
 from langchain_core.language_models.chat_models import BaseChatModel
+from langchain_core.runnables import RunnableConfig
+from langchain_core.runnables.base import RunnableSequence
+from langchain_core.runnables.graph import MermaidDrawMethod
+from langdetect import detect
+from langgraph.graph import END, START, StateGraph
 
 from assistant.impl.graph.graph_state import GraphState
 

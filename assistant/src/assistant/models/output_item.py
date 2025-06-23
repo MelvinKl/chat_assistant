@@ -13,23 +13,29 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
-from inspect import getfullargspec
+
 import json
 import pprint
 import re  # noqa: F401
+from inspect import getfullargspec
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StrictStr,
+    ValidationError,
+    field_validator,
+)
+from typing_extensions import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr, ValidationError, field_validator
-from typing import Optional
 from assistant.models.computer_tool_call import ComputerToolCall
 from assistant.models.file_search_tool_call import FileSearchToolCall
 from assistant.models.function_tool_call import FunctionToolCall
 from assistant.models.output_message import OutputMessage
 from assistant.models.reasoning_item import ReasoningItem
 from assistant.models.web_search_tool_call import WebSearchToolCall
-from typing import Union, Any, List, TYPE_CHECKING, Optional, Dict
-from typing_extensions import Literal
-from pydantic import StrictStr, Field
 
 try:
     from typing import Self

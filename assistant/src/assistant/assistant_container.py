@@ -1,16 +1,19 @@
-import inject
-from inject import Binder
-
-from langchain_core.language_models.chat_models import BaseChatModel
-from langchain_openai import ChatOpenAI
-from langchain.prompts import PromptTemplate
-from langchain_mcp_adapters.client import MultiServerMCPClient
-from langgraph.prebuilt import create_react_agent
 import asyncio
+
+import inject
 import nest_asyncio
+from inject import Binder
+from langchain.prompts import PromptTemplate
+from langchain_core.language_models.chat_models import BaseChatModel
+from langchain_mcp_adapters.client import MultiServerMCPClient
+from langchain_openai import ChatOpenAI
+from langgraph.prebuilt import create_react_agent
 
 from assistant.impl.graph.chat_graph import ChatGraph
-from assistant.impl.settings.mcp_server_settings import MCPSettings, load_mcp_settings_from_json
+from assistant.impl.settings.mcp_server_settings import (
+    MCPSettings,
+    load_mcp_settings_from_json,
+)
 from assistant.impl.settings.openai_settings import OpenAISetttings
 from assistant.impl.settings.prompt_settings import PromptSettings
 

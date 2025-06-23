@@ -13,14 +13,17 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
+from typing import Any, ClassVar, Dict, List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional
-from assistant.models.audit_log_user_updated_changes_requested import AuditLogUserUpdatedChangesRequested
+
+from assistant.models.audit_log_user_updated_changes_requested import (
+    AuditLogUserUpdatedChangesRequested,
+)
 
 try:
     from typing import Self

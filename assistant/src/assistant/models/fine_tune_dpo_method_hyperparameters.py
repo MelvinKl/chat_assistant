@@ -13,19 +13,26 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
+from typing import Any, ClassVar, Dict, List, Optional
 
 from pydantic import BaseModel, ConfigDict
-from typing import Any, ClassVar, Dict, List, Optional
-from assistant.models.fine_tune_dpo_method_hyperparameters_batch_size import FineTuneDPOMethodHyperparametersBatchSize
-from assistant.models.fine_tune_dpo_method_hyperparameters_beta import FineTuneDPOMethodHyperparametersBeta
+
+from assistant.models.fine_tune_dpo_method_hyperparameters_batch_size import (
+    FineTuneDPOMethodHyperparametersBatchSize,
+)
+from assistant.models.fine_tune_dpo_method_hyperparameters_beta import (
+    FineTuneDPOMethodHyperparametersBeta,
+)
 from assistant.models.fine_tune_dpo_method_hyperparameters_learning_rate_multiplier import (
     FineTuneDPOMethodHyperparametersLearningRateMultiplier,
 )
-from assistant.models.fine_tune_dpo_method_hyperparameters_n_epochs import FineTuneDPOMethodHyperparametersNEpochs
+from assistant.models.fine_tune_dpo_method_hyperparameters_n_epochs import (
+    FineTuneDPOMethodHyperparametersNEpochs,
+)
 
 try:
     from typing import Self

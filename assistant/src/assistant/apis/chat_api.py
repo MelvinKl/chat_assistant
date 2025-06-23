@@ -8,7 +8,6 @@ from assistant.apis.chat_api_base import BaseChatApi
 from assistant.models.chat_completion_request import ChatCompletionRequest
 from assistant.models.chat_completion_response import ChatCompletionResponse
 
-
 router = APIRouter()
 
 ns_pkg = assistant.impl.apis

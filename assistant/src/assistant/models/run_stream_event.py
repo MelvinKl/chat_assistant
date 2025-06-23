@@ -13,14 +13,23 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
-from inspect import getfullargspec
+
 import json
 import pprint
 import re  # noqa: F401
+from inspect import getfullargspec
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StrictStr,
+    ValidationError,
+    field_validator,
+)
+from typing_extensions import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr, ValidationError, field_validator
-from typing import Any, List, Optional
 from assistant.models.run_stream_event_one_of import RunStreamEventOneOf
 from assistant.models.run_stream_event_one_of1 import RunStreamEventOneOf1
 from assistant.models.run_stream_event_one_of2 import RunStreamEventOneOf2
@@ -31,9 +40,6 @@ from assistant.models.run_stream_event_one_of6 import RunStreamEventOneOf6
 from assistant.models.run_stream_event_one_of7 import RunStreamEventOneOf7
 from assistant.models.run_stream_event_one_of8 import RunStreamEventOneOf8
 from assistant.models.run_stream_event_one_of9 import RunStreamEventOneOf9
-from typing import Union, Any, List, TYPE_CHECKING, Optional, Dict
-from typing_extensions import Literal
-from pydantic import StrictStr, Field
 
 try:
     from typing import Self

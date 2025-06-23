@@ -13,14 +13,23 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
-from inspect import getfullargspec
+
 import json
 import pprint
 import re  # noqa: F401
+from inspect import getfullargspec
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StrictStr,
+    ValidationError,
+    field_validator,
+)
+from typing_extensions import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr, ValidationError, field_validator
-from typing import Any, List, Optional
 from assistant.models.click import Click
 from assistant.models.double_click import DoubleClick
 from assistant.models.drag import Drag
@@ -30,9 +39,6 @@ from assistant.models.screenshot import Screenshot
 from assistant.models.scroll import Scroll
 from assistant.models.type import Type
 from assistant.models.wait import Wait
-from typing import Union, Any, List, TYPE_CHECKING, Optional, Dict
-from typing_extensions import Literal
-from pydantic import StrictStr, Field
 
 try:
     from typing import Self

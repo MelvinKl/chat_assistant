@@ -13,13 +13,14 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
+from typing import Any, ClassVar, Dict, List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional
+
 from assistant.models.audit_log_actor import AuditLogActor
 from assistant.models.audit_log_api_key_created import AuditLogApiKeyCreated
 from assistant.models.audit_log_api_key_deleted import AuditLogApiKeyDeleted
@@ -35,9 +36,15 @@ from assistant.models.audit_log_project_created import AuditLogProjectCreated
 from assistant.models.audit_log_project_updated import AuditLogProjectUpdated
 from assistant.models.audit_log_rate_limit_deleted import AuditLogRateLimitDeleted
 from assistant.models.audit_log_rate_limit_updated import AuditLogRateLimitUpdated
-from assistant.models.audit_log_service_account_created import AuditLogServiceAccountCreated
-from assistant.models.audit_log_service_account_deleted import AuditLogServiceAccountDeleted
-from assistant.models.audit_log_service_account_updated import AuditLogServiceAccountUpdated
+from assistant.models.audit_log_service_account_created import (
+    AuditLogServiceAccountCreated,
+)
+from assistant.models.audit_log_service_account_deleted import (
+    AuditLogServiceAccountDeleted,
+)
+from assistant.models.audit_log_service_account_updated import (
+    AuditLogServiceAccountUpdated,
+)
 from assistant.models.audit_log_user_added import AuditLogUserAdded
 from assistant.models.audit_log_user_deleted import AuditLogUserDeleted
 from assistant.models.audit_log_user_updated import AuditLogUserUpdated

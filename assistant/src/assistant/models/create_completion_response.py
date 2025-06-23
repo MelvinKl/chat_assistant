@@ -13,15 +13,18 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
+from typing import Any, ClassVar, Dict, List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
-from typing import Any, ClassVar, Dict, List, Optional
+
 from assistant.models.completion_usage import CompletionUsage
-from assistant.models.create_completion_response_choices_inner import CreateCompletionResponseChoicesInner
+from assistant.models.create_completion_response_choices_inner import (
+    CreateCompletionResponseChoicesInner,
+)
 
 try:
     from typing import Self

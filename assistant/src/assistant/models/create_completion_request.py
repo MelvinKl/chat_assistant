@@ -13,17 +13,22 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
+from typing import Any, ClassVar, Dict, List, Optional, Union
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional, Union
 from typing_extensions import Annotated
+
 from assistant.models.chat_completion_stream_options import ChatCompletionStreamOptions
-from assistant.models.create_completion_request_model import CreateCompletionRequestModel
-from assistant.models.create_completion_request_prompt import CreateCompletionRequestPrompt
+from assistant.models.create_completion_request_model import (
+    CreateCompletionRequestModel,
+)
+from assistant.models.create_completion_request_prompt import (
+    CreateCompletionRequestPrompt,
+)
 from assistant.models.stop_configuration import StopConfiguration
 
 try:

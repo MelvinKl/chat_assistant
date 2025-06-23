@@ -13,16 +13,21 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
+from typing import Any, ClassVar, Dict, List, Optional, Union
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional, Union
 from typing_extensions import Annotated
-from assistant.models.vector_store_file_attributes_value import VectorStoreFileAttributesValue
-from assistant.models.vector_store_search_result_content_object import VectorStoreSearchResultContentObject
+
+from assistant.models.vector_store_file_attributes_value import (
+    VectorStoreFileAttributesValue,
+)
+from assistant.models.vector_store_search_result_content_object import (
+    VectorStoreSearchResultContentObject,
+)
 
 try:
     from typing import Self

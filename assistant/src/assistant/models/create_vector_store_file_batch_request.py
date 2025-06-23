@@ -13,16 +13,21 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
+from typing import Any, ClassVar, Dict, List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional
 from typing_extensions import Annotated
-from assistant.models.chunking_strategy_request_param import ChunkingStrategyRequestParam
-from assistant.models.vector_store_file_attributes_value import VectorStoreFileAttributesValue
+
+from assistant.models.chunking_strategy_request_param import (
+    ChunkingStrategyRequestParam,
+)
+from assistant.models.vector_store_file_attributes_value import (
+    VectorStoreFileAttributesValue,
+)
 
 try:
     from typing import Self

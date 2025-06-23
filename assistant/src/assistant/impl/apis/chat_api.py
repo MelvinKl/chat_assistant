@@ -2,12 +2,12 @@ import time
 
 import inject
 
+from assistant.apis.chat_api_base import BaseChatApi
 from assistant.impl.graph.chat_graph import ChatGraph
 from assistant.models.chat_completion_choice import ChatCompletionChoice
 from assistant.models.chat_completion_choice_message import ChatCompletionChoiceMessage
 from assistant.models.chat_completion_request import ChatCompletionRequest
 from assistant.models.chat_completion_response import ChatCompletionResponse
-from assistant.apis.chat_api_base import BaseChatApi
 
 
 class ChatApi(BaseChatApi):

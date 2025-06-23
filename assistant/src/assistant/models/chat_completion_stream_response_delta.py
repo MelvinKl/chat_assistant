@@ -13,14 +13,17 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
+from typing import Any, ClassVar, Dict, List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
-from typing import Any, ClassVar, Dict, List, Optional
-from assistant.models.chat_completion_message_tool_call_chunk import ChatCompletionMessageToolCallChunk
+
+from assistant.models.chat_completion_message_tool_call_chunk import (
+    ChatCompletionMessageToolCallChunk,
+)
 from assistant.models.chat_completion_stream_response_delta_function_call import (
     ChatCompletionStreamResponseDeltaFunctionCall,
 )

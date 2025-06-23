@@ -13,17 +13,20 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
+from typing import Any, ClassVar, Dict, List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool
-from typing import Any, ClassVar, Dict, List, Optional
 from typing_extensions import Annotated
+
 from assistant.models.chat_completion_functions import ChatCompletionFunctions
 from assistant.models.chat_completion_tool import ChatCompletionTool
-from assistant.models.fine_tune_chat_request_input_messages_inner import FineTuneChatRequestInputMessagesInner
+from assistant.models.fine_tune_chat_request_input_messages_inner import (
+    FineTuneChatRequestInputMessagesInner,
+)
 
 try:
     from typing import Self

@@ -13,14 +13,17 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
+from typing import Any, ClassVar, Dict, List, Optional
 
 from pydantic import BaseModel, ConfigDict, StrictBool, StrictStr, field_validator
-from typing import Any, ClassVar, Dict, List, Optional
-from assistant.models.fine_tuning_checkpoint_permission import FineTuningCheckpointPermission
+
+from assistant.models.fine_tuning_checkpoint_permission import (
+    FineTuningCheckpointPermission,
+)
 
 try:
     from typing import Self

@@ -13,17 +13,22 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
+from typing import Any, ClassVar, Dict, List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool
-from typing import Any, ClassVar, Dict, List, Optional
 from typing_extensions import Annotated
+
 from assistant.models.file_search_tool_filters import FileSearchToolFilters
-from assistant.models.vector_store_search_request_query import VectorStoreSearchRequestQuery
-from assistant.models.vector_store_search_request_ranking_options import VectorStoreSearchRequestRankingOptions
+from assistant.models.vector_store_search_request_query import (
+    VectorStoreSearchRequestQuery,
+)
+from assistant.models.vector_store_search_request_ranking_options import (
+    VectorStoreSearchRequestRankingOptions,
+)
 
 try:
     from typing import Self

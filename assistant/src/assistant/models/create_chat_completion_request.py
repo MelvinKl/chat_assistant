@@ -13,24 +13,41 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
-
-from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional, Union
+
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StrictBool,
+    StrictInt,
+    StrictStr,
+    field_validator,
+)
 from typing_extensions import Annotated
+
 from assistant.models.chat_completion_functions import ChatCompletionFunctions
-from assistant.models.chat_completion_request_message import ChatCompletionRequestMessage
+from assistant.models.chat_completion_request_message import (
+    ChatCompletionRequestMessage,
+)
 from assistant.models.chat_completion_stream_options import ChatCompletionStreamOptions
 from assistant.models.chat_completion_tool import ChatCompletionTool
-from assistant.models.chat_completion_tool_choice_option import ChatCompletionToolChoiceOption
-from assistant.models.create_chat_completion_request_all_of_audio import CreateChatCompletionRequestAllOfAudio
+from assistant.models.chat_completion_tool_choice_option import (
+    ChatCompletionToolChoiceOption,
+)
+from assistant.models.create_chat_completion_request_all_of_audio import (
+    CreateChatCompletionRequestAllOfAudio,
+)
 from assistant.models.create_chat_completion_request_all_of_function_call import (
     CreateChatCompletionRequestAllOfFunctionCall,
 )
-from assistant.models.create_chat_completion_request_all_of_prediction import CreateChatCompletionRequestAllOfPrediction
+from assistant.models.create_chat_completion_request_all_of_prediction import (
+    CreateChatCompletionRequestAllOfPrediction,
+)
 from assistant.models.create_chat_completion_request_all_of_response_format import (
     CreateChatCompletionRequestAllOfResponseFormat,
 )

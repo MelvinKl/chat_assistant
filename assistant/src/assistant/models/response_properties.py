@@ -13,17 +13,20 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
+
+import json
 import pprint
 import re  # noqa: F401
-import json
-
+from typing import Any, ClassVar, Dict, List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
-from typing import Any, ClassVar, Dict, List, Optional
+
 from assistant.models.model_ids_responses import ModelIdsResponses
 from assistant.models.reasoning import Reasoning
 from assistant.models.response_properties_text import ResponsePropertiesText
-from assistant.models.response_properties_tool_choice import ResponsePropertiesToolChoice
+from assistant.models.response_properties_tool_choice import (
+    ResponsePropertiesToolChoice,
+)
 from assistant.models.tool import Tool
 
 try:

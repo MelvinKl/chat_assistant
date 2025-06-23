@@ -13,19 +13,29 @@ Do not edit the class manually.
 
 
 from __future__ import annotations
-from inspect import getfullargspec
+
 import json
 import pprint
 import re  # noqa: F401
+from inspect import getfullargspec
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
-
-from pydantic import BaseModel, ConfigDict, Field, StrictStr, ValidationError, field_validator
-from typing import Any, List, Optional
-from assistant.models.run_step_details_message_creation_object import RunStepDetailsMessageCreationObject
-from assistant.models.run_step_details_tool_calls_object import RunStepDetailsToolCallsObject
-from typing import Union, Any, List, TYPE_CHECKING, Optional, Dict
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StrictStr,
+    ValidationError,
+    field_validator,
+)
 from typing_extensions import Literal
-from pydantic import StrictStr, Field
+
+from assistant.models.run_step_details_message_creation_object import (
+    RunStepDetailsMessageCreationObject,
+)
+from assistant.models.run_step_details_tool_calls_object import (
+    RunStepDetailsToolCallsObject,
+)
 
 try:
     from typing import Self
