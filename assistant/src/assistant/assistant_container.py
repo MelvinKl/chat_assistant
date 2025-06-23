@@ -17,6 +17,7 @@ from assistant.impl.settings.prompt_settings import PromptSettings
 # Apply the patch to allow nested event loops
 nest_asyncio.apply()
 
+
 def _di_config(binder: Binder):
     settings_openai = OpenAISetttings()
     settings_prompt = PromptSettings()
@@ -54,9 +55,9 @@ def _di_config(binder: Binder):
     binder.bind("answer_rephraser", rephrase_answer_prompt_template | llm)
     binder.bind(BaseChatModel, llm)
     binder.bind(MCPSettings, load_mcp_settings_from_json())
-    binder.bind_to_constructor(ChatGraph, ChatGraph) 
-    binder.bind("mcp_agent", mcp_agent)   
-    
+    binder.bind_to_constructor(ChatGraph, ChatGraph)
+    binder.bind("mcp_agent", mcp_agent)
+
 
 def configure():
     inject.configure(_di_config, allow_override=True, clear=True)

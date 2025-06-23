@@ -33,7 +33,12 @@ class GraphNodeNames(StrEnum):
 
 class ChatGraph:
 
-    @inject.params(llm=BaseChatModel, question_rephraser="question_rephraser", answer_rephraser="answer_rephraser", mcp_agent="mcp_agent")
+    @inject.params(
+        llm=BaseChatModel,
+        question_rephraser="question_rephraser",
+        answer_rephraser="answer_rephraser",
+        mcp_agent="mcp_agent",
+    )
     def __init__(
         self,
         llm: BaseChatModel,
