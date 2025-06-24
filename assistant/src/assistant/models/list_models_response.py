@@ -34,7 +34,7 @@ class ListModelsResponse(BaseModel):
     ListModelsResponse
     """  # noqa: E501
 
-    object: StrictStr
+    object: StrictStr = "list"
     data: List[Model]
     __properties: ClassVar[List[str]] = ["object", "data"]
 
