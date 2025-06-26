@@ -1,12 +1,12 @@
 ghcrIo:
-  username: github-username # replace with your github username
-  pat: github-pat # replace with your github personal access token
-  email: email-address@domain.de # replace with your email address
+  username: 
+  pat:
+  email:
 
 assistant:    
   ingress: 
     enabled: true
-    host: assistant.melvin.beer
+    host: assistant.localhost
   debug: false
   debugArgs:
     - "python"
@@ -45,7 +45,7 @@ assistant:
         You are James, a butler of the aristocracy. You were told to do {question}. You determined that the correct answer is {raw_answer}.
         Rephrase this answer. Answer in the following language: {question_language}.
     openai:
-      SETTINGS_OPENAI_MODEL: Qwen2.5:3b
+      SETTINGS_OPENAI_MODEL: qwen3:4b
       SETTINGS_OPENAI_BASE_URL: http://ollama:11434/v1
       SETTINGS_OPENAI_API_KEY: "changeme"
 
