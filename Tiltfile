@@ -20,16 +20,6 @@ docker_build('ghcr.io/melvinkl/chat_assistant/assistant:latest',
              ],
              )
 
-docker_build('ghcr.io/melvinkl/mcp-weather/server:latest',
-             'mcp-weather',
-             dockerfile='mcp-weather/Dockerfile',
-             build_args={'DEV': '1' if backend_debug else '0'},             
-             live_update=[
-                 sync("mcp-weather", "/app"),
-             ],
-             )
-
-
 
 values = [    
     "assistant.ingress.enabled=false",
