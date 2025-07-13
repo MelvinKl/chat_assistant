@@ -1,4 +1,5 @@
 import time
+import uuid
 
 import inject
 
@@ -26,7 +27,7 @@ class ChatApi(BaseChatApi):
         result_message = await chat_graph.ainvoke(history)
 
         return ChatCompletionResponse(
-            id="create_chat_completion_request.id",
+            id=str(uuid.uuid4()),
             choices=[
                 ChatCompletionChoice(
                     finish_reason="stop",
