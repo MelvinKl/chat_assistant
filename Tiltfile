@@ -36,7 +36,7 @@ if os.environ.get("SETTINGS_OPENAI_BASE_URL", None):
     values.append("assistant.settings.openai.SETTINGS_OPENAI_BASE_URL=%s" % os.environ.get("SETTINGS_OPENAI_BASE_URL", None))
     values.append("ollama.enabled=false") # There is no need for ollama if a different llm is used.
 if os.environ.get("SETTINGS_OPENAI_MODEL", None):
-    values.append("assistant.settings.openai.SETTINGS_OPENAI_MODEL=%s" % os.environ.get("SETTINGS_OPENAI_MODEL", None))
+    values.append("assistant.settings.openai.SETTINGS_OPENAI_MODEL=%s" % os.environ.get("SETTINGS_OPENAI_MODEL", None))    
 
 k8s_yaml(helm('infrastructure/helm', name='assistant', values='infrastructure/helm/values.yaml',set=values))
 # 'busybox-deployment' is the name of the Kubernetes resource we're deploying.

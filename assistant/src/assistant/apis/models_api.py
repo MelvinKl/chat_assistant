@@ -18,25 +18,6 @@ for _, name, _ in pkgutil.iter_modules(ns_pkg.__path__, ns_pkg.__name__ + "."):
     importlib.import_module(name)
 
 
-@router.delete(
-    "/models/{model}",
-    responses={
-        200: {"model": DeleteModelResponse, "description": "OK"},
-    },
-    tags=["Models"],
-    summary="Delete a fine-tuned model. You must have the Owner role in your organization to delete a model.",
-    response_model_by_alias=True,
-)
-async def delete_model(
-    model: Annotated[StrictStr, Field(description="The model to delete")] = Path(
-        ..., description="The model to delete"
-    ),
-) -> DeleteModelResponse:
-    if not BaseModelsApi.subclasses:
-        raise HTTPException(status_code=500, detail="Not implemented")
-    return await BaseModelsApi.subclasses[0]().delete_model(model)
-
-
 @router.get(
     "/models",
     responses={

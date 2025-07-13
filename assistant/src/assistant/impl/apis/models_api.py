@@ -13,12 +13,6 @@ class ModelsApi(BaseModelsApi):
 
     model = Model(id="chat_assistant", created=0, owned_by="No one. This model is a free spirit", object="model")
 
-    async def delete_model(
-        self,
-        model: Annotated[StrictStr, Field(description="The model to delete")],
-    ) -> DeleteModelResponse:
-        raise HTTPException(status_code=500, detail="Not implemented")
-
     async def list_models(
         self,
     ) -> ListModelsResponse:
