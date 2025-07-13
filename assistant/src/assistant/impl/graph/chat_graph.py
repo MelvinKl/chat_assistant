@@ -28,7 +28,6 @@ class GraphNodeNames(StrEnum):
     DECIDE = "decide"
     ERROR_NODE = "error_node"
     REPHRASE_ANSWER = "rephrase_answer"
-    ADD_ADDITIONAL_INFORMATION = "add_additional_information"
 
 
 class ChatGraph:
@@ -46,7 +45,6 @@ class ChatGraph:
         answer_rephraser: RunnableSequence,
         mcp_agent: RunnableSequence,
     ):
-
         self._question_rephraser = question_rephraser
         self._answer_rephraser = answer_rephraser
         self._llm = llm
@@ -106,13 +104,21 @@ class ChatGraph:
     # nodes #
     #########
     async def _determine_language_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
-        question = state["history"][-1][1]  # TODO: ensure this exists
+        try:
+            question = state["history"][-1][1]
+        except Exception as e:
+            logger.error(e)
+            queston = "There is no question here."
         question_language = detect(question)
         logger.info('Detected langauge for question "%s": %s', question, question_language)
         return {"question_language": question_language}
 
     async def _rephrase_question_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
-        question = state["history"][-1][1]  # TODO: ensure this exists
+        try:
+            question = state["history"][-1][1]
+        except Exception as e:
+            logger.error(e)
+            queston = "There is no question here."
         history = [f"{message[0]}: {message[1]}" for message in state["history"][0:-1]]
 
         rephrased_question = await self._question_rephraser.ainvoke({"question": question, "history": history}, config)
@@ -130,34 +136,17 @@ class ChatGraph:
         answer = answer["messages"][-1].content
         return {"raw_answer": answer}
 
-    async def _add_additional_information_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
-        # TODO: add additional information about the user that was inferred by previous interactions
-        return {}
-
-    async def _error_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
-        logger.error("\n".join(state["error_messages"]))
-        return {
-            "processed_answer": "I'm sorry, there have been some errors and your request could not be handled. "
-            + f"Errors: {'\n'.join(state['error_messages'])}"
-        }
-
-    #####################
-    # conditional edges #
-    #####################
-
     def _add_nodes(self):
         self._state_graph.add_node(GraphNodeNames.REPHRASE_QUESTION, self._rephrase_question_node)
         self._state_graph.add_node(GraphNodeNames.DETERMINE_LANGUAGE, self._determine_language_node)
         self._state_graph.add_node(GraphNodeNames.DECIDE, self._decide_node)
         self._state_graph.add_node(GraphNodeNames.ERROR_NODE, self._error_node)
-        self._state_graph.add_node(GraphNodeNames.REPHRASE_ANSWER, self._answer_rephraser_node)
-        self._state_graph.add_node(GraphNodeNames.ADD_ADDITIONAL_INFORMATION, self._add_additional_information_node)
+        self._state_graph.add_node(GraphNodeNames.REPHRASE_ANSWER, self._answer_rephraser_node)        
 
     def _wire_graph(self):
         self._state_graph.add_edge(START, GraphNodeNames.DETERMINE_LANGUAGE)
         self._state_graph.add_edge(START, GraphNodeNames.REPHRASE_QUESTION)
-        self._state_graph.add_edge(GraphNodeNames.REPHRASE_QUESTION, GraphNodeNames.ADD_ADDITIONAL_INFORMATION)
-        self._state_graph.add_edge(GraphNodeNames.ADD_ADDITIONAL_INFORMATION, GraphNodeNames.DECIDE)
+        self._state_graph.add_edge(GraphNodeNames.REPHRASE_QUESTION, GraphNodeNames.DECIDE)
         self._state_graph.add_edge(
             [GraphNodeNames.DECIDE, GraphNodeNames.DETERMINE_LANGUAGE], GraphNodeNames.REPHRASE_ANSWER
         )

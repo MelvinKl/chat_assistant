@@ -64,7 +64,7 @@ An example prompt using this mcp server would be:
 "How is the weather at latitude:49.0148,longitude:8.4?"
 ```
 
-The configuration consists of two sections:
+The 'mcpServers' configuration consists of two subsections:
 #### Deployments
 This section governs the deployment of additional mcp server. If the mcp server you want to use is alread deployed you can skip this section.
 Each deployment should be an array item containing the following information:

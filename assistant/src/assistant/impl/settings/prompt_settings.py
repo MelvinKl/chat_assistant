@@ -8,7 +8,7 @@ class PromptSettings(BaseSettings):
 
     rephrase_question_prompt: str = Field(
         """
-            Rephrase the question so it containts all the relevant information from the history required to answer the question.
+            Rephrase the question so it contains all the relevant information from the history required to answer the question.
                                                        
             Question: {question}
             History: {history}

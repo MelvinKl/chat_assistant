@@ -27,8 +27,8 @@ spec:
           - configMapRef:
               name: {{ $server.name }}
           - secretRef:
-              name: {{ $server.name }}          
+              name: {{ $server.name }}     
         image:  {{ $server.image }}
         ports:
-        - containerPort: {{ $server.port }}            
-{{ end }}          
+        - containerPort: {{ $server.port }}
+{{ end }}

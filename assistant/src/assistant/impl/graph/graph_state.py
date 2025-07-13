@@ -1,4 +1,4 @@
-"""Module for the AnswerGraphState class."""
+"""Module for the GraphState class."""
 
 import operator
 from typing import Annotated
@@ -21,7 +21,7 @@ class GraphState(TypedDict):
     def create(
         cls,
         history: list[tuple[str, str]],
-        question: str | str = None,
+        question: str | None = None,
         raw_answer: str | None = None,
         processed_answer: str | None = None,
         question_language: str | None = None,
@@ -35,7 +35,7 @@ class GraphState(TypedDict):
             raw_answer=raw_answer,
             processed_answer=processed_answer,
             question_language=question_language,
-            additional_info=additional_info if additional_info else {},
-            error_messages=error_messages if error_messages else [],
-            finish_reasons=finish_reasons if finish_reasons else [],
+            additional_info=additional_info or {},
+            error_messages=error_messages or [],
+            finish_reasons=finish_reasons or [],
         )
