@@ -1,30 +1,177 @@
 openapi: 3.0.2
 info:
-  description: A modular chat assistant.
-  title: Assistant API
-  version: 1.0.0
+  description: API for chat assistant. OpenAI compatible.
+  title: New API
+  version: 0.0.1
 servers:
 - url: /
 paths:
-  /assist:
+  /chat/completions:
     post:
-      operationId: assist
+      operationId: chat_completions
       requestBody:
         content:
           application/json:
             schema:
-              type: string
+              $ref: '#/components/schemas/chat_completion_request'
         required: true
       responses:
         "200":
           content:
             application/json:
               schema:
-                type: string
-          description: answer
+                $ref: '#/components/schemas/chat_completion_response'
+          description: OK
+        "422":
+          description: Unprocessable Entity
         "500":
           description: Something somewhere went terribly wrong.
       tags:
-      - assistant
+      - chat
 components:
-  schemas: {}
+  schemas:
+    chat_completion_request:
+      description: ""
+      properties:
+        model:
+          description: ""
+          title: model
+          type: string
+        messages:
+          description: ""
+          items:
+            $ref: '#/components/schemas/chat_completion_messages'
+          title: messages
+          type: array
+      required:
+      - messages
+      - model
+      title: chat_completion_request
+      type: object
+    chat_completion_messages:
+      description: ""
+      properties:
+        role:
+          description: ""
+          title: role
+          type: string
+        content:
+          description: ""
+          title: content
+          type: string
+      required:
+      - content
+      - role
+      title: chat_completion_messages
+      type: object
+    chat_completion_response:
+      description: ""
+      example:
+        created: 0
+        model: model
+        service_tier: service_tier
+        id: id
+        system_fingerprint: system_fingerprint
+        choices:
+        - finish_reason: finish_reason
+          index: 6
+          message:
+            role: role
+            refusal: refusal
+            content: content
+        - finish_reason: finish_reason
+          index: 6
+          message:
+            role: role
+            refusal: refusal
+            content: content
+        object: object
+      properties:
+        id:
+          description: ""
+          title: id
+          type: string
+        model:
+          description: ""
+          title: model
+          type: string
+        created:
+          description: ""
+          title: created
+          type: integer
+        object:
+          description: chat.completion
+          title: object
+          type: string
+        service_tier:
+          description: default
+          title: service_tier
+          type: string
+        system_fingerprint:
+          description: ""
+          title: system_fingerprint
+          type: string
+        choices:
+          description: ""
+          items:
+            $ref: '#/components/schemas/chat_completion_choice'
+          title: choices
+          type: array
+      required:
+      - choices
+      - created
+      - id
+      - model
+      - object
+      title: chat_completion_response
+      type: object
+    chat_completion_choice:
+      description: ""
+      example:
+        finish_reason: finish_reason
+        index: 6
+        message:
+          role: role
+          refusal: refusal
+          content: content
+      properties:
+        index:
+          description: ""
+          title: index
+          type: integer
+        message:
+          $ref: '#/components/schemas/chat_completion_choice_message'
+        finish_reason:
+          description: stop
+          title: finish_reason
+          type: string
+      required:
+      - finish_reason
+      - index
+      - message
+      title: chat_completion_choice
+      type: object
+    chat_completion_choice_message:
+      description: ""
+      example:
+        role: role
+        refusal: refusal
+        content: content
+      properties:
+        role:
+          description: ""
+          title: role
+          type: string
+        content:
+          description: ""
+          title: content
+          type: string
+        refusal:
+          description: ""
+          title: refusal
+          type: string
+      required:
+      - content
+      - role
+      title: chat_completion_choice_message
+      type: object

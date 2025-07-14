@@ -1,0 +1,10 @@
+{{- range $server :=  .Values.mcpServers.deployments }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $server.name }}
+data:
+  {{- range $key, $value := $server.config }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
+{{ end }}  

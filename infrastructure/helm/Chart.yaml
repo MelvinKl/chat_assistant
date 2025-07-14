@@ -1,18 +1,17 @@
-name: rag
-description: RAG solution to rule them all
+name: assistant
+description: Chat assistant
 version: 0.0.1
-apiVersion: v1
+apiVersion: v2
 keywords:
-  - rag
   - llm
-  - ollama
+  - assistant
 dependencies:
-  - name: open-webui
-    version: 5.4.0
-    repository: "https://helm.openwebui.com/"
-  - name: qdrant
-    repository: https://qdrant.github.io/qdrant-helm
-    version: 0.10.1
+  - name: ollama
+    version: 1.14.0
+    repository: "https://otwld.github.io/ollama-helm/"
+  #- name: qdrant
+  #  repository: https://qdrant.github.io/qdrant-helm
+  #  version: 0.10.1
   #- name: langtrace 
   #  repository: https://Scale3-Labs.github.io/langtrace-helm-chart
   #  version: 1.0.2

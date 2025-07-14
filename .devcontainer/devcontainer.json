@@ -11,10 +11,12 @@
         "ms-python.python",
         "Tim-Koehler.helm-intellisense",
         "k--kato.intellij-idea-keybindings",
-				"vscode-icons-team.vscode-icons",
+        "vscode-icons-team.vscode-icons",
         "EditorConfig.EditorConfig",
         "hbenl.vscode-test-explorer",
-        "ms-vscode.makefile-tools"
+        "ms-vscode.makefile-tools",
+        "tilt-dev.Tiltfile",
+        "DhananjaySenday.mcp--inspector"
       ]
     }
   },
@@ -23,6 +25,13 @@
   ],
   "features": {
     "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
-    "ghcr.io/nucleuscloud/devcontainer-features/helmfile:0": {}
+    "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {},
+    "ghcr.io/lentzi90/features/tilt:0": {}
+   // "ghcr.io/nucleuscloud/devcontainer-features/helmfile:0": {}
+  },  
+  "remoteEnv": {
+    "KUBECONFIG": "/workspaces/chat_assistant/config"
   }
 }
+
+        

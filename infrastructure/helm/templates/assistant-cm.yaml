@@ -3,5 +3,11 @@ kind: ConfigMap
 metadata:
   name: assistant-cm
 data:
-  SETTINGS_COMPONENTS_APIS: '[{{- range $deploy :=  .Values.components.rag }}"http://{{ $deploy.name }}:8080"{{ end }}]'
----
+  SETTINGS_PROMPTS_REPHRASE_QUESTION_SYSTEM_PROMPT: |
+{{ .Values.assistant.settings.prompt.SETTINGS_PROMPTS_REPHRASE_QUESTION_SYSTEM_PROMPT |indent 6 }}
+  SETTINGS_PROMPTS_REPHRASE_QUESTION_USER_PROMPT: |
+{{ .Values.assistant.settings.prompt.SETTINGS_PROMPTS_REPHRASE_QUESTION_USER_PROMPT |indent 6 }}
+  SETTINGS_PROMPTS_REPHRASE_ANSWER_SYSTEM_PROMPT: |
+{{ .Values.assistant.settings.prompt.SETTINGS_PROMPTS_REPHRASE_ANSWER_SYSTEM_PROMPT |indent 6 }}
+  SETTINGS_PROMPTS_REPHRASE_ANSWER_USER_PROMPT: |
+{{ .Values.assistant.settings.prompt.SETTINGS_PROMPTS_REPHRASE_ANSWER_USER_PROMPT |indent 6 }}

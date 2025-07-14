@@ -6,5 +6,6 @@
         "components/base-library/src",
         "assistant/src",
     ],
+    "makefile.configureOnOpen": false,
  
 }

@@ -1,9 +1,0 @@
-dependencies:
-- name: open-webui
-  repository: https://helm.openwebui.com/
-  version: 3.3.0
-- name: qdrant
-  repository: https://qdrant.github.io/qdrant-helm
-  version: 0.10.1
-digest: sha256:07ee08157f91ac82b16759ed6c3ee792657aa7f90fe82062e1c25e4a4668541a
-generated: "2024-10-05T22:02:43.923067297+02:00"
