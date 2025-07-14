@@ -18,7 +18,6 @@ docker_build('ghcr.io/melvinkl/chat_assistant/assistant:latest',
 values = [    
     "assistant.ingress.enabled=false",
     "assistant.debug=true",
-    "ollama.runtimeClassName=",
     "ghcrIo.username=%s" % os.environ["GH_USERNAME"],
     "ghcrIo.pat=%s" % os.environ["GH_PAT"],
     "ghcrIo.email=%s" % os.environ["GH_MAIL"],    
