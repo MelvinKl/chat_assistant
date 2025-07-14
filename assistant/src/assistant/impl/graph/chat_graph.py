@@ -10,7 +10,7 @@ from typing import Any, Optional
 
 import inject
 from langchain_core.language_models.chat_models import BaseChatModel
-from langchain_core.runnables import RunnableConfig
+from langchain_core.runnables import Runnable, RunnableConfig
 from langchain_core.runnables.base import RunnableSequence
 from langchain_core.runnables.graph import MermaidDrawMethod
 from langdetect import detect
@@ -41,8 +41,8 @@ class ChatGraph:
     def __init__(
         self,
         llm: BaseChatModel,
-        question_rephraser: RunnableSequence,
-        answer_rephraser: RunnableSequence,
+        question_rephraser: Runnable,
+        answer_rephraser: Runnable,
         mcp_agent: RunnableSequence,
     ):
         self._question_rephraser = question_rephraser
@@ -108,7 +108,7 @@ class ChatGraph:
             question = state["history"][-1][1]
         except Exception as e:
             logger.error(e)
-            queston = "There is no question here."
+            question = "There is no question here."
         question_language = detect(question)
         logger.info('Detected langauge for question "%s": %s', question, question_language)
         return {"question_language": question_language}
@@ -118,17 +118,15 @@ class ChatGraph:
             question = state["history"][-1][1]
         except Exception as e:
             logger.error(e)
-            queston = "There is no question here."
+            question = "There is no question here."
         history = [f"{message[0]}: {message[1]}" for message in state["history"][0:-1]]
 
         rephrased_question = await self._question_rephraser.ainvoke({"question": question, "history": history}, config)
-        rephrased_question = rephrased_question.content
         logger.info('Rephrased question "%s" with history "%s" to %s', question, history, rephrased_question)
         return {"question": rephrased_question}
 
     async def _answer_rephraser_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
         rephrased_answer = await self._answer_rephraser.ainvoke(state, config)
-        rephrased_answer = rephrased_answer.content
         return {"processed_answer": rephrased_answer}
 
     async def _decide_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
@@ -140,8 +138,7 @@ class ChatGraph:
         self._state_graph.add_node(GraphNodeNames.REPHRASE_QUESTION, self._rephrase_question_node)
         self._state_graph.add_node(GraphNodeNames.DETERMINE_LANGUAGE, self._determine_language_node)
         self._state_graph.add_node(GraphNodeNames.DECIDE, self._decide_node)
-        self._state_graph.add_node(GraphNodeNames.ERROR_NODE, self._error_node)
-        self._state_graph.add_node(GraphNodeNames.REPHRASE_ANSWER, self._answer_rephraser_node)        
+        self._state_graph.add_node(GraphNodeNames.REPHRASE_ANSWER, self._answer_rephraser_node)
 
     def _wire_graph(self):
         self._state_graph.add_edge(START, GraphNodeNames.DETERMINE_LANGUAGE)
@@ -151,7 +148,6 @@ class ChatGraph:
             [GraphNodeNames.DECIDE, GraphNodeNames.DETERMINE_LANGUAGE], GraphNodeNames.REPHRASE_ANSWER
         )
         self._state_graph.add_edge(GraphNodeNames.REPHRASE_ANSWER, END)
-        self._state_graph.add_edge(GraphNodeNames.ERROR_NODE, END)
 
     def _setup_graph(self):
         self._add_nodes()

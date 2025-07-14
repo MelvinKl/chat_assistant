@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: assistant-mcp-cm
+data:
+  SETTINGS_MCP_SERVERS: |
+    {{ toJson .Values.mcpServers }}

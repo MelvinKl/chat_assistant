@@ -17,7 +17,7 @@ spec:
       volumes:
       - name: config-volume
         configMap:
-          name: assistant-cm
+          name: assistant-mcp-cm
       imagePullSecrets:
       - name: "pull-secret"
       containers:
@@ -28,6 +28,8 @@ spec:
         imagePullPolicy: Always        
         image: ghcr.io/melvinkl/chat_assistant/assistant:latest
         envFrom:
+          - configMapRef:
+              name: assistant-cm
           - secretRef:
               name: assistant-secret
         ports:

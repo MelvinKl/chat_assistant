@@ -47,8 +47,10 @@ Here is an explanation of the configuration options available through the `infra
 ### Prompts
 |Key|Default value|Explanation|
 |---|---|---|
-|`assistant.settings.prompt.SETTINGS_PROMPTS_REPHRASE_QUESTION_PROMPT`|`Rephrase the question so it containts all the relevant information from the history required to answer the question.\n\nQuestion: {question}\n History: {history}`|The prompt used for rephrasing of the initial question. Usable placeholders are: `question`,`history`|
-|`assistant.settings.prompt.SETTINGS_PROMPTS_REPHRASE_ANSWER_PROMPT`|`You are James, a butler of the aristocracy. You were told to do {question}. You determined that the correct answer is {raw_answer}.\nRephrase this answer. Answer in the following language: {question_language}.`|The prompt used for rephrasing the final answer. Usable placeholders are: `question`,`history`, `question_language`,`additional_info`,`raw_answer`|
+|`assistant.settings.prompt.SETTINGS_PROMPTS_REPHRASE_QUESTION_SYSTEM_PROMPT`|`Your job is to rephrase the questions so they contain all the relevant information from the history required to answer the question.`|The system prompt used for rephrasing of the initial question. Usable placeholders are: `question`,`history`|
+|`assistant.settings.prompt.SETTINGS_PROMPTS_REPHRASE_QUESTION_USER_PROMPT`|`Question: {question}\nHistory: {history}`|The user prompt used for rephrasing of the initial question. Usable placeholders are: `question`,`history`|
+|`assistant.settings.prompt.SETTINGS_PROMPTS_REPHRASE_ANSWER_SYSTEM_PROMPT`|`You are James, a butler of the aristocracy.\nYou will get asked questions and will be provided with the correct answer.\nHowever the answer might not be worded suitable for your master. Your job is to rephrase the answer in a way that is suitable for your master.\nAnswer in the following language: {question_language}`|The system prompt used for rephrasing the final answer. Usable placeholders are: `question`,`history`, `question_language`,`additional_info`,`raw_answer`|
+|`assistant.settings.prompt.SETTINGS_PROMPTS_REPHRASE_ANSWER_USER_PROMPT`|`Question: {question}\nAnswer: {raw_answer}`|The user prompt used for rephrasing the final answer. Usable placeholders are: `question`,`history`, `question_language`,`additional_info`,`raw_answer`|
 
 ### LLM Settings
 |Key|Default value|Explanation|

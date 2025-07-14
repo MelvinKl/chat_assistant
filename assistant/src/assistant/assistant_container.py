@@ -10,6 +10,7 @@ from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
 
 from assistant.impl.graph.chat_graph import ChatGraph
+from assistant.impl.rephraser.rephraser import Rephraser
 from assistant.impl.settings.mcp_server_settings import (
     MCPSettings,
     load_mcp_settings_from_json,
@@ -27,10 +28,11 @@ def _di_config(binder: Binder):
     settings_mcp = load_mcp_settings_from_json()
 
     rephrase_question_prompt_template = PromptTemplate(
-        template=settings_prompt.rephrase_question_prompt, input_variables=["question", "history"]
+        template=settings_prompt.rephrase_question_system_prompt, input_variables=["question", "history"]
     )
     rephrase_answer_prompt_template = PromptTemplate(
-        template=settings_prompt.rephrase_answer_prompt, input_variables=["question", "question_language", "raw_answer"]
+        template=settings_prompt.rephrase_answer_system_prompt,
+        input_variables=["question", "question_language", "raw_answer"],
     )
     llm = ChatOpenAI(
         model=settings_openai.model,
@@ -54,8 +56,22 @@ def _di_config(binder: Binder):
     tools = asyncio.run(mcp_client.get_tools())
     mcp_agent = create_react_agent(llm, tools)
 
-    binder.bind("question_rephraser", rephrase_question_prompt_template | llm)
-    binder.bind("answer_rephraser", rephrase_answer_prompt_template | llm)
+    binder.bind(
+        "question_rephraser",
+        Rephraser(
+            llm=llm,
+            system_prompt=settings_prompt.rephrase_question_system_prompt,
+            user_prompt=settings_prompt.rephrase_question_user_prompt,
+        ),
+    )
+    binder.bind(
+        "answer_rephraser",
+        Rephraser(
+            llm=llm,
+            system_prompt=settings_prompt.rephrase_answer_system_prompt,
+            user_prompt=settings_prompt.rephrase_answer_user_prompt,
+        ),
+    )
     binder.bind(BaseChatModel, llm)
     binder.bind(MCPSettings, load_mcp_settings_from_json())
     binder.bind_to_constructor(ChatGraph, ChatGraph)
