@@ -10,6 +10,7 @@ Output = str
 
 
 class Rephraser(Runnable[Input, Output]):
+    """Langchain Runnable used for rephrasing. Allows for special instructions using a system prompt."""
 
     def __init__(self, llm: BaseChatModel, system_prompt: str, user_prompt: str):
         """

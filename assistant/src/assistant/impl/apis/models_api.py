@@ -7,6 +7,7 @@ from assistant.models.model import Model
 
 
 class ModelsApi(BaseModelsApi):
+    """Implementation of OpenAI compatible models API for chat assistant."""
 
     model = Model(id="chat_assistant", created=0, owned_by="No one. This model is a free spirit", object="model")
 

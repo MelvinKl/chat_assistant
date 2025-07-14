@@ -4,6 +4,7 @@ from typing_extensions import TypedDict
 
 
 class GraphState(TypedDict):
+    """Dict for holding the current state of the ChatGraph."""
 
     question: str | None
     history: list[tuple[str, str]]

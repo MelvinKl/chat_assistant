@@ -7,6 +7,8 @@ from assistant.models.chat_completion_response import ChatCompletionResponse
 
 
 class BaseChatApi:
+    """BaseClass for ChatAPI. OpenAI compatible."""
+
     subclasses: ClassVar[tuple] = ()
 
     def __init_subclass__(cls, **kwargs):

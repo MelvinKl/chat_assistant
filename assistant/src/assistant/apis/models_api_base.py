@@ -10,6 +10,8 @@ from assistant.models.model import Model
 
 
 class BaseModelsApi:
+    """Base class for model API. OpenAI compatible."""
+
     subclasses: ClassVar[tuple] = ()
 
     def __init_subclass__(cls, **kwargs):

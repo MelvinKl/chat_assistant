@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 class GraphNodeNames(StrEnum):
+    """Enum for names of the nodes in the ChatGraph"""
 
     REPHRASE_QUESTION = "rephrase_question"
     DETERMINE_LANGUAGE = "determine_language"
@@ -31,6 +32,7 @@ class GraphNodeNames(StrEnum):
 
 
 class ChatGraph:
+    """Langchain graph for executing requests against the chat assistant."""
 
     @inject.params(
         llm=BaseChatModel,
