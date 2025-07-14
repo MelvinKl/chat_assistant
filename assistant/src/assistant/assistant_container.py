@@ -3,7 +3,6 @@ import asyncio
 import inject
 import nest_asyncio
 from inject import Binder
-from langchain.prompts import PromptTemplate
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_openai import ChatOpenAI
@@ -27,13 +26,6 @@ def _di_config(binder: Binder):
     settings_prompt = PromptSettings()
     settings_mcp = load_mcp_settings_from_json()
 
-    rephrase_question_prompt_template = PromptTemplate(
-        template=settings_prompt.rephrase_question_system_prompt, input_variables=["question", "history"]
-    )
-    rephrase_answer_prompt_template = PromptTemplate(
-        template=settings_prompt.rephrase_answer_system_prompt,
-        input_variables=["question", "question_language", "raw_answer"],
-    )
     llm = ChatOpenAI(
         model=settings_openai.model,
         base_url=settings_openai.base_url,

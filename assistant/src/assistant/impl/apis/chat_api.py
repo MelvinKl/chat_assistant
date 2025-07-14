@@ -19,6 +19,19 @@ class ChatApi(BaseChatApi):
         chat_completion_request: ChatCompletionRequest,
         chat_graph: ChatGraph,
     ) -> ChatCompletionResponse:
+        """
+        Processes a chat completion request and returns a chat completion response.
+
+        Parameters
+        ----------
+        chat_completion_request : ChatCompletionRequest
+            The request object containing the necessary information for the chat completion.
+
+        Returns
+        -------
+        ChatCompletionResponse
+            The response object containing the result of the chat completion process.
+        """
         history = []
 
         for message in chat_completion_request.messages:

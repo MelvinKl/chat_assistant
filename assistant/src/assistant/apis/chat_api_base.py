@@ -16,4 +16,17 @@ class BaseChatApi:
     async def chat_completions(
         self,
         chat_completion_request: ChatCompletionRequest,
-    ) -> ChatCompletionResponse: ...
+    ) -> ChatCompletionResponse:
+        """
+        Processes a chat completion request and returns a chat completion response.
+
+        Parameters
+        ----------
+        chat_completion_request : ChatCompletionRequest
+            The request object containing the necessary information for the chat completion.
+
+        Returns
+        -------
+        ChatCompletionResponse
+            The response object containing the result of the chat completion process.
+        """

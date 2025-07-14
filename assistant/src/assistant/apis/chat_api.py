@@ -28,6 +28,19 @@ for _, name, _ in pkgutil.iter_modules(ns_pkg.__path__, ns_pkg.__name__ + "."):
 async def chat_completions(
     chat_completion_request: ChatCompletionRequest = Body(None, description=""),
 ) -> ChatCompletionResponse:
+    """
+    Processes a chat completion request and returns a chat completion response.
+
+    Parameters
+    ----------
+    chat_completion_request : ChatCompletionRequest
+        The request object containing the necessary information for the chat completion.
+
+    Returns
+    -------
+    ChatCompletionResponse
+        The response object containing the result of the chat completion process.
+    """
     if not BaseChatApi.subclasses:
         raise HTTPException(status_code=500, detail="Not implemented")
     return await BaseChatApi.subclasses[0]().chat_completions(chat_completion_request)

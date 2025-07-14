@@ -7,7 +7,6 @@ from typing_extensions import Annotated
 
 import assistant.impl.apis
 from assistant.apis.models_api_base import BaseModelsApi
-from assistant.models.delete_model_response import DeleteModelResponse
 from assistant.models.list_models_response import ListModelsResponse
 from assistant.models.model import Model
 
@@ -28,6 +27,13 @@ for _, name, _ in pkgutil.iter_modules(ns_pkg.__path__, ns_pkg.__name__ + "."):
     response_model_by_alias=True,
 )
 async def list_models() -> ListModelsResponse:
+    """
+    Returns a list of available models.
+
+    Returns
+    -------
+    ListModelsResponse: A response object containing the list of models.
+    """
     if not BaseModelsApi.subclasses:
         raise HTTPException(status_code=500, detail="Not implemented")
     return await BaseModelsApi.subclasses[0]().list_models()
@@ -47,6 +53,17 @@ async def retrieve_model(
         ..., description="The ID of the model to use for this request"
     ),
 ) -> Model:
+    """
+    Retrieves a model by its ID.
+
+    Parameters
+    ----------
+    model (StrictStr): The ID of the model to retrieve.
+
+    Returns
+    -------
+    Model: The model instance with the specified ID.
+    """
     if not BaseModelsApi.subclasses:
         raise HTTPException(status_code=500, detail="Not implemented")
     return await BaseModelsApi.subclasses[0]().retrieve_model(model)

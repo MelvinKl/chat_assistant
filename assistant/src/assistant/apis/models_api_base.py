@@ -5,7 +5,6 @@ from typing import ClassVar
 from pydantic import Field, StrictStr
 from typing_extensions import Annotated
 
-from assistant.models.delete_model_response import DeleteModelResponse
 from assistant.models.list_models_response import ListModelsResponse
 from assistant.models.model import Model
 
@@ -19,9 +18,27 @@ class BaseModelsApi:
 
     async def list_models(
         self,
-    ) -> ListModelsResponse: ...
+    ) -> ListModelsResponse:
+        """
+        Returns a list of available models.
+
+        Returns
+        -------
+        ListModelsResponse: A response object containing the list of models.
+        """
 
     async def retrieve_model(
         self,
         model: Annotated[StrictStr, Field(description="The ID of the model to use for this request")],
-    ) -> Model: ...
+    ) -> Model:
+        """
+        Retrieves a model by its ID.
+
+        Parameters
+        ----------
+        model (StrictStr): The ID of the model to retrieve.
+
+        Returns
+        -------
+        Model: The model instance with the specified ID.
+        """

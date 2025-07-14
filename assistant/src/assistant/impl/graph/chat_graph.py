@@ -55,6 +55,23 @@ class ChatGraph:
     async def ainvoke(
         self, graph_input: list[tuple[str, str]], config: Optional[RunnableConfig] = None, **kwargs: Any
     ) -> str:
+        """
+        Processes a chat assistant request and handles mcp calls.
+
+        Parameters
+        ----------
+        graph_input : list[tuple[str, str]]
+            The initial state used to initialize the GraphState.
+        config: RunnableConfig
+            configuration for the llm. Defaults to None
+        kwargs: Any
+            Additional configuration parameters for the llm call.
+
+        Returns
+        -------
+        str
+            The generated answer.
+        """
         if not graph_input:
             return ""
 
