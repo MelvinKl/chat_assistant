@@ -44,6 +44,9 @@ def _di_config(binder: Binder):
                 "url": server_definition.url,
                 "transport": server_definition.transport,
             }
+            if server_definition.headers:
+                server_dict[server_definition.name]["headers"] = server_definition.headers
+
     mcp_client = MultiServerMCPClient(server_dict)
     tools = asyncio.run(mcp_client.get_tools())
     mcp_agent = create_react_agent(llm, tools)
