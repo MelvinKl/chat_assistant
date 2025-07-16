@@ -68,14 +68,15 @@ mcpServers:
         - "src/main.py"
       secrets: 
         TRANSPORT: sse
-  servers:    
-    - name: warhammer2
-      url: "http://backend.rag.svc.cluster.local:8000/mcp"
+  servers:
+    - name: weather
+      url: "http://weather:8080/sse"
       command: ""
       env: ""
-      transport: "streamable_http"
+      transport: "sse"
       args: []
-    
+
+
 
 ollama:
   image:
@@ -99,4 +100,3 @@ ollama:
   runtimeClassName: 
   persistentVolume:
     enabled: true
-
