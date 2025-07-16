@@ -5,12 +5,13 @@ from pydantic_settings import BaseSettings
 
 
 class MCPServer(BaseModel):
-    url: str
+    url: str = ""
     name: str
-    command: str
-    args: list[str]
-    env: str
+    command: str = ""
+    args: list[str] = []
+    env: str = ""
     transport: str
+    headers: dict[str, str] | None = None
 
 
 class MCPSettings(BaseSettings):

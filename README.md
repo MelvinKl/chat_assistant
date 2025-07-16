@@ -88,6 +88,7 @@ Each MCP server should be an array item containing the following information:
 |`name`|`weather`|Name of the MCP server|
 |`url`|`http://weather:8080/sse`|Connection URL of the MCP server|
 |`transport`|`sse`|Connection protocol used|
+|`headers`|-|Optional. Dictionary of additional values to send as headers to the server|
 
 ### Ollama
 Ollama can be used as a local LLM provider. For a full overview of available configuration options please see [here](https://github.com/otwld/ollama-helm)
