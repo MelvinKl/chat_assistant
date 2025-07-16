@@ -9,9 +9,4 @@ dependencies:
   - name: ollama
     version: 1.24.0
     repository: "https://otwld.github.io/ollama-helm/"
-  #- name: qdrant
-  #  repository: https://qdrant.github.io/qdrant-helm
-  #  version: 0.10.1
-  #- name: langtrace 
-  #  repository: https://Scale3-Labs.github.io/langtrace-helm-chart
-  #  version: 1.0.2
+    condition: ollama.enabled
