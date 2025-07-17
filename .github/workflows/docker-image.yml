@@ -28,5 +28,7 @@ jobs:
       - name: Build and push Docker image
         run: |
           export TAG=ghcr.io/${GITHUB_REPOSITORY@L}/assistant:${{ github.event.release.tag_name }}
+          export LATEST_TAG=ghcr.io/${GITHUB_REPOSITORY@L}/assistant:latest
           docker build . -f assistant/Dockerfile -t $TAG
           docker push $TAG
+          docker image retag LATEST_TAG TAG
