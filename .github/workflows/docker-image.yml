@@ -2,8 +2,8 @@ name: Docker Image CI
 
 on:
   workflow_dispatch:
-  push:
-    branches: ["main"]
+  release:
+    types: [published]  
 
 jobs:
   build:
@@ -27,6 +27,6 @@ jobs:
         
       - name: Build and push Docker image
         run: |
-          export TAG=ghcr.io/${GITHUB_REPOSITORY@L}/assistant:latest
+          export TAG=ghcr.io/${GITHUB_REPOSITORY@L}/assistant:${{ github.event.release.tag_name }}
           docker build . -f assistant/Dockerfile -t $TAG
           docker push $TAG
