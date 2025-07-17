@@ -9,6 +9,7 @@ from assistant.models.chat_completion_choice import ChatCompletionChoice
 from assistant.models.chat_completion_choice_message import ChatCompletionChoiceMessage
 from assistant.models.chat_completion_request import ChatCompletionRequest
 from assistant.models.chat_completion_response import ChatCompletionResponse
+from assistant.models.chat_completion_usage import ChatCompletionUsage
 
 
 class ChatApi(BaseChatApi):
@@ -52,4 +53,9 @@ class ChatApi(BaseChatApi):
             created=int(time.time()),
             model=chat_completion_request.model,
             object="chat.completion",
+            usage=ChatCompletionUsage(
+                prompt_tokens=0,
+                completion_tokens=0,
+                total_tokens=0,
+            ),
         )

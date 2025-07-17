@@ -22,7 +22,6 @@ from typing import Any, ClassVar, Dict, List, Optional
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
 
 from assistant.models.chat_completion_choice import ChatCompletionChoice
-from assistant.models.chat_completion_usage import ChatCompletionUsage
 
 try:
     from typing import Self
@@ -30,26 +29,16 @@ except ImportError:
     from typing_extensions import Self
 
 
-class ChatCompletionResponse(BaseModel):
+class ChatCompletionUsage(BaseModel):
     """ """  # noqa: E501
 
-    id: StrictStr
-    model: StrictStr
-    created: StrictInt
-    object: StrictStr = Field(description="chat.completion")
-    service_tier: Optional[StrictStr] = Field(default=None, description="default")
-    system_fingerprint: Optional[StrictStr] = None
-    choices: List[ChatCompletionChoice]
-    usage: ChatCompletionUsage
+    prompt_tokens: StrictInt
+    completion_tokens: StrictInt
+    total_tokens: StrictInt
     __properties: ClassVar[List[str]] = [
-        "id",
-        "model",
-        "created",
-        "object",
-        "service_tier",
-        "system_fingerprint",
-        "choices",
-        "usage",
+        "prompt_tokens",
+        "completion_tokens",
+        "total_tokens",
     ]
 
     model_config = {
@@ -107,18 +96,9 @@ class ChatCompletionResponse(BaseModel):
 
         _obj = cls.model_validate(
             {
-                "id": obj.get("id"),
-                "model": obj.get("model"),
-                "created": obj.get("created"),
-                "object": obj.get("object"),
-                "service_tier": obj.get("service_tier"),
-                "system_fingerprint": obj.get("system_fingerprint"),
-                "choices": (
-                    [ChatCompletionChoice.from_dict(_item) for _item in obj.get("choices")]
-                    if obj.get("choices") is not None
-                    else None
-                ),
-                "usage": (ChatCompletionUsage.from_dict(obj.get("usage")) if obj.get("usage") is not None else None),
+                "prompt_tokens": obj.get("prompt_tokens"),
+                "completion_tokens": obj.get("completion_tokens"),
+                "total_tokens": obj.get("total_tokens"),
             }
         )
         return _obj
