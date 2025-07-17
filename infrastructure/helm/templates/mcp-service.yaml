@@ -1,4 +1,5 @@
 {{- range $server :=  .Values.mcpServers.deployments }}
+---
 apiVersion: v1
 kind: Service
 metadata:
