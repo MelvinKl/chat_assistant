@@ -31,5 +31,5 @@ jobs:
           export LATEST_TAG=ghcr.io/${GITHUB_REPOSITORY@L}/assistant:latest
           docker build . -f assistant/Dockerfile -t $TAG
           docker push $TAG
-          docker image tag $LATEST_TAG $TAG
+          docker image tag $TAG $LATEST_TAG 
           docker push $LATEST_TAG
