@@ -5,10 +5,11 @@ import inject
 import nest_asyncio
 from inject import Binder
 from langchain_core.language_models.chat_models import BaseChatModel
+from langchain_core.tools import BaseTool
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
-from langchain_core.tools import BaseTool
+
 from assistant.impl.graph.chat_graph import ChatGraph
 from assistant.impl.rephraser.rephraser import Rephraser
 from assistant.impl.settings.mcp_server_settings import (
@@ -23,17 +24,18 @@ nest_asyncio.apply()
 
 logger = logging.getLogger(__name__)
 
-def _get_mcp_tools(settings_mcp:MCPSettings)->list[BaseTool]:
+
+def _get_mcp_tools(settings_mcp: MCPSettings) -> list[BaseTool]:
     tools = []
-    
-    for server_definition in settings_mcp.servers:        
-        server_dict = {}        
+
+    for server_definition in settings_mcp.servers:
+        server_dict = {}
         if server_definition.transport == "stdio":
             server_dict[server_definition.name] = {
                 "command": server_definition.command,
                 "args": server_definition.args,
                 "transport": "stdio",
-            }            
+            }
         else:
             server_dict[server_definition.name] = {
                 "url": server_definition.url,
@@ -86,4 +88,4 @@ def _di_config(binder: Binder):
 
 
 def configure():
-    inject.configure(_di_config, allow_override=True, clear=True)    
+    inject.configure(_di_config, allow_override=True, clear=True)
