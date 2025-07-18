@@ -21,7 +21,7 @@ class MCPSettings(BaseSettings):
     servers: list[MCPServer] = Field()
 
 
-def load_mcp_settings_from_json(json_file_path="/config/mcp/SETTINGS_MCP_SERVERS"):
+def load_mcp_settings_from_json(json_file_path="/config/mcp/SETTINGS_MCP_SERVERS")->MCPSettings:
     with open(json_file_path, "r") as f:
         data = json.load(f)
 
