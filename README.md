@@ -59,6 +59,11 @@ Here is an explanation of the configuration options available through the `infra
 |`assistant.settings.openai.SETTINGS_OPENAI_BASE_URL`|`http://ollama:11434/v1`|The host of the LLM provider. Defaults to the ollama instance that can be installed using this helm chart.|
 |`assistant.settings.openai.SETTINGS_OPENAI_API_KEY`|`changeme`|The apikey for the LLM provider. If ollama is used this value is not required.|
 
+### Other Settings
+|Key|Default value|Explanation|
+|---|---|---|
+|`assistant.settings.additionalInformation`|`Fun Fact: Your source code is available under Apache2 license`|Additional information that is given to the LLM. This can be things like, the position of the home, the name of the user, etc. This value is loaded as a string, there are no requirements on the format.|
+
 ### MCP Server
 This configuration is for the available skills in the chat assistant. By default [this](https://github.com/MelvinKl/mcp-weather) mcp server for weather information is configured. Keep in mind that this mcp server requires the geo coordinates of the location you want a weather forecast for.
 An example prompt using this mcp server would be:

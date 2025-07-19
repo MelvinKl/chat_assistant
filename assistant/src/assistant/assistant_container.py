@@ -12,6 +12,7 @@ from langgraph.prebuilt import create_react_agent
 
 from assistant.impl.graph.chat_graph import ChatGraph
 from assistant.impl.rephraser.rephraser import Rephraser
+from assistant.impl.settings.information_settings import InformationSettings
 from assistant.impl.settings.mcp_server_settings import (
     MCPSettings,
     load_mcp_settings_from_json,
@@ -55,6 +56,7 @@ def _get_mcp_tools(settings_mcp: MCPSettings) -> list[BaseTool]:
 def _di_config(binder: Binder):
     settings_openai = OpenAISetttings()
     settings_prompt = PromptSettings()
+    settings_information = InformationSettings()
     settings_mcp = load_mcp_settings_from_json()
 
     llm = ChatOpenAI(
@@ -83,6 +85,7 @@ def _di_config(binder: Binder):
     )
     binder.bind(BaseChatModel, llm)
     binder.bind(MCPSettings, load_mcp_settings_from_json())
+    binder.bind(InformationSettings, settings_information)
     binder.bind_to_constructor(ChatGraph, ChatGraph)
     binder.bind("mcp_agent", mcp_agent)
 

@@ -3,6 +3,8 @@ kind: ConfigMap
 metadata:
   name: assistant-cm
 data:
+  SETTINGS_ADDITIONAL_INFORMATION: |
+{{ .Values.assistant.settings.additionalInformation |indent 4 }}
   SETTINGS_PROMPTS_REPHRASE_QUESTION_SYSTEM_PROMPT: |
 {{ .Values.assistant.settings.prompt.SETTINGS_PROMPTS_REPHRASE_QUESTION_SYSTEM_PROMPT |indent 6 }}
   SETTINGS_PROMPTS_REPHRASE_QUESTION_USER_PROMPT: |

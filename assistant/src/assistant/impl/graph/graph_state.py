@@ -7,7 +7,7 @@ class GraphState(TypedDict):
     """Dict for holding the current state of the ChatGraph."""
 
     question: str | None
-    history: list[tuple[str, str]]
+    history: list[str]
     raw_answer: str | None
     processed_answer: str | None
     question_language: str | None
@@ -16,20 +16,20 @@ class GraphState(TypedDict):
     @classmethod
     def create(
         cls,
-        history: list[tuple[str, str]],
+        history: list[str],
         question: str | None = None,
         raw_answer: str | None = None,
         processed_answer: str | None = None,
         question_language: str | None = None,
-        additional_info: dict | None = None,
+        additional_info: str | None = None,
     ) -> "GraphState":
         """
         Create an instance of the GraphState
 
         Parameters
         ----------
-        history: list[tuple[str, str]]
-            Chat history. Contains role and message
+        history: list[str]
+            Chat history.
         question: str | None = None
             The question the user asked. Defaults to None
         raw_answer: str | None = None
@@ -39,8 +39,8 @@ class GraphState(TypedDict):
         question_language: str | None = None
             The language in which the question was asked. Will be used to generate an answer in the same language.
             Defaults to None
-        additional_info: dict | None = None
-            Dictionary with additional information that can be used in the answer generation process. Defaults to None
+        additional_info: str | None = None
+            String with additional information that can be used in the answer generation process. Defaults to None
 
         Returns
         -------
@@ -53,5 +53,5 @@ class GraphState(TypedDict):
             raw_answer=raw_answer,
             processed_answer=processed_answer,
             question_language=question_language,
-            additional_info=additional_info or {},
+            additional_info=additional_info,
         )
