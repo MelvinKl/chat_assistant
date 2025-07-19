@@ -74,7 +74,7 @@ mcpServers:
         TRANSPORT: sse
   servers:
     - name: weather
-      url: "http://wether:8080/sse"
+      url: "http://weather:8080/sse"
       command: ""
       env: ""
       transport: "sse"
