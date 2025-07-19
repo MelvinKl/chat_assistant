@@ -17,6 +17,7 @@ from langdetect import detect
 from langgraph.graph import END, START, StateGraph
 
 from assistant.impl.graph.graph_state import GraphState
+from assistant.impl.settings.information_settings import InformationSettings
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +40,7 @@ class ChatGraph:
         question_rephraser="question_rephraser",
         answer_rephraser="answer_rephraser",
         mcp_agent="mcp_agent",
+        information_settings=InformationSettings,
     )
     def __init__(
         self,
@@ -46,7 +48,9 @@ class ChatGraph:
         question_rephraser: Runnable,
         answer_rephraser: Runnable,
         mcp_agent: RunnableSequence,
+        information_settings: InformationSettings,
     ):
+        self._information_settings = information_settings
         self._question_rephraser = question_rephraser
         self._answer_rephraser = answer_rephraser
         self._llm = llm
@@ -77,8 +81,15 @@ class ChatGraph:
         if not graph_input:
             return ""
 
+        try:
+            question = graph_input[-1][1]
+        except Exception as e:
+            logger.error(e)
+            return "No question has been found."
+        history = [f"{message[0]}: {message[1]}" for message in graph_input[0:-1]]
+
         state = GraphState.create(
-            history=graph_input,
+            history=history, question=question, additional_info=self._information_settings.information
         )
 
         logger.info("RECEIVED question: %s", state["question"])
@@ -123,25 +134,16 @@ class ChatGraph:
     # nodes #
     #########
     async def _determine_language_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
-        try:
-            question = state["history"][-1][1]
-        except Exception as e:
-            logger.error(e)
-            question = "There is no question here."
-        question_language = detect(question)
-        logger.info('Detected langauge for question "%s": %s', question, question_language)
+        question_language = detect(state["question"])
+        logger.info('Detected langauge for question "%s": %s', state["question"], question_language)
         return {"question_language": question_language}
 
     async def _rephrase_question_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
-        try:
-            question = state["history"][-1][1]
-        except Exception as e:
-            logger.error(e)
-            question = "There is no question here."
-        history = [f"{message[0]}: {message[1]}" for message in state["history"][0:-1]]
 
-        rephrased_question = await self._question_rephraser.ainvoke({"question": question, "history": history}, config)
-        logger.info('Rephrased question "%s" with history "%s" to %s', question, history, rephrased_question)
+        rephrased_question = await self._question_rephraser.ainvoke(state, config)
+        logger.info(
+            'Rephrased question "%s" with history "%s" to %s', state["question"], state["history"], rephrased_question
+        )
         return {"question": rephrased_question}
 
     async def _answer_rephraser_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:

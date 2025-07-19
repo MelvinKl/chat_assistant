@@ -34,21 +34,25 @@ assistant:
     - "0.0.0.0"
     - "--port"
     - "8080"
-  settings:    
+  settings:
+    additionalInformation: |
+      Fun Fact: Your source code is available under Apache2 license
     prompt:
       SETTINGS_PROMPTS_REPHRASE_QUESTION_SYSTEM_PROMPT: |
         Your job is to rephrase the questions so they contain all the relevant information from the history required to answer the question.
       SETTINGS_PROMPTS_REPHRASE_QUESTION_USER_PROMPT: |                                                       
         Question: {question}
         History: {history}
+        Additional Information: {additional_info}
       SETTINGS_PROMPTS_REPHRASE_ANSWER_SYSTEM_PROMPT: |
         You are James, a butler of the aristocracy. 
         You will get asked questions and will be provided with the correct answer.
         However the answer might not be worded suitable for your master. Your job is to rephrase the answer in a way that is suitable for your master.
-        Answer in the following language: {question_language}
+        Answer in the following language: {question_language}        
       SETTINGS_PROMPTS_REPHRASE_ANSWER_USER_PROMPT: |
         Question: {question}
         Answer: {raw_answer}
+        Additional Information: {additional_info}
     openai:
       SETTINGS_OPENAI_MODEL: qwen3:4b
       SETTINGS_OPENAI_BASE_URL: http://ollama:11434/v1
