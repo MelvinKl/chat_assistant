@@ -1,11 +1,8 @@
 """Module for the string enum class GraphNodeNames and the DefaultChatGraph class."""
 
-import io
 import logging
 from enum import StrEnum
 from pathlib import Path
-from time import time
-from tkinter import Image
 from typing import Any, Optional
 
 import inject
@@ -120,10 +117,9 @@ class ChatGraph:
         else:
             p = Path.cwd()
         p.mkdir(parents=True, exist_ok=True)
-        img_name = p / f"chat_graph.png"
+        img_name = p / "chat_graph.png"
         self._graph.get_graph().draw_mermaid_png(
-                    draw_method=MermaidDrawMethod.API,
-                    output_file_path=str(img_name.absolute())
+            draw_method=MermaidDrawMethod.API, output_file_path=str(img_name.absolute())
         )
 
     #########

@@ -8,14 +8,13 @@ Run with e.g.:
 """
 
 import pytest
-
 from langchain_core.messages import AIMessage
-from langchain_core.runnables import RunnableConfig
 from langchain_core.outputs import ChatGeneration, ChatResult
+from langchain_core.runnables import RunnableConfig
 
 from assistant.impl.rephraser.rephraser import Rephraser
-from ..fake_chat_model import FakeChatModel
 
+from ..fake_chat_model import FakeChatModel
 
 
 @pytest.fixture
@@ -42,7 +41,6 @@ def test_rephraser_initialisation():
     )
 
     assert r._llm is llm
-    expected_template = "SYS: {val}\nUSR: {question}"  # ChatPromptTemplate formats this in order
     actual_str = str(r._prompt_template.messages)
     assert "SYS: {val}" in actual_str
     assert "USR: {question}" in actual_str

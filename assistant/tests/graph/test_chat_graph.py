@@ -1,7 +1,6 @@
 # test_chat_graph.py
 """Unittests for chat_graph.py"""
 
-from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -106,10 +105,8 @@ class TestChatGraph:
             fake_gs.create = MagicMock()
             chat_graph._graph.ainvoke.return_value = {"processed_answer": "ok"}
             await chat_graph.ainvoke([("user", "q")])
-            fake_gs.create.assert_called_once_with(
-                history=[], question="q", additional_info="extra context"
-            )
-            
+            fake_gs.create.assert_called_once_with(history=[], question="q", additional_info="extra context")
+
     # ------------------------------------------------------------------ #
     # Node level unit tests                                              #
     # ------------------------------------------------------------------ #
@@ -130,21 +127,15 @@ class TestChatGraph:
     @pytest.mark.asyncio
     async def test_answer_rephraser_node(self, chat_graph, fake_answer_rephraser):
         fake_answer_rephraser.ainvoke.return_value = "Refined answer"
-        result = await chat_graph._answer_rephraser_node(
-            {"question": "q", "raw_answer": "answer"}
-        )
+        result = await chat_graph._answer_rephraser_node({"question": "q", "raw_answer": "answer"})
         assert result == {"processed_answer": "Refined answer"}
 
     @pytest.mark.asyncio
     async def test_decide_node(self, chat_graph, fake_mcp_agent):
         fake_mcp_agent.ainvoke.return_value = {"messages": [MagicMock(content="42")]}
-        result = await chat_graph._decide_node(
-            {"question": "meaning of life"}
-        )
+        result = await chat_graph._decide_node({"question": "meaning of life"})
         assert result == {"raw_answer": "42"}
-        fake_mcp_agent.ainvoke.assert_awaited_once_with(
-            {"messages": "meaning of life"}, None
-        )
+        fake_mcp_agent.ainvoke.assert_awaited_once_with({"messages": "meaning of life"}, None)
 
     # ------------------------------------------------------------------ #
     # Graph wiring                                                       #
@@ -162,4 +153,3 @@ class TestChatGraph:
             sg_mock.add_node.assert_any_call(GraphNodeNames.DECIDE, chat_graph._decide_node)
             sg_mock.add_node.assert_any_call(GraphNodeNames.REPHRASE_ANSWER, chat_graph._answer_rephraser_node)
             assert sg_mock.add_node.call_count == 4
-

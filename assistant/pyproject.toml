@@ -35,6 +35,7 @@ per-file-ignores = """
   ./src/assistant/impl/settings/prompt_settings.py: E501,W293
   ./src/assistant/apis/models_api.py: B008
   ./src/assistant/apis/chat_api.py: B008
+  ./tests/*: S101,I252
 """
 
 [tool.isort]
