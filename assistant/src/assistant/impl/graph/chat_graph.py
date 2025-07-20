@@ -79,7 +79,7 @@ class ChatGraph:
             The generated answer.
         """
         if not graph_input:
-            return ""
+            return "No question has been found."
 
         try:
             question = graph_input[-1][1]
@@ -115,20 +115,16 @@ class ChatGraph:
         -------
         None
         """
-        img = Image.open(
-            io.BytesIO(
-                self._graph.get_graph().draw_mermaid_png(
-                    draw_method=MermaidDrawMethod.API,
-                )
-            )
-        )
         if relative_dir_path:
             p = Path.cwd() / relative_dir_path
         else:
             p = Path.cwd()
-
         p.mkdir(parents=True, exist_ok=True)
-        img.save(p / f"graph_{str(time()).replace('.', '_')}.png")
+        img_name = p / f"chat_graph.png"
+        self._graph.get_graph().draw_mermaid_png(
+                    draw_method=MermaidDrawMethod.API,
+                    output_file_path=str(img_name.absolute())
+        )
 
     #########
     # nodes #
