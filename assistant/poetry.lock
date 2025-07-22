@@ -1547,14 +1547,14 @@ six = "*"
 
 [[package]]
 name = "langgraph"
-version = "0.5.3"
+version = "0.5.4"
 description = "Building stateful, multi-actor applications with LLMs"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "langgraph-0.5.3-py3-none-any.whl", hash = "sha256:9819b88a6ef6134a0fa6d6121a81b202dc3d17b25cf7ea3fe4d7669b9b252b5d"},
-    {file = "langgraph-0.5.3.tar.gz", hash = "sha256:36d4b67f984ff2649d447826fc99b1a2af3e97599a590058f20750048e4f548f"},
+    {file = "langgraph-0.5.4-py3-none-any.whl", hash = "sha256:7122840225623e081be24ac30a691a24e5dac4c0361f593208f912838192d7f6"},
+    {file = "langgraph-0.5.4.tar.gz", hash = "sha256:ab8f6b7b9c50fd2ae35a2efb072fbbfe79500dfc18071ac4ba6f5de5fa181931"},
 ]
 
 [package.dependencies]
