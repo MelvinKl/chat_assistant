@@ -15,7 +15,9 @@ from assistant.models.chat_completion_usage import ChatCompletionUsage
 class ChatApi(BaseChatApi):
     """Implementation of OpenAI compatible chat API for chat assistant."""
 
-    @inject.autoparams("chat_graph")
+    @inject.params(
+        chat_graph=ChatGraph,
+    )
     async def chat_completions(
         self,
         chat_completion_request: ChatCompletionRequest,

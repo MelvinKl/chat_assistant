@@ -7,5 +7,6 @@ class OpenAISetttings(BaseSettings):
         env_prefix = "SETTINGS_OPENAI_"
 
     api_key: str = Field()
-    model: str = Field("Meta-Llama-3.1-8B-Instruct")
-    base_url: str = Field("https://api.arliai.com/v1")
+    embedder: str = Field()
+    model: str = Field()
+    base_url: str = Field()

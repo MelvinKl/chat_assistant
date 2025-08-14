@@ -35,3 +35,4 @@ k8s_yaml(helm('infrastructure/helm', name='assistant', values='infrastructure/he
 
 k8s_resource('assistant', port_forwards=[port_forward(8080,8080, link_path="/docs"),'5679:5679'])
 
+k8s_resource('assistant-qdrant', port_forwards=[ port_forward( 6333, container_port=6333, name="Dashboard", link_path="/dashboard", ), ])

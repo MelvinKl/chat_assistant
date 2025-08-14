@@ -13,3 +13,12 @@ data:
 {{ .Values.assistant.settings.prompt.SETTINGS_PROMPTS_REPHRASE_ANSWER_SYSTEM_PROMPT |indent 6 }}
   SETTINGS_PROMPTS_REPHRASE_ANSWER_USER_PROMPT: |
 {{ .Values.assistant.settings.prompt.SETTINGS_PROMPTS_REPHRASE_ANSWER_USER_PROMPT |indent 6 }}
+  SETTINGS_DYNAMIC_KNOWLEDGE_ENABLED: {{ .Values.assistant.settings.dynamic_knowledge.enabled |quote }}
+  SETTINGS_DYNAMIC_KNOWLEDGE_COLLECTION_NAME: {{ .Values.assistant.settings.dynamic_knowledge.collection_name }}
+  SETTINGS_DYNAMIC_KNOWLEDGE_DB_HOST: {{ .Values.assistant.settings.dynamic_knowledge.db_host }}
+  SETTINGS_DYNAMIC_KNOWLEDGE_MAX_ITEMS: {{ .Values.assistant.settings.dynamic_knowledge.max_items |quote  }}
+  SETTINGS_DYNAMIC_KNOWLEDGE_SCORE_THRESHOLD: {{ .Values.assistant.settings.dynamic_knowledge.score_threshold |quote  }}
+  SETTINGS_DYNAMIC_KNOWLEDGE_SYSTEM_PROMPT: |
+{{ .Values.assistant.settings.dynamic_knowledge.system_prompt |indent 6 }}
+  SETTINGS_DYNAMIC_KNOWLEDGE_USER_PROMPT: |
+{{ .Values.assistant.settings.dynamic_knowledge.user_prompt |indent 6 }}

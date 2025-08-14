@@ -1,3 +1,6 @@
+features:
+  qdrant: true
+
 ghcrIo:
   username: 
   pat:
@@ -55,9 +58,34 @@ assistant:
         Additional Information: {additional_info}
     openai:
       SETTINGS_OPENAI_MODEL: qwen3:4b
+      SETTINGS_OPENAI_EMBEDDER: nomic-embed-text
       SETTINGS_OPENAI_BASE_URL: http://ollama:11434/v1
       SETTINGS_OPENAI_API_KEY: "changeme"
+    dynamic_knowledge:
+      enabled: true
+      collection_name: assistent
+      db_host: http://assistant-qdrant:6333
+      max_items: 25
+      score_threshold: 0.25
+      system_prompt: |
+        You are an information inspector.
+        Your job is to inspect the given conversation and the retrieved knowledge for this conversation for:
+          1. Correctnes - Is any of the retrieved knowledge incorrect, given the conversation?
+          2. Missing important information - Is any information that is important missing retrieved knowledge, but present in the conversation?
+          3. Give each information piece an expiration date - If the information is not expected to change any time soon (e.g. place of residency) do not give it an expiration date (None).
+        You correct incorrect information, delete outdated or wrong information and add new information if it is missing.
+        Keep your answer as short as possible. If knowledge is found in the retrieved knowledge, but not in the conversation ignore it. 
+        Keep each knowledge piece as short as possible. It should only contain one type of information. Here are some examples:
+        
+          Owner: Max Mustermann
 
+
+          Place of residency: Musterstadt, latitude:49.0148,longitude:8.4
+
+
+      user_prompt: |
+        Converstation: {conversation}
+        Retrieved Knowledge: {retrieved_knowledge}
 
 mcpServers: 
   deployments:
@@ -99,6 +127,7 @@ ollama:
     models:
       pull:
         - qwen3:4b
+        - nomic-embed-text
   #  #  - llama3.2:1b
   #    - llama3.2:3b
   runtimeClassName: 

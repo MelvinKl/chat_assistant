@@ -11,7 +11,7 @@ class GraphState(TypedDict):
     raw_answer: str | None
     processed_answer: str | None
     question_language: str | None
-    additional_info: dict
+    additional_info: str
 
     @classmethod
     def create(
