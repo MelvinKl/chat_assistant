@@ -7,6 +7,6 @@ keywords:
   - assistant
 dependencies:
   - name: ollama
-    version: 1.26.0
+    version: 1.27.0
     repository: "https://otwld.github.io/ollama-helm/"
     condition: ollama.enabled
