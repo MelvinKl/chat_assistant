@@ -1524,18 +1524,18 @@ typing-extensions = ">=4.7"
 
 [[package]]
 name = "langchain-mcp-adapters"
-version = "0.1.10"
+version = "0.1.11"
 description = "Make Anthropic Model Context Protocol (MCP) tools compatible with LangChain and LangGraph agents."
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "langchain_mcp_adapters-0.1.10-py3-none-any.whl", hash = "sha256:ed15229d46e816d8b5686f9d645af9d5aa5bb2895ea49a23b1a65f3e4225a992"},
-    {file = "langchain_mcp_adapters-0.1.10.tar.gz", hash = "sha256:ef963bb64526b156de75fb48bb2f921e4f571f9d996185afcacc1d2f5c72fd8d"},
+    {file = "langchain_mcp_adapters-0.1.11-py3-none-any.whl", hash = "sha256:7b35921e9487bcb3ea3d94bf10341316ac897e2997e8a16032ae514834a9685d"},
+    {file = "langchain_mcp_adapters-0.1.11.tar.gz", hash = "sha256:a217c49086b162344749f7f99a148fc12482e2da8e0260b2e35fc93afb31b38d"},
 ]
 
 [package.dependencies]
-langchain-core = ">=0.3.36,<0.4"
+langchain-core = ">=0.3.36,<2"
 mcp = ">=1.9.2"
 typing-extensions = ">=4.14.0"
 
