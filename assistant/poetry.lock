@@ -1588,19 +1588,19 @@ six = "*"
 
 [[package]]
 name = "langgraph"
-version = "0.6.7"
+version = "0.6.11"
 description = "Building stateful, multi-actor applications with LLMs"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "langgraph-0.6.7-py3-none-any.whl", hash = "sha256:c724dd8c24806b70faf4903e8e20c0234f8c0a356e0e96a88035cbecca9df2cf"},
-    {file = "langgraph-0.6.7.tar.gz", hash = "sha256:ba7fd17b8220142d6a4269b6038f2b3dcbcef42cd5ecf4a4c8d9b60b010830a6"},
+    {file = "langgraph-0.6.11-py3-none-any.whl", hash = "sha256:49268de69d85b7db3da9e2ca582a474516421c1c44be5cff390416cfa6967faa"},
+    {file = "langgraph-0.6.11.tar.gz", hash = "sha256:cd5373d0a59701ab39c9f8af33a33c5704553de815318387fa7f240511e0efd7"},
 ]
 
 [package.dependencies]
 langchain-core = ">=0.1"
-langgraph-checkpoint = ">=2.1.0,<3.0.0"
+langgraph-checkpoint = ">=2.1.0,<4.0.0"
 langgraph-prebuilt = ">=0.6.0,<0.7.0"
 langgraph-sdk = ">=0.2.2,<0.3.0"
 pydantic = ">=2.7.4"
