@@ -52,7 +52,7 @@ description = ""
 authors = ["Melvin Klein"]
 
 [tool.poetry.dependencies]
-python = ">=3.13,<3.14"
+python = ">=3.14,<3.15"
 pydantic-settings = "^2.4.0"
 langchain-openai = "^0.3.0"
 langchain-community = "^0.3.4"
