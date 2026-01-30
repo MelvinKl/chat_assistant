@@ -185,18 +185,6 @@ test = ["anyio[trio]", "coverage[toml] (>=7)", "exceptiongroup (>=1.2.0)", "hypo
 trio = ["trio (>=0.26.1)"]
 
 [[package]]
-name = "astor"
-version = "0.8.1"
-description = "Read/rewrite/write Python ASTs"
-optional = false
-python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,>=2.7"
-groups = ["dev"]
-files = [
-    {file = "astor-0.8.1-py2.py3-none-any.whl", hash = "sha256:070a54e890cefb5b3739d19f30f5a5ec840ffc9c50ffa7d23cc9fc1a38ebbfc5"},
-    {file = "astor-0.8.1.tar.gz", hash = "sha256:6a6effda93f4e1ce9f618779b2dd1d9d84f1e32812c23a29b3fff6fd7f63fa5e"},
-]
-
-[[package]]
 name = "astpretty"
 version = "3.0.0"
 description = "Pretty print the output of python stdlib `ast.parse`."
@@ -1022,18 +1010,17 @@ flake8-plugin-utils = ">=1.0,<2.0"
 
 [[package]]
 name = "flake8-simplify"
-version = "0.22.0"
+version = "0.30.0"
 description = "flake8 plugin which checks for code that can be simplified"
 optional = false
-python-versions = ">=3.6.1"
+python-versions = ">=3.9.0"
 groups = ["dev"]
 files = [
-    {file = "flake8_simplify-0.22.0-py3-none-any.whl", hash = "sha256:812c65bf49d7857093750df71fc9c4a925fc192bfca14ecf04570e224f17581f"},
-    {file = "flake8_simplify-0.22.0.tar.gz", hash = "sha256:526421594d5815cf786a637c2a705223956f7e34872b6bb9f66c5ce3e28caaf9"},
+    {file = "flake8_simplify-0.30.0-py3-none-any.whl", hash = "sha256:c9f54a50d24780832a3f2bb7a687ef465b91f10d7cb4ea0845dff4b65d9c91f4"},
+    {file = "flake8_simplify-0.30.0.tar.gz", hash = "sha256:61bff74fab73884e1ec12e472d67e7e789043028ff858e5f9af389d392d65b82"},
 ]
 
 [package.dependencies]
-astor = ">=0.1"
 flake8 = ">=3.7"
 
 [[package]]
@@ -3775,4 +3762,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13,<3.14"
-content-hash = "c72a30628efc575a313b5a3aa65ffc35e29bf07147b8f3c7778e362f7cfe960a"
+content-hash = "1bf9c599ce3f75fdfe82fceffbce85b943a28da6d965cb614e9bf48de988ac25"
