@@ -55,7 +55,7 @@ authors = ["Melvin Klein"]
 python = ">=3.13,<3.14"
 pydantic-settings = "^2.4.0"
 langchain-openai = "^0.3.0"
-langchain-community = "^0.3.4"
+langchain-community = "^0.4.0"
 pydantic = "^2.9.0"
 inject = "^5.2.1"
 uvicorn = "^0.38.0"
