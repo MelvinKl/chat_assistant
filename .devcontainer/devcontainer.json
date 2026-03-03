@@ -10,6 +10,7 @@
       "extensions": [
         "ms-python.python",
         "Tim-Koehler.helm-intellisense",
+<<<<<<< HEAD
         "k--kato.intellij-idea-keybindings",
         "vscode-icons-team.vscode-icons",
         "EditorConfig.EditorConfig",
@@ -17,6 +18,9 @@
         "ms-vscode.makefile-tools",
         "tilt-dev.Tiltfile",
         "DhananjaySenday.mcp--inspector"
+=======
+        "ms-vscode.makefile-tools"
+>>>>>>> feature/assistant
       ]
     }
   },

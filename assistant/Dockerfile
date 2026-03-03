@@ -32,4 +32,6 @@ WORKDIR /app/assistant
 
 COPY assistant .
 
-CMD [ "poetry", "run", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8080" ]
+ENV PYTHONPATH=/app/assistant/src
+
+CMD [ "poetry", "run", "uvicorn", "assistant.main:app", "--host", "0.0.0.0", "--port", "8080" ]

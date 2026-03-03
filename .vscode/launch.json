@@ -19,6 +19,26 @@
                     "remoteRoot": "/app/assistant"
                 }
             ]
+        },
+        {
+            "name": "assistant",
+            "type": "debugpy",
+            "request": "attach",
+            "justMyCode": false,
+            "connect": {
+                "host": "localhost",
+                "port": 5679
+            },
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}/assistant",
+                    "remoteRoot": "/app/assistant"
+                },
+                {
+                    "localRoot": "${workspaceFolder}/components/base-library",
+                    "remoteRoot": "/app//base-library"
+                }
+            ]
         }
     ]
 }
