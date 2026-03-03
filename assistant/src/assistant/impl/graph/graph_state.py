@@ -1,27 +1,27 @@
 """Module for the GraphState class."""
 
-from typing_extensions import TypedDict
+from typing_extensions import TypedDict, Optional
 
 
 class GraphState(TypedDict):
     """Dict for holding the current state of the ChatGraph."""
 
-    question: str | None
+    question: Optional[str]
     history: list[str]
-    raw_answer: str | None
-    processed_answer: str | None
-    question_language: str | None
+    raw_answer: Optional[str]
+    processed_answer: Optional[str]
+    question_language: Optional[str]
     additional_info: dict
 
     @classmethod
     def create(
         cls,
         history: list[str],
-        question: str | None = None,
-        raw_answer: str | None = None,
-        processed_answer: str | None = None,
-        question_language: str | None = None,
-        additional_info: str | None = None,
+        question: Optional[str] = None,
+        raw_answer: Optional[str] = None,
+        processed_answer: Optional[str] = None,
+        question_language: Optional[str] = None,
+        additional_info: Optional[str] = None,
     ) -> "GraphState":
         """
         Create an instance of the GraphState
