@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: home-assistant-component
+  labels:
+    app: home-assistant-component
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: home-assistant-component
+  template:
+    metadata:
+      labels:
+        app: home-assistant-component
+    spec:
+      imagePullSecrets:
+      - name: "pull-secret"
+      containers:
+      - name: home-assistant-component
+        imagePullPolicy: Always
+        envFrom:
+          - configMapRef:
+              name: home-assistant-component-llm
+          - configMapRef:
+              name: home-assistant-component-ollama
+          - configMapRef:
+              name: home-assistant-component-api
+          - configMapRef:
+              name: home-assistant-component-home-assistant
+          - secretRef:
+              name: home-assistant-component-home-assistant
+        image: ghcr.io/melvinkl/chat_assistant/home-assistant-component:latest
+        ports:
+        - containerPort: 8080
+        command: 
+          - "poetry"
+          - "run"
+        args:
+          {{- if .Values.components.homeAssistantComponent.debug }}
+          {{- range $arg :=  .Values.components.homeAssistantComponent.debugArgs }}
+          - {{ $arg | quote -}}
+          {{ end }}
+          {{- else }}
+          {{- range $arg :=  .Values.components.homeAssistantComponent.args }}
+          - {{ $arg | quote -}}
+          {{ end }}
+          {{- end }}
