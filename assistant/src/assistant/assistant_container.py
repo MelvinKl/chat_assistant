@@ -1,24 +1,37 @@
+# coding: utf-8
 import asyncio
 import logging
+import os
 
 import inject
 import nest_asyncio
 from inject import Binder
 from langchain_core.language_models.chat_models import BaseChatModel
+from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.tools import BaseTool
 from langchain_mcp_adapters.client import MultiServerMCPClient
-from langchain_openai import ChatOpenAI
+from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langgraph.prebuilt import create_react_agent
+from qdrant_client import QdrantClient
 
+from assistant.impl.component_handler import ComponentHandler
+from assistant.impl.dynamic_knowledge.dummy_knowledge_db import DummyKnowledgeDB
+from assistant.impl.dynamic_knowledge.qdrant_knowledge_db import QdrantKnowledgeDB
 from assistant.impl.graph.chat_graph import ChatGraph
 from assistant.impl.rephraser.rephraser import Rephraser
+from assistant.impl.settings.component_settings import ComponentSetttings
+from assistant.impl.settings.dynamic_knowledge_settings import DynamicKnowledgeSettings
 from assistant.impl.settings.information_settings import InformationSettings
+from assistant.impl.settings.llm_settings import LLMSetttings
 from assistant.impl.settings.mcp_server_settings import (
     MCPSettings,
     load_mcp_settings_from_json,
 )
+from assistant.impl.settings.ollama_settings import OllamaSettings
 from assistant.impl.settings.openai_settings import OpenAISetttings
 from assistant.impl.settings.prompt_settings import PromptSettings
+from assistant.interfaces.knowledge_db import KnowledgeDB
 
 # Apply the patch to allow nested event loops
 nest_asyncio.apply()
@@ -53,17 +66,54 @@ def _get_mcp_tools(settings_mcp: MCPSettings) -> list[BaseTool]:
     return tools
 
 
-def _di_config(binder: Binder):
+def _init_dynamic_knowledge(binder: Binder, settings_openai: OpenAISetttings) -> None:
+    settings_dynamic_knowledge = DynamicKnowledgeSettings()
+
+    binder.bind("dynamic_knowledge_enabled", settings_dynamic_knowledge.enabled)
+
+    if not settings_dynamic_knowledge.enabled:
+        binder.bind_to_constructor(KnowledgeDB, DummyKnowledgeDB)
+        return
+
+    binder.bind(
+        "dynamic_knowledge_prompt_template",
+        ChatPromptTemplate.from_messages(
+            [
+                ("system", settings_dynamic_knowledge.system_prompt),
+                ("user", settings_dynamic_knowledge.user_prompt),
+            ]
+        ),
+    )
+    embedder = OpenAIEmbeddings(
+        model=settings_openai.embedder,
+        openai_api_base=settings_openai.base_url,
+        openai_api_key=settings_openai.api_key,
+    )
+    binder.bind(OpenAIEmbeddings, embedder)
+    binder.bind_to_constructor(KnowledgeDB, QdrantKnowledgeDB)
+    binder.bind(QdrantClient, QdrantClient(location=settings_dynamic_knowledge.db_host))
+
+
+def _di_config(binder: Binder) -> None:
+    settings_llm = LLMSetttings()
     settings_openai = OpenAISetttings()
     settings_prompt = PromptSettings()
     settings_information = InformationSettings()
-    settings_mcp = load_mcp_settings_from_json()
 
-    llm = ChatOpenAI(
-        model=settings_openai.model,
-        base_url=settings_openai.base_url,
-        api_key=settings_openai.api_key,
-    )
+    settings_mcp = load_mcp_settings_from_json()
+    settings_components = ComponentSetttings()
+    _init_dynamic_knowledge(binder, settings_openai)
+
+    if settings_llm.provider == "ollama":
+        settings_ollama = OllamaSettings()
+        llm = ChatOllama(model=settings_ollama.model, base_url=settings_ollama.url)
+    else:
+        llm = ChatOpenAI(
+            model=settings_openai.model,
+            base_url=settings_openai.base_url,
+            api_key=settings_openai.api_key,
+        )
+
     tools = _get_mcp_tools(settings_mcp)
     mcp_agent = create_react_agent(llm, tools)
 
@@ -86,7 +136,9 @@ def _di_config(binder: Binder):
     binder.bind(BaseChatModel, llm)
     binder.bind(MCPSettings, load_mcp_settings_from_json())
     binder.bind(InformationSettings, settings_information)
+    binder.bind(ComponentSetttings, settings_components)
     binder.bind_to_constructor(ChatGraph, ChatGraph)
+    binder.bind_to_constructor(ComponentHandler, ComponentHandler)
     binder.bind("mcp_agent", mcp_agent)
 
 
