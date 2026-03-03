@@ -21,8 +21,24 @@
 #docs/*.md
 # Then explicitly reverse the ignore rule for a single file:
 #!docs/README.md
+<<<<<<< HEAD
+<<<<<<<< HEAD:assistant/src/.openapi-generator-ignore
 src/assistant/apis/*
 !src/assistant/apis/chat_api.py
 !src/assistant/apis/chat_api_base.py
 !src/assistant/apis/models_api.py
 !src/assistant/apis/models_api_base.py
+========
+docker-compose.yaml
+requirements.txt
+main.py
+pyproject.toml
+Dockerfile
+setup.cfg
+.flake8
+.gitignore
+README.md
+**/main.py
+>>>>>>>> feature/assistant:components/base-component-api/.openapi-generator-ignore
+=======
+>>>>>>> feature/assistant

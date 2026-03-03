@@ -19,6 +19,8 @@ from assistant.impl.settings.mcp_server_settings import (
 )
 from assistant.impl.settings.openai_settings import OpenAISetttings
 from assistant.impl.settings.prompt_settings import PromptSettings
+from assistant.impl.settings.component_settings import ComponentSetttings
+from assistant.impl.component_handler import ComponentHandler
 
 # Apply the patch to allow nested event loops
 nest_asyncio.apply()
@@ -58,6 +60,7 @@ def _di_config(binder: Binder):
     settings_prompt = PromptSettings()
     settings_information = InformationSettings()
     settings_mcp = load_mcp_settings_from_json()
+    settings_components = ComponentSetttings()
 
     llm = ChatOpenAI(
         model=settings_openai.model,
@@ -86,7 +89,9 @@ def _di_config(binder: Binder):
     binder.bind(BaseChatModel, llm)
     binder.bind(MCPSettings, load_mcp_settings_from_json())
     binder.bind(InformationSettings, settings_information)
+    binder.bind(ComponentSetttings, settings_components)
     binder.bind_to_constructor(ChatGraph, ChatGraph)
+    binder.bind_to_constructor(ComponentHandler, ComponentHandler)
     binder.bind("mcp_agent", mcp_agent)
 
 

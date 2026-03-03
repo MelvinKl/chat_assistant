@@ -34,4 +34,3 @@ if os.environ.get("SETTINGS_OPENAI_MODEL", None):
 k8s_yaml(helm('infrastructure/helm', name='assistant', values='infrastructure/helm/values.yaml',set=values))
 
 k8s_resource('assistant', port_forwards=[port_forward(8080,8080, link_path="/docs"),'5679:5679'])
-
