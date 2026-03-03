@@ -6,5 +6,5 @@ class APISetttings(BaseSettings):
     class Config:
         env_prefix = "SETTINGS_API_"
 
-    name: str = Field()
-    description: str = Field()
+    name: str = Field(default="api_name")
+    description: str = Field(default="api_description")

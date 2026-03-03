@@ -22,8 +22,11 @@ class MCPSettings(BaseSettings):
 
 
 def load_mcp_settings_from_json(json_file_path="/config/mcp/SETTINGS_MCP_SERVERS") -> MCPSettings:
-    with open(json_file_path, "r") as f:
-        data = json.load(f)
+    try:
+        with open(json_file_path, "r") as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        return MCPSettings(servers=[])
 
-    cleaned_data = {"servers": data["servers"]} if "servers" in data else {}
+    cleaned_data = {"servers": data["servers"]} if "servers" in data else {"servers": []}
     return MCPSettings(**cleaned_data)
