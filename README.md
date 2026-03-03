@@ -5,23 +5,18 @@ Chat Assistant is a locally deployable, privacy-focused virtual assistant powere
 Key Features:
 
 - Local Deployment:
-
     Run the application entirely on your local machine or server, ensuring complete control over your data and environment.
 
 - No Internet Required:
-
     Operates offline, making it ideal for secure environments or areas with limited connectivity.
 
 - LLM-Powered Intelligence:
-
     Leverages a Large Language Model to provide natural language understanding and context-aware responses.
 
 - Extensible via MCP:
-
     Add new skills and capabilities using the Model Context Protocol (MCP), enabling tailored functionality to meet specific needs.
 
 - Privacy-Focused:
-
     The LLM can be hosted locally, ensuring that no data ever leaves the local network.
 
 
@@ -101,3 +96,33 @@ Ollama can be used as a local LLM provider. For a full overview of available con
 |Key|Default value|Explanation|
 |---|---|---|
 |`ollama.enabled`|`true`|Enables or disables the Ollama deployment|
+
+## Directory Structure
+The repository is organized as follows:
+
+### `assistant`
+* The chat assistant API and its endpoints. This includes an OpenAI compatible chat completion endpoint and a modular assistant endpoint.
+
+### `components`
+* Directory containing additional components for extending the chat assistant.
+* `home-assistant`: Component for integrating with Home Assistant.
+
+### `infrastructure/helm`
+* Contains the Helm chart for deploying the chat assistant to a Kubernetes cluster.
+
+### `infrastructure/local/create_local_env.sh`
+* Setup script for creating a local k3d cluster for development purposes.
+
+### `.vscode` and `.devcontainer`
+* Contain configuration files for debugging with Visual Studio Code and developing in a devcontainer, respectively.
+
+## Getting Started
+To get started with the chat assistant, follow these steps:
+
+1. Create a new Kubernetes cluster using `infrastructure/local/create_local_env.sh`.
+2. Create a `.env` file in the root of the repository with required secrets, such as `SETTINGS_HOMEASSISTANT_APIKEY`.
+3. Use `Tiltfile` to start the chat assistant application.
+4. When using `Tiltfile`, the APIs will wait for the debugger to connect.
+
+## Development
+This repository provides a `Tiltfile` for local development. It supports live-reloading for the assistant component and easy debugging.

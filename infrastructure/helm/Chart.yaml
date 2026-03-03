@@ -7,6 +7,10 @@ keywords:
   - assistant
 dependencies:
   - name: ollama
-    version: 1.46.0
+    version: 1.47.0
     repository: "https://otwld.github.io/ollama-helm/"
     condition: ollama.enabled
+  - name: qdrant
+    version: 1.15.2
+    repository: "https://qdrant.github.io/qdrant-helm"
+    condition: features.qdrant

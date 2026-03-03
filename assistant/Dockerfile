@@ -1,4 +1,4 @@
-FROM python:3.13 AS build
+FROM python:3.14 AS build
 
 ENV POETRY_VIRTUALENVS_PATH=/app/assistant/.venv
 ARG DEV 0
@@ -17,7 +17,7 @@ RUN poetry config virtualenvs.create false
 RUN if [ "$DEV" = 1 ] ; then poetry install --with dev; else poetry install ; fi
 
 
-FROM python:3.13 
+FROM python:3.14 
 
 
 ENV POETRY_VIRTUALENVS_PATH=/app/assistant/.venv
@@ -32,4 +32,6 @@ WORKDIR /app/assistant
 
 COPY assistant .
 
-CMD [ "poetry", "run", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8080" ]
+ENV PYTHONPATH=/app/assistant/src
+
+CMD [ "poetry", "run", "uvicorn", "assistant.main:app", "--host", "0.0.0.0", "--port", "8080" ]
