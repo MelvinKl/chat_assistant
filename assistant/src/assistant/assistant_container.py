@@ -1,5 +1,7 @@
+# coding: utf-8
 import asyncio
 import logging
+import os
 
 import inject
 import nest_asyncio
@@ -8,6 +10,7 @@ from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.tools import BaseTool
 from langchain_mcp_adapters.client import MultiServerMCPClient
+from langchain_ollama import ChatOllama
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langgraph.prebuilt import create_react_agent
 from qdrant_client import QdrantClient
@@ -20,10 +23,12 @@ from assistant.impl.rephraser.rephraser import Rephraser
 from assistant.impl.settings.component_settings import ComponentSetttings
 from assistant.impl.settings.dynamic_knowledge_settings import DynamicKnowledgeSettings
 from assistant.impl.settings.information_settings import InformationSettings
+from assistant.impl.settings.llm_settings import LLMSetttings
 from assistant.impl.settings.mcp_server_settings import (
     MCPSettings,
     load_mcp_settings_from_json,
 )
+from assistant.impl.settings.ollama_settings import OllamaSettings
 from assistant.impl.settings.openai_settings import OpenAISetttings
 from assistant.impl.settings.prompt_settings import PromptSettings
 from assistant.interfaces.knowledge_db import KnowledgeDB
@@ -51,18 +56,13 @@ def _get_mcp_tools(settings_mcp: MCPSettings) -> list[BaseTool]:
                 "transport": server_definition.transport,
             }
             if server_definition.headers:
-                server_dict[server_definition.name]["headers"] = (
-                    server_definition.headers
-                )
+                server_dict[server_definition.name]["headers"] = server_definition.headers
         mcp_client = MultiServerMCPClient(server_dict)
         try:
             server_tools = asyncio.run(mcp_client.get_tools())
             tools += server_tools
         except Exception as e:
-            logger.error(
-                "Could not load MCP Tools from server %s\t%s "
-                % (server_definition.name, e)
-            )
+            logger.error("Could not load MCP Tools from server %s\t%s " % (server_definition.name, e))
     return tools
 
 
@@ -95,6 +95,7 @@ def _init_dynamic_knowledge(binder: Binder, settings_openai: OpenAISetttings) ->
 
 
 def _di_config(binder: Binder) -> None:
+    settings_llm = LLMSetttings()
     settings_openai = OpenAISetttings()
     settings_prompt = PromptSettings()
     settings_information = InformationSettings()
@@ -103,11 +104,16 @@ def _di_config(binder: Binder) -> None:
     settings_components = ComponentSetttings()
     _init_dynamic_knowledge(binder, settings_openai)
 
-    llm = ChatOpenAI(
-        model=settings_openai.model,
-        base_url=settings_openai.base_url,
-        api_key=settings_openai.api_key,
-    )
+    if settings_llm.provider == "ollama":
+        settings_ollama = OllamaSettings()
+        llm = ChatOllama(model=settings_ollama.model, base_url=settings_ollama.url)
+    else:
+        llm = ChatOpenAI(
+            model=settings_openai.model,
+            base_url=settings_openai.base_url,
+            api_key=settings_openai.api_key,
+        )
+
     tools = _get_mcp_tools(settings_mcp)
     mcp_agent = create_react_agent(llm, tools)
 
