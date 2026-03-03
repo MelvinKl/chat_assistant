@@ -52,10 +52,10 @@ description = ""
 authors = ["Melvin Klein"]
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.14"
+python = ">=3.10,<3.14"
 pydantic-settings = "^2.4.0"
-langchain-openai = "^1.0.0"
-langchain-community = "^0.4.0"
+langchain-openai = "^0.3.0"
+langchain-community = "^0.3.4"
 pydantic = "^2.9.0"
 inject = "^5.2.1"
 uvicorn = "^0.38.0"
@@ -100,3 +100,4 @@ pytest-asyncio = "^1.1.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
