@@ -8,10 +8,10 @@ class GraphState(TypedDict):
 
     question: Optional[str]
     history: list[str]
-    raw_answer: Optional[str]
-    processed_answer: Optional[str]
-    question_language: Optional[str]
-    additional_info: dict
+    raw_answer: str | None
+    processed_answer: str | None
+    question_language: str | None
+    additional_info: str
 
     @classmethod
     def create(
