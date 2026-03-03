@@ -17,7 +17,6 @@ from __future__ import annotations
 import json
 import pprint
 import re  # noqa: F401
-<<<<<<< HEAD:assistant/src/assistant/models/delete_model_response.py
 from typing import Any, ClassVar, Dict, List
 
 from pydantic import BaseModel, ConfigDict, StrictBool, StrictStr
@@ -32,35 +31,18 @@ class DeleteModelResponse(BaseModel):
     """
     DeleteModelResponse
     """  # noqa: E501
-=======
-from typing import Any, ClassVar, Dict, List, Optional, Set
-
-from pydantic import BaseModel, ConfigDict, Field, StrictStr
-from typing_extensions import Self
-
-
-class KeyValue(BaseModel):
-    """ """  # noqa: E501
-
-    name: StrictStr = Field(alias="Name")
-    value: StrictStr = Field(alias="Value")
-    __properties: ClassVar[List[str]] = ["Name", "Value"]
->>>>>>> feature/assistant:assistant/src/assistant/component_api/models/key_value.py
 
     id: StrictStr
     deleted: StrictBool
     object: StrictStr
     __properties: ClassVar[List[str]] = ["id", "deleted", "object"]
 
-<<<<<<< HEAD:assistant/src/assistant/models/delete_model_response.py
     model_config = {
         "populate_by_name": True,
         "validate_assignment": True,
         "protected_namespaces": (),
     }
 
-=======
->>>>>>> feature/assistant:assistant/src/assistant/component_api/models/key_value.py
     def to_str(self) -> str:
         """Returns the string representation of the model using alias"""
         return pprint.pformat(self.model_dump(by_alias=True))
@@ -85,11 +67,6 @@ class KeyValue(BaseModel):
           were set at model initialization. Other fields with value `None`
           are ignored.
         """
-<<<<<<< HEAD:assistant/src/assistant/models/delete_model_response.py
-=======
-        excluded_fields: Set[str] = set([])
-
->>>>>>> feature/assistant:assistant/src/assistant/component_api/models/key_value.py
         _dict = self.model_dump(
             by_alias=True,
             exclude={},
@@ -106,9 +83,5 @@ class KeyValue(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-<<<<<<< HEAD:assistant/src/assistant/models/delete_model_response.py
         _obj = cls.model_validate({"id": obj.get("id"), "deleted": obj.get("deleted"), "object": obj.get("object")})
-=======
-        _obj = cls.model_validate({"Name": obj.get("Name"), "Value": obj.get("Value")})
->>>>>>> feature/assistant:assistant/src/assistant/component_api/models/key_value.py
         return _obj
