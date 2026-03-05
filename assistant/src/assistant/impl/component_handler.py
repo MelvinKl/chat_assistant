@@ -1,13 +1,14 @@
 from typing import Optional, Type
 
 import inject
-from langchain.agents import AgentExecutor, create_tool_calling_agent
-from langchain.callbacks.manager import (
+from langchain.agents import create_agent
+from langchain_core.callbacks.manager import (
     AsyncCallbackManagerForToolRun,
     CallbackManagerForToolRun,
 )
 from langchain.tools import BaseTool
 from langchain_core.language_models.chat_models import BaseChatModel
+from langchain_core.messages import HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
 from pydantic import BaseModel, Field
 
@@ -24,18 +25,7 @@ class ComponentHandler:
         self._settings = component_settings
         self._tools = self._create_tools()
         self._agent = llm.bind_tools(self._tools)
-        prompt = ChatPromptTemplate.from_messages(
-            [
-                ("system", "You are a helpful assistant"),
-                ("placeholder", "{chat_history}"),
-                ("human", "{input}"),
-                ("placeholder", "{agent_scratchpad}"),
-            ]
-        )
-        agent = create_tool_calling_agent(llm, self._tools, prompt)
-
-        agent_executor = AgentExecutor(agent=agent, tools=self._tools)
-        self._chain = agent_executor
+        self._chain = create_agent(llm, tools=self._tools, system_prompt="You are a helpful assistant")
 
     def _create_tools(self) -> list[BaseTool]:
         tools = []
@@ -48,8 +38,8 @@ class ComponentHandler:
         return tools
 
     async def aanswer_question(self, question: str) -> str:
-        response = await self._chain.ainvoke({"input": question})
-        return response["output"]
+        response = await self._chain.ainvoke({"messages": [HumanMessage(content=question)]})
+        return response["messages"][-1].content
 
 
 class ComponentInput(BaseModel):
