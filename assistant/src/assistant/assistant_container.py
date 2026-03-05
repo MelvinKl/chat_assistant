@@ -12,7 +12,7 @@ from langchain_core.tools import BaseTool
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_ollama import ChatOllama
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from langgraph.prebuilt import create_react_agent
+from langchain.agents import create_agent
 from qdrant_client import QdrantClient
 
 from assistant.impl.component_handler import ComponentHandler
@@ -115,7 +115,7 @@ def _di_config(binder: Binder) -> None:
         )
 
     tools = _get_mcp_tools(settings_mcp)
-    mcp_agent = create_react_agent(llm, tools)
+    mcp_agent = create_agent(llm, tools)
 
     binder.bind(
         "question_rephraser",
