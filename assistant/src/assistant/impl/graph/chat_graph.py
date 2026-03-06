@@ -22,7 +22,7 @@ from assistant.interfaces.knowledge_db import KnowledgeDB
 logger = logging.getLogger(__name__)
 
 
-class GraphNodeNames(str, StrEnum):
+class GraphNodeNames(StrEnum):
     """Enum for names of the nodes in the ChatGraph"""
 
     REPHRASE_QUESTION = "rephrase_question"

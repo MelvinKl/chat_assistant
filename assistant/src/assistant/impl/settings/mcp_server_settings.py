@@ -1,4 +1,5 @@
 import json
+import os
 
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings
@@ -18,10 +19,12 @@ class MCPSettings(BaseSettings):
     class Config:
         env_prefix = "SETTINGS_MCP_"
 
-    servers: list[MCPServer] = Field()
+    servers: list[MCPServer] = Field(default_factory=list)
 
 
 def load_mcp_settings_from_json(json_file_path="/config/mcp/SETTINGS_MCP_SERVERS") -> MCPSettings:
+    if not os.path.exists(json_file_path):
+        return MCPSettings(servers=[])
     with open(json_file_path, "r") as f:
         data = json.load(f)
 
