@@ -18,7 +18,7 @@ exclude = '''
 '''
 
 [tool.flake8]
-exclude= ["src/assistant/models", ".eggs", ".git", ".hg", ".mypy_cache", ".tox", ".venv", ".devcontainer", "venv", "_build", "buck-out", "build", "dist", "**/__init__.py"]
+exclude= ["src/assistant/models", "src/assistant/component_api", "tests/test_assistant_api.py", ".eggs", ".git", ".hg", ".mypy_cache", ".tox", ".venv", ".devcontainer", "venv", "_build", "buck-out", "build", "dist", "**/__init__.py"]
 statistics = true
 show-source = false
 max-complexity = 8
@@ -35,6 +35,8 @@ per-file-ignores = """
   ./src/assistant/impl/settings/prompt_settings.py: E501,W293
   ./src/assistant/apis/models_api.py: B008
   ./src/assistant/apis/chat_api.py: B008
+  ./src/assistant/apis/assistant_api.py: B008,WOT001
+  ./src/assistant/apis/assistant_api_base.py: WOT001
   ./tests/*: S101,I252
 """
 

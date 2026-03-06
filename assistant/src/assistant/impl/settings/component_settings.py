@@ -17,9 +17,9 @@ class ComponentSetttings(BaseSettings):
                 return []
             if "[" in v:
                 import json
-                try:
+                import contextlib
+
+                with contextlib.suppress(Exception):
                     return json.loads(v)
-                except Exception:
-                    pass
             return [x.strip() for x in v.split(",") if x.strip()]
         return v

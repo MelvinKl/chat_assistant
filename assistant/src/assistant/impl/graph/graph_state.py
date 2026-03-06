@@ -1,6 +1,6 @@
 """Module for the GraphState class."""
 
-from typing_extensions import TypedDict, Optional
+from typing_extensions import Optional, TypedDict
 
 
 class GraphState(TypedDict):

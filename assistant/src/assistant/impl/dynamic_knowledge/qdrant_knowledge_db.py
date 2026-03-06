@@ -7,13 +7,14 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient
 from qdrant_client.http import models
+from qdrant_client.models import Distance, VectorParams
 
 from assistant.impl.dynamic_knowledge.knowledge_checker import KnowledgeChecker
 from assistant.impl.mapper.knowledge_mapper import KnowledgeMapper
 from assistant.impl.settings.dynamic_knowledge_settings import DynamicKnowledgeSettings
 from assistant.interfaces.knowledge import Knowledge
 from assistant.interfaces.knowledge_db import KnowledgeDB
-from qdrant_client.models import VectorParams, Distance
+
 
 class QdrantKnowledgeDB(KnowledgeDB):
     @inject.autoparams()
@@ -30,8 +31,8 @@ class QdrantKnowledgeDB(KnowledgeDB):
         self._embedder = embedder
         self._knowledge_checker = knowledge_checker
         self._vectordb_client = vectordb_client
-        
-        if not settings.collection_name in [x.name for x in vectordb_client.get_collections().collections]:
+
+        if settings.collection_name not in [x.name for x in vectordb_client.get_collections().collections]:
             _ = vectordb_client.create_collection(
                 self._settings.collection_name,
                 vectors_config=VectorParams(
