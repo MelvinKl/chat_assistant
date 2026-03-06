@@ -6,13 +6,13 @@ import os
 import inject
 import nest_asyncio
 from inject import Binder
+from langchain.agents import create_agent
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.tools import BaseTool
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_ollama import ChatOllama
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from langgraph.prebuilt import create_react_agent
 from qdrant_client import QdrantClient
 
 from assistant.impl.component_handler import ComponentHandler
@@ -56,13 +56,18 @@ def _get_mcp_tools(settings_mcp: MCPSettings) -> list[BaseTool]:
                 "transport": server_definition.transport,
             }
             if server_definition.headers:
-                server_dict[server_definition.name]["headers"] = server_definition.headers
+                server_dict[server_definition.name]["headers"] = (
+                    server_definition.headers
+                )
         mcp_client = MultiServerMCPClient(server_dict)
         try:
             server_tools = asyncio.run(mcp_client.get_tools())
             tools += server_tools
         except Exception as e:
-            logger.error("Could not load MCP Tools from server %s\t%s " % (server_definition.name, e))
+            logger.error(
+                "Could not load MCP Tools from server %s\t%s "
+                % (server_definition.name, e)
+            )
     return tools
 
 
@@ -115,7 +120,7 @@ def _di_config(binder: Binder) -> None:
         )
 
     tools = _get_mcp_tools(settings_mcp)
-    mcp_agent = create_react_agent(llm, tools)
+    mcp_agent = create_agent(llm, tools)
 
     binder.bind(
         "question_rephraser",
