@@ -212,18 +212,6 @@ idna = ">=2.8"
 trio = ["trio (>=0.31.0) ; python_version < \"3.10\"", "trio (>=0.32.0) ; python_version >= \"3.10\""]
 
 [[package]]
-name = "astpretty"
-version = "3.0.0"
-description = "Pretty print the output of python stdlib `ast.parse`."
-optional = false
-python-versions = ">=3.8"
-groups = ["dev"]
-files = [
-    {file = "astpretty-3.0.0-py2.py3-none-any.whl", hash = "sha256:15bfd47593667169485a1fa7938b8de9445b11057d6f2b6e214b2f70667f94b6"},
-    {file = "astpretty-3.0.0.tar.gz", hash = "sha256:b08c95f32e5994454ea99882ff3c4a0afc8254c38998a0ed4b479dba448dc581"},
-]
-
-[[package]]
 name = "attrs"
 version = "25.4.0"
 description = "Classes Without Boilerplate"
@@ -885,21 +873,6 @@ pycodestyle = ">=2.14.0,<2.15.0"
 pyflakes = ">=3.4.0,<3.5.0"
 
 [[package]]
-name = "flake8-annotations-complexity"
-version = "0.1.0"
-description = "A flake8 extension that checks for type annotations complexity"
-optional = false
-python-versions = ">=3.9"
-groups = ["dev"]
-files = [
-    {file = "flake8_annotations_complexity-0.1.0-py3-none-any.whl", hash = "sha256:102d75f5ba0c667cde9c563062f4e7c616ca84bf5bfdc9c1f960a2655133ce35"},
-    {file = "flake8_annotations_complexity-0.1.0.tar.gz", hash = "sha256:98b86ef87de5331d2b61f3cf472dcf6b8ff1a5ddde46f78bc894b464f06e1414"},
-]
-
-[package.dependencies]
-flake8 = "*"
-
-[[package]]
 name = "flake8-bandit"
 version = "4.1.1"
 description = "Automated security testing with bandit and flake8."
@@ -1034,38 +1007,6 @@ files = [
 flake8 = "*"
 
 [[package]]
-name = "flake8-expression-complexity"
-version = "0.0.11"
-description = "A flake8 extension that checks expressions complexity"
-optional = false
-python-versions = ">=3.7"
-groups = ["dev"]
-files = [
-    {file = "flake8_expression_complexity-0.0.11-py3-none-any.whl", hash = "sha256:b56bac37f7dd5d3d102a7111c89f6579c2cbd897b868147794c9ed12aadc627c"},
-    {file = "flake8_expression_complexity-0.0.11.tar.gz", hash = "sha256:4dd8909fecbc20f53814cdcef9d0b04f61532764278d9b6e8026686812e96631"},
-]
-
-[package.dependencies]
-astpretty = "*"
-flake8 = "*"
-
-[[package]]
-name = "flake8-function-order"
-version = "0.0.5"
-description = "flake8 extension that checks function order within a class"
-optional = false
-python-versions = ">=3.6"
-groups = ["dev"]
-files = [
-    {file = "flake8_function_order-0.0.5-py3-none-any.whl", hash = "sha256:58fd9cdf5584894318dd3949ce51b4000f28810adc053cb092f10911ffe9ec8e"},
-    {file = "flake8_function_order-0.0.5.tar.gz", hash = "sha256:16185e1a126ddc7767add8e60616859e3364208fac3650b1c2c624f05c5e39dd"},
-]
-
-[package.dependencies]
-flake8 = "*"
-setuptools = "*"
-
-[[package]]
 name = "flake8-plugin-utils"
 version = "1.3.3"
 description = "The package provides base classes and utils for flake8 plugin writing"
@@ -1123,21 +1064,6 @@ files = [
 [package.dependencies]
 flake8 = "*"
 setuptools = "*"
-
-[[package]]
-name = "flake8-return"
-version = "1.2.0"
-description = "Flake8 plugin that checks return values"
-optional = false
-python-versions = ">=3.6,<4.0"
-groups = ["dev"]
-files = [
-    {file = "flake8-return-1.2.0.tar.gz", hash = "sha256:68dfa56582cd704febd02ad86dcf5df67e38e0836d62f1ceae7930d76d3dd955"},
-    {file = "flake8_return-1.2.0-py3-none-any.whl", hash = "sha256:1f07af12954ed03ebe2c2aac2418f78b55374e9929d4956109664588f31582a1"},
-]
-
-[package.dependencies]
-flake8-plugin-utils = ">=1.0,<2.0"
 
 [[package]]
 name = "flake8-simplify"
@@ -4611,4 +4537,4 @@ cffi = ["cffi (>=1.17,<2.0) ; platform_python_implementation != \"PyPy\" and pyt
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13,<3.15"
-content-hash = "53048be12d2a3eb1885341f2e8044d3223b2ecaecfc231b788cd914a02848e3d"
+content-hash = "8e8526983c372ded67f0b7e4e7566f08acfca30fbdd5e486584a069d4fec204d"
