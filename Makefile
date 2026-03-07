@@ -4,5 +4,5 @@ format:
 lint: 
 	cd assistant; poetry run flake8
 
-test:
+test: lint
 	cd assistant; poetry run pytest .

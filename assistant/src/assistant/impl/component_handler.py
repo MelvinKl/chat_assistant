@@ -18,29 +18,34 @@ from assistant.impl.settings.component_settings import ComponentSetttings
 
 
 class ComponentHandler:
-
     @inject.autoparams()
-    def __init__(self, llm: BaseChatModel, component_settings: ComponentSetttings) -> None:
+    def __init__(
+        self, llm: BaseChatModel, component_settings: ComponentSetttings
+    ) -> None:
         self._settings = component_settings
         self._tools = self._create_tools()
         self._chain = create_agent(
-            model=llm,
-            tools=self._tools,
-            system_prompt="You are a helpful assistant"
+            model=llm, tools=self._tools, system_prompt="You are a helpful assistant"
         )
 
     def _create_tools(self) -> list[BaseTool]:
         tools = []
         for component in self._settings.apis:
-            client = ComponentApi(ApiClient(configuration=Configuration(host=component)))
+            client = ComponentApi(
+                ApiClient(configuration=Configuration(host=component))
+            )
             description_response = client.get_description()
             description = description_response.description
             name = description_response.name
-            tools.append(ComponentTool(client=client, name=name, description=description))
+            tools.append(
+                ComponentTool(client=client, name=name, description=description)
+            )
         return tools
 
     async def aanswer_question(self, question: str) -> str:
-        response = await self._chain.ainvoke({"messages": [{"role": "user", "content": question}]})
+        response = await self._chain.ainvoke(
+            {"messages": [{"role": "user", "content": question}]}
+        )
         return response["messages"][-1].content
 
 
@@ -49,14 +54,15 @@ class ComponentInput(BaseModel):
 
 
 class ComponentTool(BaseTool):
-
     name: str
     description: str
     client: ComponentApi
     args_schema: Type[BaseModel] = ComponentInput
     return_direct: bool = True
 
-    def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
+    def _run(
+        self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None
+    ) -> str:
         """Use the tool."""
         return self.client.assist(query).answer
 

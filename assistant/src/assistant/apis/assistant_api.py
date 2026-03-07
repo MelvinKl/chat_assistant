@@ -2,7 +2,6 @@
 
 import importlib
 import pkgutil
-from typing import Any, Dict, List  # noqa: F401
 
 from fastapi import (  # noqa: F401
     APIRouter,
