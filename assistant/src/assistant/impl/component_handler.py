@@ -8,6 +8,7 @@ from langchain_core.callbacks.manager import (
 )
 from langchain.tools import BaseTool
 from langchain_core.language_models.chat_models import BaseChatModel
+from langchain_core.messages import HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
 from pydantic import BaseModel, Field
 
@@ -19,36 +20,35 @@ from assistant.impl.settings.component_settings import ComponentSetttings
 
 class ComponentHandler:
     @inject.autoparams()
-    def __init__(self, llm: BaseChatModel, component_settings: ComponentSetttings) -> None:
+    def __init__(
+        self, llm: BaseChatModel, component_settings: ComponentSetttings
+    ) -> None:
         self._settings = component_settings
         self._tools = self._create_tools()
         self._agent = llm.bind_tools(self._tools)
-        prompt = ChatPromptTemplate.from_messages(
-            [
-                ("system", "You are a helpful assistant"),
-                ("placeholder", "{chat_history}"),
-                ("human", "{input}"),
-                ("placeholder", "{agent_scratchpad}"),
-            ]
+        self._chain = create_agent(
+            llm, tools=self._tools, system_prompt="You are a helpful assistant"
         )
-        agent = create_tool_calling_agent(llm, self._tools, prompt)
-
-        agent_executor = AgentExecutor(agent=agent, tools=self._tools)
-        self._chain = agent_executor
 
     def _create_tools(self) -> list[BaseTool]:
         tools = []
         for component in self._settings.apis:
-            client = ComponentApi(ApiClient(configuration=Configuration(host=component)))
+            client = ComponentApi(
+                ApiClient(configuration=Configuration(host=component))
+            )
             description_response = client.get_description()
             description = description_response.description
             name = description_response.name
-            tools.append(ComponentTool(client=client, name=name, description=description))
+            tools.append(
+                ComponentTool(client=client, name=name, description=description)
+            )
         return tools
 
     async def aanswer_question(self, question: str) -> str:
-        response = await self._chain.ainvoke({"input": question})
-        return response["output"]
+        response = await self._chain.ainvoke(
+            {"messages": [HumanMessage(content=question)]}
+        )
+        return response["messages"][-1].content
 
 
 class ComponentInput(BaseModel):
@@ -62,7 +62,9 @@ class ComponentTool(BaseTool):
     args_schema: Type[BaseModel] = ComponentInput
     return_direct: bool = True
 
-    def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
+    def _run(
+        self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None
+    ) -> str:
         """Use the tool."""
         return self.client.assist(query).answer
 
