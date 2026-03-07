@@ -31,8 +31,10 @@ def load_mcp_settings_from_json(
 ) -> MCPSettings:
     if not os.path.exists(json_file_path):
         return MCPSettings(servers=[])
-    with open(json_file_path, "r") as f:
-        data = json.load(f)
-
-    cleaned_data = {"servers": data["servers"]} if "servers" in data else {}
-    return MCPSettings(**cleaned_data)
+    try:
+        with open(json_file_path, "r") as f:
+            data = json.load(f)
+        cleaned_data = {"servers": data["servers"]} if "servers" in data else {}
+        return MCPSettings(**cleaned_data)
+    except FileNotFoundError:
+        return MCPSettings(servers=[])
