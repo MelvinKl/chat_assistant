@@ -1,10 +1,14 @@
 from pydantic import Field
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class OpenAISetttings(BaseSettings):
-    class Config:
-        env_prefix = "SETTINGS_OPENAI_"
+    model_config = SettingsConfigDict(
+        env_prefix="SETTINGS_OPENAI_",
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
 
     api_key: str = Field()
     embedder: str = Field()

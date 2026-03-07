@@ -1,10 +1,14 @@
 from pydantic import Field
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class DynamicKnowledgeSettings(BaseSettings):
-    class Config:
-        env_prefix = "SETTINGS_DYNAMIC_KNOWLEDGE_"
+    model_config = SettingsConfigDict(
+        env_prefix="SETTINGS_DYNAMIC_KNOWLEDGE_",
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
 
     enabled: bool = Field(default=False)
     collection_name: str = Field(default="test_collection")
