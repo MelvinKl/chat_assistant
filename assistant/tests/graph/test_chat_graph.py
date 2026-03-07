@@ -93,7 +93,9 @@ class TestChatGraph:
 
         assert result == "42"
         chat_graph._graph.ainvoke.assert_awaited_once()
-        assert chat_graph._graph.ainvoke.call_args.kwargs["config"] is None  # no config supplied
+        assert (
+            chat_graph._graph.ainvoke.call_args.kwargs["config"] is None
+        )  # no config supplied
 
     @pytest.mark.asyncio
     async def test_ainvoke_produces_correct_state(
@@ -101,11 +103,15 @@ class TestChatGraph:
         chat_graph,
     ):
         """Verify GraphState.create is called with the expected parts."""
-        with patch("assistant.impl.graph.chat_graph.GraphState", create=True) as fake_gs:
+        with patch(
+            "assistant.impl.graph.chat_graph.GraphState", create=True
+        ) as fake_gs:
             fake_gs.create = MagicMock()
             chat_graph._graph.ainvoke.return_value = {"processed_answer": "ok"}
             await chat_graph.ainvoke([("user", "q")])
-            fake_gs.create.assert_called_once_with(history=[], question="q", additional_info="extra context")
+            fake_gs.create.assert_called_once_with(
+                history=[], question="q", additional_info="extra context"
+            )
 
     # ------------------------------------------------------------------ #
     # Node level unit tests                                              #
@@ -113,7 +119,9 @@ class TestChatGraph:
     @pytest.mark.asyncio
     async def test_determine_language_node(self, chat_graph):
         with patch("assistant.impl.graph.chat_graph.detect", return_value="de"):
-            result = await chat_graph._determine_language_node({"question": "Wie geht's?"})
+            result = await chat_graph._determine_language_node(
+                {"question": "Wie geht's?"}
+            )
             assert result == {"question_language": "de"}
 
     @pytest.mark.asyncio
@@ -127,7 +135,9 @@ class TestChatGraph:
     @pytest.mark.asyncio
     async def test_answer_rephraser_node(self, chat_graph, fake_answer_rephraser):
         fake_answer_rephraser.ainvoke.return_value = "Refined answer"
-        result = await chat_graph._answer_rephraser_node({"question": "q", "raw_answer": "answer"})
+        result = await chat_graph._answer_rephraser_node(
+            {"question": "q", "raw_answer": "answer"}
+        )
         assert result == {"processed_answer": "Refined answer"}
 
     @pytest.mark.asyncio
@@ -135,21 +145,41 @@ class TestChatGraph:
         fake_mcp_agent.ainvoke.return_value = {"messages": [MagicMock(content="42")]}
         result = await chat_graph._decide_node({"question": "meaning of life"})
         assert result == {"raw_answer": "42"}
-        fake_mcp_agent.ainvoke.assert_awaited_once_with({"messages": "meaning of life"}, None)
+        fake_mcp_agent.ainvoke.assert_awaited_once_with(
+            {"messages": "meaning of life"}, None
+        )
 
     # ------------------------------------------------------------------ #
     # Graph wiring                                                       #
     # ------------------------------------------------------------------ #
     def test_add_nodes_calls_state_graph_correctly(self, chat_graph):
         with (
-            patch("assistant.impl.graph.chat_graph.StateGraph", autospec=True) as sg_mock,
+            patch(
+                "assistant.impl.graph.chat_graph.StateGraph", autospec=True
+            ) as sg_mock,
             patch.object(chat_graph, "_wire_graph"),
         ):
             chat_graph._state_graph = sg_mock
             chat_graph._add_nodes()
 
-            sg_mock.add_node.assert_any_call(GraphNodeNames.REPHRASE_QUESTION, chat_graph._rephrase_question_node)
-            sg_mock.add_node.assert_any_call(GraphNodeNames.DETERMINE_LANGUAGE, chat_graph._determine_language_node)
-            sg_mock.add_node.assert_any_call(GraphNodeNames.DECIDE, chat_graph._decide_node)
-            sg_mock.add_node.assert_any_call(GraphNodeNames.REPHRASE_ANSWER, chat_graph._answer_rephraser_node)
+            sg_mock.add_node.assert_any_call(
+                GraphNodeNames.REPHRASE_QUESTION, chat_graph._rephrase_question_node
+            )
+            sg_mock.add_node.assert_any_call(
+                GraphNodeNames.DETERMINE_LANGUAGE, chat_graph._determine_language_node
+            )
+            sg_mock.add_node.assert_any_call(
+                GraphNodeNames.ADD_DYNAMIC_KNOWLEDGE,
+                chat_graph._add_dynamic_knowledge_node,
+            )
+            sg_mock.add_node.assert_any_call(
+                GraphNodeNames.DECIDE, chat_graph._decide_node
+            )
+            sg_mock.add_node.assert_any_call(
+                GraphNodeNames.REPHRASE_ANSWER, chat_graph._answer_rephraser_node
+            )
+            sg_mock.add_node.assert_any_call(
+                GraphNodeNames.UPDATE_DYNAMIC_KNOWLEDGE,
+                chat_graph._update_knowledge_node,
+            )
             assert sg_mock.add_node.call_count == 6
