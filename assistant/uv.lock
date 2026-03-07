@@ -155,7 +155,6 @@ dev = [
     { name = "coverage" },
     { name = "debugpy" },
     { name = "flake8" },
-    { name = "flake8-annotations-complexity" },
     { name = "flake8-bandit" },
     { name = "flake8-black" },
     { name = "flake8-bugbear" },
@@ -164,12 +163,9 @@ dev = [
     { name = "flake8-eol" },
     { name = "flake8-eradicate" },
     { name = "flake8-exceptions" },
-    { name = "flake8-expression-complexity" },
-    { name = "flake8-function-order" },
     { name = "flake8-pyproject" },
     { name = "flake8-pytest-style" },
     { name = "flake8-quotes" },
-    { name = "flake8-return" },
     { name = "flake8-simplify" },
     { name = "flake8-tidy-imports" },
     { name = "flake8-wot" },
@@ -186,7 +182,6 @@ requires-dist = [
     { name = "debugpy", marker = "extra == 'dev'", specifier = ">=1.8.14" },
     { name = "fastapi", specifier = ">=0.135.0" },
     { name = "flake8", marker = "extra == 'dev'", specifier = ">=7.2.0" },
-    { name = "flake8-annotations-complexity", marker = "extra == 'dev'", specifier = ">=0.1.0" },
     { name = "flake8-bandit", marker = "extra == 'dev'", specifier = ">=4.1.1" },
     { name = "flake8-black", marker = "extra == 'dev'", specifier = ">=0.4.0" },
     { name = "flake8-bugbear", marker = "extra == 'dev'", specifier = ">=25.0.0" },
@@ -195,12 +190,9 @@ requires-dist = [
     { name = "flake8-eol", marker = "extra == 'dev'", specifier = ">=0.0.8" },
     { name = "flake8-eradicate", marker = "extra == 'dev'", specifier = ">=1.5.0" },
     { name = "flake8-exceptions", marker = "extra == 'dev'", specifier = ">=0.0.1a0" },
-    { name = "flake8-expression-complexity", marker = "extra == 'dev'", specifier = ">=0.0.11" },
-    { name = "flake8-function-order", marker = "extra == 'dev'", specifier = ">=0.0.5" },
     { name = "flake8-pyproject", marker = "extra == 'dev'", specifier = ">=1.2.3" },
     { name = "flake8-pytest-style", marker = "extra == 'dev'", specifier = ">=2.1.0" },
     { name = "flake8-quotes", marker = "extra == 'dev'", specifier = ">=3.4.0" },
-    { name = "flake8-return", marker = "extra == 'dev'", specifier = ">=1.2.0" },
     { name = "flake8-simplify", marker = "extra == 'dev'", specifier = ">=0.30.0" },
     { name = "flake8-tidy-imports", marker = "extra == 'dev'", specifier = ">=4.10.0" },
     { name = "flake8-wot", marker = "extra == 'dev'", specifier = ">=0.2.0" },
@@ -226,15 +218,6 @@ requires-dist = [
     { name = "uvicorn", specifier = ">=0.38.0" },
 ]
 provides-extras = ["dev"]
-
-[[package]]
-name = "astpretty"
-version = "3.0.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/2d/b6/ffec7edce2a8315ef1acd4ae2e334ba428db2b2e8d7577a9aaf1e434034d/astpretty-3.0.0.tar.gz", hash = "sha256:b08c95f32e5994454ea99882ff3c4a0afc8254c38998a0ed4b479dba448dc581", size = 4675, upload-time = "2022-05-16T23:41:24.712Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/9f/0a/79fff71a08bc0cc427f0dfbd4cca62b60f7f277aae81b89b79e9b04d526d/astpretty-3.0.0-py2.py3-none-any.whl", hash = "sha256:15bfd47593667169485a1fa7938b8de9445b11057d6f2b6e214b2f70667f94b6", size = 4928, upload-time = "2022-05-16T23:41:23.422Z" },
-]
 
 [[package]]
 name = "attrs"
@@ -604,18 +587,6 @@ wheels = [
 ]
 
 [[package]]
-name = "flake8-annotations-complexity"
-version = "0.1.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "flake8" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/fa/68/ab6f136df474fbbddad1bff3965b9857a89327d819a385c815549a884cd7/flake8_annotations_complexity-0.1.0.tar.gz", hash = "sha256:98b86ef87de5331d2b61f3cf472dcf6b8ff1a5ddde46f78bc894b464f06e1414", size = 5365, upload-time = "2025-03-04T10:33:02.251Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/c2/8c/dcd25a2c5b727851c28e1875a04dadd8e22b31564502eea63d5977cd31a8/flake8_annotations_complexity-0.1.0-py3-none-any.whl", hash = "sha256:102d75f5ba0c667cde9c563062f4e7c616ca84bf5bfdc9c1f960a2655133ce35", size = 5539, upload-time = "2025-03-04T10:33:00.558Z" },
-]
-
-[[package]]
 name = "flake8-bandit"
 version = "4.1.1"
 source = { registry = "https://pypi.org/simple" }
@@ -717,32 +688,6 @@ wheels = [
 ]
 
 [[package]]
-name = "flake8-expression-complexity"
-version = "0.0.11"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "astpretty" },
-    { name = "flake8" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/19/71/5bfb69acbfd319add958c70b60e68aee8914d4a5e243b87f4fcda249cf7b/flake8_expression_complexity-0.0.11.tar.gz", hash = "sha256:4dd8909fecbc20f53814cdcef9d0b04f61532764278d9b6e8026686812e96631", size = 7097, upload-time = "2022-03-19T07:13:04.985Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/bc/20/6707c990610d45a3a961345ad5fdabf096cac5a1ce8571581f5787453574/flake8_expression_complexity-0.0.11-py3-none-any.whl", hash = "sha256:b56bac37f7dd5d3d102a7111c89f6579c2cbd897b868147794c9ed12aadc627c", size = 8235, upload-time = "2022-03-19T07:13:03.128Z" },
-]
-
-[[package]]
-name = "flake8-function-order"
-version = "0.0.5"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "flake8" },
-    { name = "setuptools" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/a6/51/b01a5657280ffcb183f1bb0d1ce2a6ec70a8e05d18d761e68eba13c521fe/flake8_function_order-0.0.5.tar.gz", hash = "sha256:16185e1a126ddc7767add8e60616859e3364208fac3650b1c2c624f05c5e39dd", size = 6766, upload-time = "2020-11-07T20:12:35.708Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/bd/87/f5da17988142237190d9e22437aee5adeddc7e97cdf6da9096b878ffece5/flake8_function_order-0.0.5-py3-none-any.whl", hash = "sha256:58fd9cdf5584894318dd3949ce51b4000f28810adc053cb092f10911ffe9ec8e", size = 7894, upload-time = "2020-11-07T20:12:34.779Z" },
-]
-
-[[package]]
 name = "flake8-plugin-utils"
 version = "1.3.3"
 source = { registry = "https://pypi.org/simple" }
@@ -783,18 +728,6 @@ dependencies = [
     { name = "setuptools" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/dd/57/a173e3eb86072b7ee77650aca496b15d6886367d257f58ea9de5276e330a/flake8-quotes-3.4.0.tar.gz", hash = "sha256:aad8492fb710a2d3eabe68c5f86a1428de650c8484127e14c43d0504ba30276c", size = 14107, upload-time = "2024-02-10T21:58:22.357Z" }
-
-[[package]]
-name = "flake8-return"
-version = "1.2.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "flake8-plugin-utils" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/83/49/43ee60c21b61fbec8e86858b2dac7d11a9bdd9958fd7f59077387b6a7197/flake8-return-1.2.0.tar.gz", hash = "sha256:68dfa56582cd704febd02ad86dcf5df67e38e0836d62f1ceae7930d76d3dd955", size = 10033, upload-time = "2022-10-28T09:37:12.507Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/f0/8c/6aece77ad2d0d68d8f6e8d5471fd06638de11df656db7d76de810815c437/flake8_return-1.2.0-py3-none-any.whl", hash = "sha256:1f07af12954ed03ebe2c2aac2418f78b55374e9929d4956109664588f31582a1", size = 10121, upload-time = "2022-10-28T09:37:14.468Z" },
-]
 
 [[package]]
 name = "flake8-simplify"
