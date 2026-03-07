@@ -4,7 +4,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class APISetttings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_prefix="SETTINGS_API_", env_file=".env", env_file_encoding="utf-8", extra="ignore"
+        env_prefix="SETTINGS_API_",
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
     )
 
     name: str = Field()

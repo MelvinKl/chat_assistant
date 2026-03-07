@@ -4,7 +4,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class PromptSettings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_prefix="SETTINGS_PROMPTS_", env_file=".env", env_file_encoding="utf-8", extra="ignore"
+        env_prefix="SETTINGS_PROMPTS_",
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
     )
 
     rephrase_question_system_prompt: str = Field()

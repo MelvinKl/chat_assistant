@@ -11,7 +11,7 @@ class DynamicKnowledgeSettings(BaseSettings):
     )
 
     enabled: bool = Field(default=False)
-    collection_name: str = Field(default="knowledge")
+    collection_name: str = Field(default="test_collection")
     db_host: str = Field(default="localhost")
     max_items: int = Field(default=25)
     score_threshold: float = Field(default=0.25)
