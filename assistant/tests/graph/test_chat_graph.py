@@ -162,6 +162,7 @@ class TestChatGraph:
             chat_graph._state_graph = sg_mock
             chat_graph._add_nodes()
 
+<<<<<<< HEAD
             sg_mock.add_node.assert_any_call(
                 GraphNodeNames.REPHRASE_QUESTION, chat_graph._rephrase_question_node
             )
@@ -182,4 +183,10 @@ class TestChatGraph:
                 GraphNodeNames.UPDATE_DYNAMIC_KNOWLEDGE,
                 chat_graph._update_knowledge_node,
             )
+=======
+            sg_mock.add_node.assert_any_call(GraphNodeNames.REPHRASE_QUESTION, chat_graph._rephrase_question_node)
+            sg_mock.add_node.assert_any_call(GraphNodeNames.DETERMINE_LANGUAGE, chat_graph._determine_language_node)
+            sg_mock.add_node.assert_any_call(GraphNodeNames.DECIDE, chat_graph._decide_node)
+            sg_mock.add_node.assert_any_call(GraphNodeNames.REPHRASE_ANSWER, chat_graph._answer_rephraser_node)
+>>>>>>> ff5e275678947ad3a488e029942c2fc593dacaf3
             assert sg_mock.add_node.call_count == 6

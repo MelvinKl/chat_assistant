@@ -2,9 +2,9 @@
 
 from fastapi import FastAPI
 
+from assistant.apis.assistant_api import router as assistant_api_router
 from assistant.apis.chat_api import router as chat_api_router
 from assistant.apis.models_api import router as models_api_router
-from assistant.apis.assistant_api import router as assistant_api_router
 from assistant.assistant_container import configure
 
 app = FastAPI(
