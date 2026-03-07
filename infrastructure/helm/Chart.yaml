@@ -11,6 +11,6 @@ dependencies:
     repository: "https://otwld.github.io/ollama-helm/"
     condition: ollama.enabled
   - name: qdrant
-    version: 1.15.2
+    version: 1.17.0
     repository: "https://qdrant.github.io/qdrant-helm"
     condition: features.qdrant
