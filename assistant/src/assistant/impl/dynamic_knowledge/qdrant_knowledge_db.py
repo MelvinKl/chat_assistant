@@ -7,13 +7,14 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient
 from qdrant_client.http import models
+from qdrant_client.models import Distance, VectorParams
 
 from assistant.impl.dynamic_knowledge.knowledge_checker import KnowledgeChecker
 from assistant.impl.mapper.knowledge_mapper import KnowledgeMapper
 from assistant.impl.settings.dynamic_knowledge_settings import DynamicKnowledgeSettings
 from assistant.interfaces.knowledge import Knowledge
 from assistant.interfaces.knowledge_db import KnowledgeDB
-from qdrant_client.models import VectorParams, Distance
+
 
 class QdrantKnowledgeDB(KnowledgeDB):
     @inject.autoparams()
@@ -30,12 +31,13 @@ class QdrantKnowledgeDB(KnowledgeDB):
         self._embedder = embedder
         self._knowledge_checker = knowledge_checker
         self._vectordb_client = vectordb_client
-        
-        if not settings.collection_name in [x.name for x in vectordb_client.get_collections().collections]:
+
+        if settings.collection_name not in [x.name for x in vectordb_client.get_collections().collections]:
             _ = vectordb_client.create_collection(
                 self._settings.collection_name,
                 vectors_config=VectorParams(
-                    size=len(self._embedder.embed_documents(["hello"])[0]), distance=Distance.COSINE
+                    size=len(self._embedder.embed_documents(["hello"])[0]),
+                    distance=Distance.COSINE,
                 ),
             )
 
@@ -63,15 +65,20 @@ class QdrantKnowledgeDB(KnowledgeDB):
         result_docs = await self._vectorstore.asearch(
             query=query,
             filter_kwargs=filter_kwargs,
-            search_kwargs={"k": self._settings.max_items, "score_threshold": self._settings.score_threshold},
+            search_kwargs={
+                "k": self._settings.max_items,
+                "score_threshold": self._settings.score_threshold,
+            },
         ).ainvoke(query)
         return [self._mapper.from_document(x) for x in result_docs]
 
     async def aupdate_knowledge(self, conversation: list[str]) -> None:
         retrieved_knowledge = await self.aretrieve_knowledge(conversation[-2])
-        new_knowledge, updated_knowledge, outdated_knowledge = await self._knowledge_checker.acheck_knowledge(
-            conversation, retrieved_knowledge
-        )
+        (
+            new_knowledge,
+            updated_knowledge,
+            outdated_knowledge,
+        ) = await self._knowledge_checker.acheck_knowledge(conversation, retrieved_knowledge)
 
         tasks = [self._aupsert_documents(self._mapper.to_document(x)) for x in new_knowledge]
         tasks += [self._aupsert_documents(self._mapper.to_document(x)) for x in updated_knowledge]
@@ -94,7 +101,8 @@ class QdrantKnowledgeDB(KnowledgeDB):
             ]
         )
         search_results = self._vectorstore.client.scroll(
-            collection_name=self._vectorstore.collection_name, scroll_filter=models.Filter(earch_kwargs)
+            collection_name=self._vectorstore.collection_name,
+            scroll_filter=models.Filter(earch_kwargs),
         )
         if not search_results:
             return
