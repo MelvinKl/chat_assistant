@@ -34,7 +34,7 @@ authors = ["Melvin Klein"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.11,<3.13"
+python = ">=3.14,<3.15"
 langchain-ollama = "^0.2.0"
 base-component-api = { path = "../base-component-api/" }
 homeassistant-api = "^4.2.2.post2"
