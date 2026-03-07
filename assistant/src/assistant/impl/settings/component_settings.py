@@ -1,13 +1,9 @@
 from pydantic import Field
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings
 
 
 class ComponentSetttings(BaseSettings):
-    model_config = SettingsConfigDict(
-        env_prefix="SETTINGS_COMPONENTS_",
-        env_file=".env",
-        env_file_encoding="utf-8",
-        extra="ignore",
-    )
+    class Config:
+        env_prefix = "SETTINGS_COMPONENTS_"
 
-    apis: list[str] = Field(default_factory=list)
+    apis: list[str] = Field(default=[])

@@ -1,19 +1,22 @@
 from typing import Optional, Type
 from impl.settings.home_assistant_settings import HomeAssistantSetttings
 import inject
-from langchain.agents import AgentExecutor, create_tool_calling_agent
-from langchain.callbacks.manager import (
+from langchain.agents import create_agent
+from langchain_core.callbacks import (
     AsyncCallbackManagerForToolRun,
     CallbackManagerForToolRun,
 )
-from langchain.tools import BaseTool
 from langchain_core.language_models.chat_models import BaseChatModel
+from langchain_core.messages import SystemMessage
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.tools import BaseTool
 from pydantic import BaseModel, Field
 from homeassistant_api import Client
 from homeassistant_api.models import Group
 
+
 @inject.autoparams()
-def create_tools(settings:HomeAssistantSetttings)->list[BaseTool]:
+def create_tools(settings: HomeAssistantSetttings) -> list[BaseTool]:
     tools = []
     client = Client(settings.url, settings.apikey)
     tools.append(HomeAssistantStateTool(client=client))
@@ -23,6 +26,7 @@ def create_tools(settings:HomeAssistantSetttings)->list[BaseTool]:
 class ComponentInput(BaseModel):
     query: str = Field(description="is unused")
 
+
 class HomeAssistantStateTool(BaseTool):
     name: str = "state-tool"
     description: str = "Lists all entitites and their current state."
@@ -30,7 +34,9 @@ class HomeAssistantStateTool(BaseTool):
     args_schema: Type[BaseModel] = ComponentInput
     return_direct: bool = True
 
-    def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> dict[str, Group]:
+    def _run(
+        self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None
+    ) -> dict[str, Group]:
         """Use the tool."""
         return self.client.get_entities()
 
