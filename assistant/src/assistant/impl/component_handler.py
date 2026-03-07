@@ -1,8 +1,8 @@
 from typing import Optional, Type
 
 import inject
-from langchain.agents import AgentExecutor, create_tool_calling_agent
-from langchain.callbacks.manager import (
+from langchain_classic.agents import AgentExecutor, create_tool_calling_agent
+from langchain_core.callbacks.manager import (
     AsyncCallbackManagerForToolRun,
     CallbackManagerForToolRun,
 )
@@ -18,7 +18,6 @@ from assistant.impl.settings.component_settings import ComponentSetttings
 
 
 class ComponentHandler:
-
     @inject.autoparams()
     def __init__(self, llm: BaseChatModel, component_settings: ComponentSetttings) -> None:
         self._settings = component_settings
@@ -57,7 +56,6 @@ class ComponentInput(BaseModel):
 
 
 class ComponentTool(BaseTool):
-
     name: str
     description: str
     client: ComponentApi

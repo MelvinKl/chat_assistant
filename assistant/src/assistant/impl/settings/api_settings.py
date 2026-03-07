@@ -1,10 +1,11 @@
 from pydantic import Field
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class APISetttings(BaseSettings):
-    class Config:
-        env_prefix = "SETTINGS_API_"
+    model_config = SettingsConfigDict(
+        env_prefix="SETTINGS_API_", env_file=".env", env_file_encoding="utf-8", extra="ignore"
+    )
 
     name: str = Field()
     description: str = Field()
