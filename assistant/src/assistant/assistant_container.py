@@ -1,7 +1,6 @@
 # coding: utf-8
 import asyncio
 import logging
-import os
 
 import inject
 import nest_asyncio
