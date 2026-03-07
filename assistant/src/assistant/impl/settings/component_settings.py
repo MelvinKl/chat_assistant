@@ -10,4 +10,4 @@ class ComponentSetttings(BaseSettings):
         extra="ignore",
     )
 
-    apis: list[str] = Field(default_factory=list)
+    apis: list[str] = Field(default=[])

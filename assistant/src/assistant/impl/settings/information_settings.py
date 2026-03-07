@@ -7,4 +7,4 @@ class InformationSettings(BaseSettings):
         env_prefix="SETTINGS_ADDITIONAL_", env_file=".env", env_file_encoding="utf-8", extra="ignore"
     )
 
-    information: str = Field()
+    information: str = Field(default="information")

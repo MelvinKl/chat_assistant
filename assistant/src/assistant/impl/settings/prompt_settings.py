@@ -7,8 +7,8 @@ class PromptSettings(BaseSettings):
         env_prefix="SETTINGS_PROMPTS_", env_file=".env", env_file_encoding="utf-8", extra="ignore"
     )
 
-    rephrase_question_system_prompt: str = Field()
-    rephrase_question_user_prompt: str = Field()
+    rephrase_question_system_prompt: str = Field(default="rephrase_question_system_prompt")
+    rephrase_question_user_prompt: str = Field(default="rephrase_question_user_prompt")
 
-    rephrase_answer_system_prompt: str = Field()
-    rephrase_answer_user_prompt: str = Field()
+    rephrase_answer_system_prompt: str = Field(default="rephrase_answer_system_prompt")
+    rephrase_answer_user_prompt: str = Field(default="rephrase_answer_user_prompt")
