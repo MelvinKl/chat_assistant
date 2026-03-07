@@ -1,6 +1,5 @@
 import uuid
 
-
 from langchain_core.documents import Document
 
 from assistant.interfaces.knowledge import Knowledge
