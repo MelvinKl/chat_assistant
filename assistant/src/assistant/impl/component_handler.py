@@ -18,7 +18,6 @@ from assistant.impl.settings.component_settings import ComponentSetttings
 
 
 class ComponentHandler:
-
     @inject.autoparams()
     def __init__(self, llm: BaseChatModel, component_settings: ComponentSetttings) -> None:
         self._settings = component_settings
@@ -57,7 +56,6 @@ class ComponentInput(BaseModel):
 
 
 class ComponentTool(BaseTool):
-
     name: str
     description: str
     client: ComponentApi
