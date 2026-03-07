@@ -1,12 +1,12 @@
 from typing import Optional, Type
 
 import inject
-from langchain.agents import AgentExecutor, create_tool_calling_agent
-from langchain.callbacks.manager import (
+from langchain_classic.agents import AgentExecutor, create_tool_calling_agent
+from langchain_classic.callbacks.manager import (
     AsyncCallbackManagerForToolRun,
     CallbackManagerForToolRun,
 )
-from langchain.tools import BaseTool
+from langchain_classic.tools import BaseTool
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
 from pydantic import BaseModel, Field
@@ -18,9 +18,10 @@ from assistant.impl.settings.component_settings import ComponentSetttings
 
 
 class ComponentHandler:
-
     @inject.autoparams()
-    def __init__(self, llm: BaseChatModel, component_settings: ComponentSetttings) -> None:
+    def __init__(
+        self, llm: BaseChatModel, component_settings: ComponentSetttings
+    ) -> None:
         self._settings = component_settings
         self._tools = self._create_tools()
         self._agent = llm.bind_tools(self._tools)
@@ -40,11 +41,15 @@ class ComponentHandler:
     def _create_tools(self) -> list[BaseTool]:
         tools = []
         for component in self._settings.apis:
-            client = ComponentApi(ApiClient(configuration=Configuration(host=component)))
+            client = ComponentApi(
+                ApiClient(configuration=Configuration(host=component))
+            )
             description_response = client.get_description()
             description = description_response.description
             name = description_response.name
-            tools.append(ComponentTool(client=client, name=name, description=description))
+            tools.append(
+                ComponentTool(client=client, name=name, description=description)
+            )
         return tools
 
     async def aanswer_question(self, question: str) -> str:
@@ -57,14 +62,15 @@ class ComponentInput(BaseModel):
 
 
 class ComponentTool(BaseTool):
-
     name: str
     description: str
     client: ComponentApi
     args_schema: Type[BaseModel] = ComponentInput
     return_direct: bool = True
 
-    def _run(self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
+    def _run(
+        self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None
+    ) -> str:
         """Use the tool."""
         return self.client.assist(query).answer
 
