@@ -2,11 +2,11 @@ from typing import Optional, Type
 
 import inject
 from langchain_classic.agents import AgentExecutor, create_tool_calling_agent
-from langchain_core.callbacks.manager import (
+from langchain_classic.callbacks.manager import (
     AsyncCallbackManagerForToolRun,
     CallbackManagerForToolRun,
 )
-from langchain.tools import BaseTool
+from langchain_classic.tools import BaseTool
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
 from pydantic import BaseModel, Field
