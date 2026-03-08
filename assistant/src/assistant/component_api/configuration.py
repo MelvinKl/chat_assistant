@@ -86,7 +86,7 @@ class Configuration:
         ssl_ca_cert=None,
         retries=None,
         *,
-        debug: Optional[bool] = None
+        debug: Optional[bool] = None,
     ) -> None:
         """Constructor"""
         self._base_path = "http://localhost" if host is None else host

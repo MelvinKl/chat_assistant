@@ -76,7 +76,7 @@ Each deployment should be an array item containing the following information:
 |`name`|`weather`|Name of the MCP server to deploy|
 |`port`|`8080`|Port of the MCP server|
 |`image`|`ghcr.io/melvinkl/mcp-weather/server:latest`|Image of the MCP server|
-|`command`|`["poetry","run","python","src/main.py"]`|(Optional) Run command for the MCP server|
+|`command`|`["uv","run","python","src/main.py"]`|(Optional) Run command for the MCP server|
 |`secrets`|`TRANSPORT: sse`|Values that will  be saved as kubernetes secret and injected as env vars into the MCP server.|
 
 #### Servers

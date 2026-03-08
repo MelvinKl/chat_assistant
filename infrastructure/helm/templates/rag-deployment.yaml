@@ -33,7 +33,7 @@ spec:
         ports:
         - containerPort: 8080
         command: 
-          - "poetry"
+          - "uv"
           - "run"
         args:
           {{- if $deploy.debug }}
