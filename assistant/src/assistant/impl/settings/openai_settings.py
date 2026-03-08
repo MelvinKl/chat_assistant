@@ -14,7 +14,7 @@ class OpenAISetttings(BaseSettings):
         extra="ignore",
     )
 
-    api_key: str = Field()
-    embedder: str = Field()
-    model: str = Field()
-    base_url: str = Field()
+    api_key: str = Field(default="dummy-key")
+    embedder: str = Field(default="text-embedding-3-small")
+    model: str = Field(default="gpt-4o-mini")
+    base_url: str = Field(default="https://api.openai.com/v1")
