@@ -26,7 +26,7 @@ Switch from the package manager poetry to the package manager uv
     - Use `uv run` instead of `poetry run` to execute the application (uvicorn).
     - The Dockerfile builds successfully.
 
-- [ ] 4. Update the components/home-assistant/Dockerfile to use uv (version 0.10.0) similarly.
+- [x] 4. Update the components/home-assistant/Dockerfile to use uv (version 0.10.0) similarly.
   - Acceptance Criteria:
     - Remove poetry installation and configuration steps.
     - Install uv via `pip install uv==0.10.0`.
@@ -37,10 +37,10 @@ Switch from the package manager poetry to the package manager uv
 
 - [ ] 5. Update other files referencing poetry (workflows, renovate, helm, README) to use uv 0.10.0.
   - Acceptance Criteria:
-    - .github/workflows/test-and-lint.yml uses uv instead of poetry (replacing `poetry install` with `uv sync --dev` and `poetry run` with `uv run` where applicable).
+    - .github/workflows/test-and-lint.yml uses uv instead of poetry (removing poetry installation steps, installing uv via `pip install uv==0.10.0`, replacing `poetry install` with `uv sync --dev` to account for `.venv` creation, and replacing `poetry run` with `uv run` where applicable).
     - .github/renovate.json is updated for uv.
     - Helm values.yaml and templates update poetry references to uv (replacing `poetry run` with `uv run` where applicable).
-    - README.md updates any poetry-specific instructions to uv (replacing `poetry install` with `uv sync` and `poetry run` with `uv run` where applicable).
+    - README.md updates any poetry-specific instructions to uv (removing poetry installation steps, installing uv via `pip install uv==0.10.0`, replacing `poetry install` with `uv sync` or `uv sync --dev`, and `poetry run` with `uv run` where applicable).
 
 - [ ] 6. Convert poetry.lock files to uv.lock and remove poetry.lock using uv 0.10.0.
   - Acceptance Criteria:
