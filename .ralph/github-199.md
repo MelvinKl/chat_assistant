@@ -35,7 +35,7 @@ Switch from the package manager poetry to the package manager uv
     - Use `uv run` instead of `poetry run` to execute the application (uvicorn).
     - The Dockerfile builds successfully.
 
-- [ ] 5. Update other files referencing poetry (workflows, renovate, helm, README) to use uv 0.10.0.
+- [x] 5. Update other files referencing poetry (workflows, renovate, helm, README) to use uv 0.10.0.
   - Acceptance Criteria:
     - .github/workflows/test-and-lint.yml uses uv instead of poetry (removing poetry installation steps, installing uv via `pip install uv==0.10.0`, replacing `poetry install` with `uv sync --dev` to account for `.venv` creation, and replacing `poetry run` with `uv run` where applicable).
     - .github/renovate.json is updated for uv.
