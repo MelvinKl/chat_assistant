@@ -14,7 +14,7 @@ Switch from the package manager poetry to the package manager uv
     - `uv --version` shows a valid version.
     - uv is installed globally or in the user's PATH.
 
-- [ ] 2. Update the Makefile to replace poetry commands with uv equivalents (using uv 0.10.0).
+- [x] 2. Update the Makefile to replace poetry commands with uv equivalents (using uv 0.10.0).
   - Acceptance Criteria:
     - The `format`, `lint`, and `test` targets use `uv run` instead of `poetry run`.
     - The Makefile still executes the same commands (isort, black, flake8, pytest) via uv.
@@ -23,22 +23,22 @@ Switch from the package manager poetry to the package manager uv
   - Acceptance Criteria:
     - Remove poetry installation and configuration steps.
     - Use `uv sync` or `uv pip install` to install dependencies.
-    - Use `uv run` to execute the application (uvicorn).
+    - Use `uv run` instead of `poetry run` to execute the application (uvicorn).
     - The Dockerfile builds successfully.
 
 - [ ] 4. Update the components/home-assistant/Dockerfile to use uv (version 0.10.0) similarly.
   - Acceptance Criteria:
     - Remove poetry installation and configuration steps.
     - Use `uv sync` or `uv pip install` to install dependencies.
-    - Use `uv run` to execute the application (uvicorn).
+    - Use `uv run` instead of `poetry run` to execute the application (uvicorn).
     - The Dockerfile builds successfully.
 
 - [ ] 5. Update other files referencing poetry (workflows, renovate, helm, README) to use uv 0.10.0.
   - Acceptance Criteria:
-    - .github/workflows/test-and-lint.yml uses uv instead of poetry.
+    - .github/workflows/test-and-lint.yml uses uv instead of poetry (replacing `poetry run` with `uv run` where applicable).
     - .github/renovate.json is updated for uv.
-    - Helm values.yaml and templates update poetry references to uv.
-    - README.md updates any poetry-specific instructions to uv.
+    - Helm values.yaml and templates update poetry references to uv (replacing `poetry run` with `uv run` where applicable).
+    - README.md updates any poetry-specific instructions to uv (replacing `poetry run` with `uv run` where applicable).
 
 - [ ] 6. Convert poetry.lock files to uv.lock and remove poetry.lock using uv 0.10.0.
   - Acceptance Criteria:
@@ -48,5 +48,5 @@ Switch from the package manager poetry to the package manager uv
 
 - [ ] 7. Run `make test` and confirm it succeeds using uv 0.10.0.
   - Acceptance Criteria:
-    - `make test` exits successfully with no errors.
-    - All linting and tests pass.
+    - `make test` exits successfully with no errors (confirming the Makefile's new `uv run pytest .` works).
+    - All linting and tests pass (confirming the new `uv run` commands for flake8, etc. work).
