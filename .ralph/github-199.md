@@ -44,11 +44,13 @@ Switch from the package manager poetry to the package manager uv
 
 - [ ] 6. Convert poetry.lock files to uv.lock and remove poetry.lock using uv 0.10.0.
   - Acceptance Criteria:
-    - Run `uv lock` in assistant/ and components/home-assistant/ directories.
+    - Install uv via `pip install uv==0.10.0`.
+    - Run `uv lock` in assistant/ and components/home-assistant/ directories (or use `uv sync --dev` to account for `.venv` creation).
     - Generated uv.lock files are present.
     - Original poetry.lock files are removed.
 
 - [ ] 7. Run `make test` and confirm it succeeds using uv 0.10.0.
   - Acceptance Criteria:
-    - `make test` exits successfully with no errors (confirming the Makefile's new `uv run pytest .` works).
+    - Ensure dependencies are installed using `uv sync --dev` to account for `.venv` creation.
+    - `make test` exits successfully with no errors (confirming the Makefile's new `uv run pytest .` works, replacing `poetry run` with `uv run` where applicable).
     - All linting and tests pass (confirming the new `uv run` commands for flake8, etc. work).
