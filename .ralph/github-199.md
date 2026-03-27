@@ -1,0 +1,52 @@
+# Task: Switch to uv
+
+Task Number: 199
+Branch: ai/issue-199-switch-to-uv
+
+## Required Task
+
+Switch from the package manager poetry to the package manager uv
+
+## Steps
+
+- [x] 1. Install uv and verify it's available in the PATH.
+  - Acceptance Criteria:
+    - `uv --version` shows a valid version.
+    - uv is installed globally or in the user's PATH.
+
+- [ ] 2. Update the Makefile to replace poetry commands with uv equivalents (using uv 0.10.0).
+  - Acceptance Criteria:
+    - The `format`, `lint`, and `test` targets use `uv run` instead of `poetry run`.
+    - The Makefile still executes the same commands (isort, black, flake8, pytest) via uv.
+
+- [ ] 3. Update the assistant/Dockerfile to use uv (version 0.10.0) for dependency installation and application execution.
+  - Acceptance Criteria:
+    - Remove poetry installation and configuration steps.
+    - Use `uv sync` or `uv pip install` to install dependencies.
+    - Use `uv run` to execute the application (uvicorn).
+    - The Dockerfile builds successfully.
+
+- [ ] 4. Update the components/home-assistant/Dockerfile to use uv (version 0.10.0) similarly.
+  - Acceptance Criteria:
+    - Remove poetry installation and configuration steps.
+    - Use `uv sync` or `uv pip install` to install dependencies.
+    - Use `uv run` to execute the application (uvicorn).
+    - The Dockerfile builds successfully.
+
+- [ ] 5. Update other files referencing poetry (workflows, renovate, helm, README) to use uv 0.10.0.
+  - Acceptance Criteria:
+    - .github/workflows/test-and-lint.yml uses uv instead of poetry.
+    - .github/renovate.json is updated for uv.
+    - Helm values.yaml and templates update poetry references to uv.
+    - README.md updates any poetry-specific instructions to uv.
+
+- [ ] 6. Convert poetry.lock files to uv.lock and remove poetry.lock using uv 0.10.0.
+  - Acceptance Criteria:
+    - Run `uv lock` in assistant/ and components/home-assistant/ directories.
+    - Generated uv.lock files are present.
+    - Original poetry.lock files are removed.
+
+- [ ] 7. Run `make test` and confirm it succeeds using uv 0.10.0.
+  - Acceptance Criteria:
+    - `make test` exits successfully with no errors.
+    - All linting and tests pass.
