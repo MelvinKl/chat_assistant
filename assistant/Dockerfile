@@ -1,37 +1,30 @@
 FROM python:3.14 AS build
 
-ENV POETRY_VIRTUALENVS_PATH=/app/assistant/.venv
 ARG DEV 0
 
 WORKDIR /app/assistant
 
-RUN python3 -m venv "${POETRY_VIRTUALENVS_PATH}"
-ENV PATH="${POETRY_VIRTUALENVS_PATH}/bin:$PATH"
-
 RUN pip install --upgrade pip
-RUN pip install poetry
+RUN pip install uv==0.10.0
 
 COPY assistant .
 
-RUN poetry config virtualenvs.create false
-RUN if [ "$DEV" = 1 ] ; then poetry install --with dev; else poetry install ; fi
+RUN if [ "$DEV" = 1 ] ; then uv sync --dev ; else uv sync ; fi
 
 
 FROM python:3.14 
 
+WORKDIR /app/assistant
 
-ENV POETRY_VIRTUALENVS_PATH=/app/assistant/.venv
-ENV PATH="${POETRY_VIRTUALENVS_PATH}/bin:$PATH"
-
-COPY --from=build ${POETRY_VIRTUALENVS_PATH} ${POETRY_VIRTUALENVS_PATH}
 COPY --from=build /usr/local/bin/ /usr/local/bin/
 COPY --from=build /usr/bin/make /usr/bin/make
 COPY --from=build /usr/local/lib/ /usr/local/lib/
+COPY --from=build /app/assistant/.venv /app/assistant/.venv
 
-WORKDIR /app/assistant
+ENV PATH="/app/assistant/.venv/bin:$PATH"
 
 COPY assistant .
 
 ENV PYTHONPATH=/app/assistant/src
 
-CMD [ "poetry", "run", "uvicorn", "assistant.main:app", "--host", "0.0.0.0", "--port", "8080" ]
+CMD [ "uv", "run", "uvicorn", "assistant.main:app", "--host", "0.0.0.0", "--port", "8080" ]

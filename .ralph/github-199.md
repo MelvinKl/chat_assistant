@@ -19,7 +19,7 @@ Switch from the package manager poetry to the package manager uv
     - The `format`, `lint`, and `test` targets use `uv run` instead of `poetry run`.
     - The Makefile still executes the same commands (isort, black, flake8, pytest) via uv.
 
-- [ ] 3. Update the assistant/Dockerfile to use uv (version 0.10.0) for dependency installation and application execution.
+- [x] 3. Update the assistant/Dockerfile to use uv (version 0.10.0) for dependency installation and application execution.
   - Acceptance Criteria:
     - Remove poetry installation and configuration steps.
     - Use `uv sync` or `uv pip install` to install dependencies.
@@ -29,16 +29,18 @@ Switch from the package manager poetry to the package manager uv
 - [ ] 4. Update the components/home-assistant/Dockerfile to use uv (version 0.10.0) similarly.
   - Acceptance Criteria:
     - Remove poetry installation and configuration steps.
-    - Use `uv sync` or `uv pip install` to install dependencies.
+    - Install uv via `pip install uv==0.10.0`.
+    - Install dependencies using `if [ "$DEV" = 1 ] ; then uv sync --dev ; else uv sync ; fi`.
+    - Adjust PATH and copying steps to account for `.venv` created by `uv` (e.g., `ENV PATH="/app/home-assistant/.venv/bin:$PATH"` and copying `/app/home-assistant/.venv` from the build stage).
     - Use `uv run` instead of `poetry run` to execute the application (uvicorn).
     - The Dockerfile builds successfully.
 
 - [ ] 5. Update other files referencing poetry (workflows, renovate, helm, README) to use uv 0.10.0.
   - Acceptance Criteria:
-    - .github/workflows/test-and-lint.yml uses uv instead of poetry (replacing `poetry run` with `uv run` where applicable).
+    - .github/workflows/test-and-lint.yml uses uv instead of poetry (replacing `poetry install` with `uv sync --dev` and `poetry run` with `uv run` where applicable).
     - .github/renovate.json is updated for uv.
     - Helm values.yaml and templates update poetry references to uv (replacing `poetry run` with `uv run` where applicable).
-    - README.md updates any poetry-specific instructions to uv (replacing `poetry run` with `uv run` where applicable).
+    - README.md updates any poetry-specific instructions to uv (replacing `poetry install` with `uv sync` and `poetry run` with `uv run` where applicable).
 
 - [ ] 6. Convert poetry.lock files to uv.lock and remove poetry.lock using uv 0.10.0.
   - Acceptance Criteria:
