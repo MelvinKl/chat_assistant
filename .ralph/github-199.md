@@ -42,14 +42,14 @@ Switch from the package manager poetry to the package manager uv
     - Helm values.yaml and templates update poetry references to uv (replacing `poetry run` with `uv run` where applicable).
     - README.md updates any poetry-specific instructions to uv (removing poetry installation steps, installing uv via `pip install uv==0.10.0`, replacing `poetry install` with `uv sync` or `uv sync --dev`, and `poetry run` with `uv run` where applicable).
 
-- [ ] 6. Convert poetry.lock files to uv.lock and remove poetry.lock using uv 0.10.0.
+- [x] 6. Convert poetry.lock files to uv.lock and remove poetry.lock using uv 0.10.0.
   - Acceptance Criteria:
     - Install uv via `pip install uv==0.10.0`.
     - Run `uv lock` in assistant/ and components/home-assistant/ directories (or use `uv sync --dev` to account for `.venv` creation).
     - Generated uv.lock files are present.
     - Original poetry.lock files are removed.
 
-- [ ] 7. Run `make test` and confirm it succeeds using uv 0.10.0.
+- [x] 7. Run `make test` and confirm it succeeds using uv 0.10.0.
   - Acceptance Criteria:
     - Ensure dependencies are installed using `uv sync --dev` to account for `.venv` creation.
     - `make test` exits successfully with no errors (confirming the Makefile's new `uv run pytest .` works, replacing `poetry run` with `uv run` where applicable).
