@@ -15,6 +15,7 @@ from langgraph.prebuilt import create_react_agent
 from qdrant_client import QdrantClient
 
 from assistant.impl.component_handler import ComponentHandler
+from assistant.impl.mcp_sampling import create_sampling_callback
 from assistant.impl.dynamic_knowledge.dummy_knowledge_db import DummyKnowledgeDB
 from assistant.impl.dynamic_knowledge.qdrant_knowledge_db import QdrantKnowledgeDB
 from assistant.impl.graph.chat_graph import ChatGraph
@@ -38,21 +39,25 @@ nest_asyncio.apply()
 logger = logging.getLogger(__name__)
 
 
-def _get_mcp_tools(settings_mcp: MCPSettings) -> list[BaseTool]:
+def _get_mcp_tools(settings_mcp: MCPSettings, llm: BaseChatModel) -> list[BaseTool]:
     tools = []
+    sampling_callback = create_sampling_callback(llm)
 
     for server_definition in settings_mcp.servers:
         server_dict = {}
+        session_kwargs = {"sampling_callback": sampling_callback}
         if server_definition.transport == "stdio":
             server_dict[server_definition.name] = {
                 "command": server_definition.command,
                 "args": server_definition.args,
                 "transport": "stdio",
+                "session_kwargs": session_kwargs,
             }
         else:
             server_dict[server_definition.name] = {
                 "url": server_definition.url,
                 "transport": server_definition.transport,
+                "session_kwargs": session_kwargs,
             }
             if server_definition.headers:
                 server_dict[server_definition.name]["headers"] = server_definition.headers
@@ -113,7 +118,7 @@ def _di_config(binder: Binder) -> None:
             api_key=settings_openai.api_key,
         )
 
-    tools = _get_mcp_tools(settings_mcp)
+    tools = _get_mcp_tools(settings_mcp, llm)
     mcp_agent = create_react_agent(llm, tools)
 
     binder.bind(
