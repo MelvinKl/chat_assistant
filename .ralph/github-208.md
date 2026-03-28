@@ -15,7 +15,7 @@ The Chat Assistant should be able to provide an LLM via MCP sampling to an attac
     - Determine the interface for providing a sampling callback to MCP clients.
     - Review the langchain_mcp_adapters documentation for sampling callback requirements.
 
-- [ ] 2. Implement a sampling callback function that uses the assistant's LLM to handle sampling requests from MCP servers.
+- [x] 2. Implement a sampling callback function that uses the assistant's LLM to handle sampling requests from MCP servers.
   - Acceptance Criteria:
     - Create a function that accepts MCP sampling parameters (messages, model preferences, etc.).
       - **Implementation location:** `assistant/src/assistant/impl/mcp_sampling.py` (create_sampling_callback function)
