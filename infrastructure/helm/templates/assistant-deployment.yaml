@@ -23,6 +23,8 @@ spec:
         envFrom:
           - configMapRef:
               name: assistant-cm
+          - secretRef:
+              name: assistant-secret
         ports:
         - containerPort: 8080
         command:
