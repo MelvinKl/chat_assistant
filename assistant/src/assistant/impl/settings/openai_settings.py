@@ -7,7 +7,7 @@ class OpenAISetttings(BaseSettings):
         env_prefix="SETTINGS_OPENAI_", env_file=".env", env_file_encoding="utf-8", extra="ignore"
     )
 
-    api_key: str = Field()
-    embedder: str = Field()
-    model: str = Field()
-    base_url: str = Field()
+    api_key: str = Field(default="")
+    embedder: str = Field(default="")
+    model: str = Field(default="")
+    base_url: str = Field(default="")
