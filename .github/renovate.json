@@ -5,5 +5,5 @@
   "prHourlyLimit": 100,
   "labels": ["renovate"],
   "repositories": ["MelvinKl/chat_assistant"],
-  "enabledManagers": ["uv", "github-actions", "dockerfile", "devcontainer", "helm-requirements", "helmv3","kubernetes", "helm-values"]
+  "enabledManagers": ["github-actions", "dockerfile", "devcontainer", "helm-requirements", "helmv3","kubernetes", "helm-values"]
 }
