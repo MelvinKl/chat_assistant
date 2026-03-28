@@ -129,3 +129,35 @@ def test_empty_servers_returns_no_tools(mock_create_cb, mock_mcp_client_cls):
 
     assert tools == []
     mock_mcp_client_cls.assert_not_called()
+
+
+@patch("assistant.assistant_container.MultiServerMCPClient")
+@patch("assistant.assistant_container.create_sampling_callback")
+def test_failing_server_does_not_break_others(mock_create_cb, mock_mcp_client_cls):
+    """When one server fails to load tools, the others still contribute their tools."""
+    mock_create_cb.return_value = AsyncMock()
+
+    good_tool = MagicMock()
+
+    def client_side_effect(server_dict, session_kwargs=None):
+        client = MagicMock()
+        name = list(server_dict.keys())[0]
+        if name == "bad-server":
+            client.get_tools = AsyncMock(side_effect=ConnectionError("refused"))
+        else:
+            client.get_tools = AsyncMock(return_value=[good_tool])
+        return client
+
+    mock_mcp_client_cls.side_effect = client_side_effect
+
+    settings = MCPSettings(
+        servers=[
+            MCPServer(name="good-server", command="echo", transport="stdio"),
+            MCPServer(name="bad-server", command="fail", transport="stdio"),
+        ]
+    )
+    llm = FakeChatModel(answer="test")
+
+    tools = _get_mcp_tools(settings, llm)
+
+    assert tools == [good_tool]

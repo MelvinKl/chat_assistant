@@ -156,3 +156,60 @@ class TestCreateSamplingCallback:
         result = await callback(context, params)
 
         assert result.model == "ollama-model"
+
+    @pytest.mark.asyncio
+    async def test_sampling_falls_back_to_unknown_model(self):
+        llm = AsyncMock()
+        llm.ainvoke.return_value = MagicMock(content="response")
+        del llm.model_name
+        del llm.model
+
+        callback = create_sampling_callback(llm)
+        context = MagicMock()
+        params = types.CreateMessageRequestParams(
+            messages=[types.SamplingMessage(role="user", content=types.TextContent(type="text", text="hello"))],
+            maxTokens=100,
+        )
+
+        result = await callback(context, params)
+
+        assert result.model == "unknown"
+
+    @pytest.mark.asyncio
+    async def test_sampling_with_zero_temperature(self):
+        """temperature=0 is falsy but should still be passed to the LLM."""
+        llm = AsyncMock()
+        llm.ainvoke.return_value = MagicMock(content="response")
+        llm.model_name = "test-model"
+
+        callback = create_sampling_callback(llm)
+        context = MagicMock()
+        params = types.CreateMessageRequestParams(
+            messages=[types.SamplingMessage(role="user", content=types.TextContent(type="text", text="hello"))],
+            maxTokens=100,
+            temperature=0,
+        )
+
+        await callback(context, params)
+
+        call_kwargs = llm.ainvoke.call_args[1]
+        assert call_kwargs["temperature"] == 0
+
+    @pytest.mark.asyncio
+    async def test_sampling_with_non_string_content(self):
+        """When response.content is not a string, it should be converted via str()."""
+        llm = AsyncMock()
+        llm.ainvoke.return_value = MagicMock(content=["chunk1", "chunk2"])
+        llm.model_name = "test-model"
+
+        callback = create_sampling_callback(llm)
+        context = MagicMock()
+        params = types.CreateMessageRequestParams(
+            messages=[types.SamplingMessage(role="user", content=types.TextContent(type="text", text="hello"))],
+            maxTokens=100,
+        )
+
+        result = await callback(context, params)
+
+        assert isinstance(result, types.CreateMessageResult)
+        assert result.content.text == "['chunk1', 'chunk2']"
