@@ -14,7 +14,7 @@ Switch from the package manager poetry to the package manager uv
     - `uv --version` shows a valid version.
     - uv is installed globally or in the user's PATH.
 
-- [ ] 2. Update the Makefile to replace poetry commands with uv equivalents (using uv 0.10.0) and ensure dev dependencies are installed for linting and formatting.
+- [x] 2. Update the Makefile to replace poetry commands with uv equivalents (using uv 0.10.0) and ensure dev dependencies are installed for linting and formatting.
   - Acceptance Criteria:
     - The `format`, `lint`, and `test` targets use `uv run` instead of `poetry run`.
     - The `format` and `lint` targets install dev dependencies via `uv sync --dev` before running the commands.
