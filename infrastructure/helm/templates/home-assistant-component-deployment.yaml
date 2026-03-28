@@ -33,8 +33,8 @@ spec:
         image: ghcr.io/melvinkl/chat_assistant/home-assistant-component:latest
         ports:
         - containerPort: 8080
-        command: 
-          - "poetry"
+        command:
+          - "uv"
           - "run"
         args:
           {{- if .Values.components.homeAssistantComponent.debug }}
