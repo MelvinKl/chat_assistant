@@ -35,44 +35,67 @@ The Chat Assistant should be able to provide an LLM via MCP sampling to an attac
   - Acceptance Criteria:
     - Update the _get_mcp_tools function or MCP client initialization to include the sampling callback.
       - **File to modify:** `assistant/src/assistant/assistant_container.py` in `_get_mcp_tools()` function
-      - **Integration point:** Create sampling callback by calling `create_sampling_callback(llm)` and pass it via `session_kwargs` dict
+      - **Integration point:** Import `create_sampling_callback` from `assistant.impl.mcp_sampling`
+      - **Callback creation:** Call `sampling_callback = create_sampling_callback(context, llm)` to instantiate the callback with RequestContext and LLM instance
+      - **Registration:** Pass `sampling_callback` via `session_kwargs = {"sampling_callback": sampling_callback}` dict
     - Ensure the callback is registered for every MCP server connection (both stdio and HTTP transports).
       - Add `session_kwargs = {"sampling_callback": sampling_callback}` before building server_dict
-      - Include session_kwargs in both stdio transport config (command, args, transport) and HTTP transport config (url, transport)
-      - Pass server_dict to `MultiServerMCPClient(server_dict)` constructor
+      - Pass `session_kwargs` to `MultiServerMCPClient(server_dict, session_kwargs=session_kwargs)` constructor
+      - The MultiServerMCPClient will automatically register the callback with each MCP server session
     - Verify that the assistant's LLM is properly passed to the sampling callback.
-      - Ensure `llm` parameter from _get_mcp_tools is passed to create_sampling_callback function
-      - LLM should be the assistant's configured instance (ChatOllama or ChatOpenAI)
+      - The `context` parameter should be the RequestContext from the method signature
+      - The `llm` parameter should be the assistant's configured instance (ChatOllama or ChatOpenAI)
+      - Confirm the callback receives both parameters to handle sampling requests with proper context
     - Confirm that existing MCP tool functionality remains unaffected.
       - Tool discovery and execution should continue to work as before
       - Sampling callback operates independently from tool invocation
+      - Verify that no changes to tool-related logic are needed
 
 - [ ] 4. Add tests to verify the sampling callback works correctly with different MCP server configurations.
   - Acceptance Criteria:
     - Write unit tests that simulate MCP sampling requests from servers.
       - **Test file location:** `assistant/tests/test_mcp_sampling.py`
-      - Use mcp.types.CreateMessageRequestParams to construct test requests
-      - Test with various message formats: user messages, assistant messages, mixed conversations
+      - Import `create_sampling_callback` from `assistant.impl.mcp_sampling`
+      - Use `mcp.types.CreateMessageRequestParams` with `messages` list and optional `systemPrompt`, `maxTokens`, `temperature`, `stopSequences`
+      - Use `mcp.types.SamplingMessage` to construct message objects with `role` (user/assistant) and `content` fields
+      - Test with various message formats: single user message, assistant messages, mixed multi-turn conversations
     - Test that the callback correctly invokes the assistant's LLM and returns formatted responses.
-      - Verify successful sampling with system prompts (systemPrompt parameter)
-      - Test temperature and stopSequences parameter passing to LLM
-      - Verify maxTokens parameter is correctly applied
-      - Confirm response contains role, content (TextContent), and model name fields
+      - Mock the LLM using unittest.mock.AsyncMock to simulate `llm.ainvoke()` calls
+      - Verify callback returns `types.CreateMessageResult` with `role="assistant"`, `content` (TextContent), and `model` fields
+      - Verify system prompt is passed to LLM when provided via `systemPrompt` parameter
+      - Test temperature parameter is passed as kwargs to `llm.ainvoke()`
+      - Test maxTokens parameter is passed as kwargs to `llm.ainvoke()`
+      - Test stopSequences parameter is passed as kwargs to `llm.ainvoke()`
+      - Confirm TextContent object contains the LLM-generated response text
     - Test error handling when the LLM is unavailable or returns errors.
-      - Mock LLM errors and verify ErrorData responses with appropriate error codes
-      - Test graceful degradation scenarios
+      - Mock LLM to raise exceptions and verify callback returns `types.ErrorData`
+      - Verify ErrorData contains appropriate error code and error message
+      - Test with various exception types (ValueError, timeout, LLM service errors)
     - Ensure tests cover both stdio and HTTP transport scenarios.
       - Tests should be transport-agnostic since sampling_callback is registered at session level
-      - Both transports use same session_kwargs mechanism
+      - Create test cases that verify callback behavior independent of transport mechanism
+      - Both transports will use the same callback instance, so test coverage applies universally
 
 - [ ] 5. Run `make test` to verify all tests pass and no regressions are introduced.
   - Acceptance Criteria:
     - The `make test` command completes successfully.
-      - Execute from project root directory
-      - Runs linting checks and full test suite
+      - Execute from project root directory: `make test`
+      - Command runs linting checks (ruff) and full test suite
+      - All checks should pass with zero errors
     - All existing tests continue to pass.
-      - MCP tool tests in `assistant/tests/test_assistant_container.py` should pass
-      - Other assistant-related tests should pass
+      - MCP tool tests in `assistant/tests/test_assistant_container.py` should pass without modification
+      - MCP-related integration tests should verify tool discovery still works
+      - Other assistant-related tests should pass unaffected
+      - Verify no regressions in existing MCP tool functionality
     - New tests for sampling functionality pass.
-      - All tests in `assistant/tests/test_mcp_sampling.py` should pass
-      - Verify specific test cases for message conversion, LLM invocation, error handling, and parameter handling
+      - All unit tests in `assistant/tests/test_mcp_sampling.py` should pass
+      - Verify specific test cases:
+        - Message conversion (SamplingMessage to LangChain message format)
+        - LLM invocation with various parameter combinations
+        - Error handling with different exception scenarios
+        - Response formatting (CreateMessageResult with role, content, model)
+        - Optional parameter handling (systemPrompt, temperature, maxTokens, stopSequences)
+      - Sampling callback tests should be independent from transport layer
+      - Integration tests should verify callback is properly registered in MultiServerMCPClient
+
+(End of file - total 78 lines)
