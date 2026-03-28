@@ -1,8 +1,8 @@
 format:
-	cd assistant; uv run isort .; uv run black .
+	cd assistant; uv run --extra dev isort .; uv run --extra dev black .
 
-lint: 
-	cd assistant; uv run flake8
+lint:
+	cd assistant; uv run --extra dev flake8
 
 test: lint
-	cd assistant; uv run pytest .
+	cd assistant; uv run --extra dev pytest .
