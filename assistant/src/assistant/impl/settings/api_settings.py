@@ -7,5 +7,5 @@ class APISetttings(BaseSettings):
         env_prefix="SETTINGS_API_", env_file=".env", env_file_encoding="utf-8", extra="ignore"
     )
 
-    name: str = Field()
-    description: str = Field()
+    name: str = Field(default="")
+    description: str = Field(default="")
