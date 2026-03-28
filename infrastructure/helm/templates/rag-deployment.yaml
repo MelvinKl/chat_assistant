@@ -32,8 +32,8 @@ spec:
         image: ghcr.io/melvinkl/chat_assistant/rag:latest
         ports:
         - containerPort: 8080
-        command: 
-          - "poetry"
+        command:
+          - "uv"
           - "run"
         args:
           {{- if $deploy.debug }}

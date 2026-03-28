@@ -26,24 +26,24 @@ skip = [
 skip_gitignore = true
 
 
-[tool.poetry]
+[project]
 name = "Home Assistant Assistant component"
 version = "0.1.0"
 description = ""
-authors = ["Melvin Klein"]
+authors = [{name = "Melvin Klein"}]
 readme = "README.md"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+  "langchain-ollama>=0.2.0",
+  "homeassistant-api>=4.2.2.post2",
+]
 
-[tool.poetry.dependencies]
-python = ">=3.11,<3.13"
-langchain-ollama = "^0.2.0"
-base-component-api = { path = "../base-component-api/" }
-homeassistant-api = "^4.2.2.post2"
-
-
-[tool.poetry.group.dev.dependencies]
-debugpy = "^1.8.5"
+[project.optional-dependencies]
+dev = [
+  "debugpy>=1.8.5",
+]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
 

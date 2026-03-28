@@ -179,7 +179,7 @@ mcpServers:
       image: ghcr.io/melvinkl/mcp-weather/server:latest
       config: {}
       command:
-        - "poetry"
+        - "uv"
         - "run"
         - "python"
         - "src/main.py"
