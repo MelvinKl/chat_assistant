@@ -79,7 +79,7 @@ The Chat Assistant should be able to provide an LLM via MCP sampling to an attac
       - Create test cases that verify callback behavior independent of transport mechanism
       - Both transports will use the same callback instance registered via `MultiServerMCPClient(server_dict, session_kwargs=session_kwargs)`
 
-- [ ] 5. Run `make test` to verify all tests pass and no regressions are introduced.
+- [x] 5. Run `make test` to verify all tests pass and no regressions are introduced.
   - Acceptance Criteria:
     - The `make test` command completes successfully.
       - Execute from project root directory: `make test`
