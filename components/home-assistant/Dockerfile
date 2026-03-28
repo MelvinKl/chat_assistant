@@ -1,4 +1,4 @@
-FROM python:3.11 AS build
+FROM python:3.14 AS build
 
 ARG DEV 0
 
@@ -14,7 +14,7 @@ WORKDIR /app/home-assistant
 RUN if [ "$DEV" = 1 ] ; then uv sync --dev ; else uv sync ; fi
 
 
-FROM python:3.11 
+FROM python:3.14 
 
 WORKDIR /app/home-assistant
 
