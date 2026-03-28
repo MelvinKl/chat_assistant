@@ -46,60 +46,56 @@ skip_gitignore = true
 known_local_folder = []
 
 
-[tool.poetry]
+[project]
 name = "assistant"
 version = "0.1.0"
 description = ""
-authors = ["Melvin Klein"]
+authors = [{name = "Melvin Klein"}]
+requires-python = ">=3.13,<3.15"
+dependencies = [
+  "pydantic-settings>=2.4.0",
+  "langchain-openai>=1.1.10",
+  "langchain-community>=0.4.1",
+  "pydantic>=2.9.0",
+  "inject>=5.2.1",
+  "uvicorn>=0.38.0",
+  "fastapi>=0.135.0",
+  "langchain>=1.2.10",
+  "python-multipart>=0.0.22",
+  "python-dateutil>=2.9.0.post0",
+  "langdetect>=1.0.9",
+  "langchain-mcp-adapters>=0.1.1",
+  "langgraph>=1.0.10",
+  "nest-asyncio>=1.6.0",
+  "langchain-ollama>=1.0.1",
+  "qdrant-client>=1.15.1",
+  "langchain-qdrant>=1.1.0",
+]
 
-[tool.poetry.dependencies]
-python = ">=3.13,<3.15"
-pydantic-settings = "^2.4.0"
-langchain-openai = "^1.1.10"
-langchain-community = "^0.4.1"
-pydantic = "^2.9.0"
-inject = "^5.2.1"
-uvicorn = "^0.38.0"
-fastapi = "^0.135.0"
-langchain = "^1.2.10"
-python-multipart = "^0.0.22"
-python-dateutil = "^2.9.0.post0"
-langdetect = "^1.0.9"
-langchain-mcp-adapters = "^0.1.1"
-langgraph = "^1.0.10"
-nest-asyncio = "^1.6.0"
-langchain-ollama = "^1.0.1"
-qdrant-client = "^1.15.1"
-langchain-qdrant = "^1.1.0"
-
-[tool.poetry.group.dev.dependencies]
-debugpy = "^1.8.14"
-pytest = "^8.3.5"
-coverage = "^7.8.0"
-flake8 = "^7.2.0"
-flake8-black = "^0.4.0"
-flake8-pyproject = "^1.2.3"
-flake8-quotes = "^3.4.0"
-flake8-return = "^1.2.0"
-flake8-annotations-complexity = "^0.1.0"
-flake8-bandit = "^4.1.1"
-flake8-bugbear = "^25.0.0"
-flake8-builtins = "^3.0.0"
-flake8-comprehensions = "^3.15.0"
-flake8-eradicate = "^1.5.0"
-flake8-expression-complexity = "^0.0.11"
-flake8-pytest-style = "^2.1.0"
-pep8-naming = "^0.15.1"
-flake8-eol = "^0.0.8"
-flake8-exceptions = "^0.0.1a0"
-flake8-simplify = "^0.30.0"
-flake8-wot = "^0.2.0"
-flake8-function-order = "^0.0.5"
-flake8-tidy-imports = "^4.10.0"
-black = "^25.1.0"
-isort = "^7.0.0"
-pytest-asyncio = "^1.1.0"
+[project.optional-dependencies]
+dev = [
+  "debugpy>=1.8.14",
+  "pytest>=8.3.5",
+  "coverage>=7.8.0",
+  "flake8>=7.2.0",
+  "flake8-black>=0.4.0",
+  "flake8-pyproject>=1.2.3",
+  "flake8-quotes>=3.4.0",
+  "flake8-bandit>=4.1.1",
+  "flake8-bugbear>=25.0.0",
+  "flake8-builtins>=3.0.0",
+  "flake8-comprehensions>=3.15.0",
+  "flake8-eradicate>=1.5.0",
+  "flake8-pytest-style>=2.1.0",
+  "pep8-naming>=0.15.1",
+  "flake8-simplify>=0.30.0",
+  "flake8-wot>=0.2.0",
+  "flake8-tidy-imports>=4.10.0",
+  "black>=25.1.0",
+  "isort>=7.0.0",
+  "pytest-asyncio>=1.1.0",
+]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
