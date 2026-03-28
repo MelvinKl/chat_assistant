@@ -31,7 +31,7 @@ The Chat Assistant should be able to provide an LLM via MCP sampling to an attac
       - Uses langchain_mcp_adapters.client.MultiServerMCPClient for registration
       - Returns MCP protocol-compliant response objects
 
-- [ ] 3. Modify the MCP client setup to register the sampling callback with all MCP server connections.
+- [x] 3. Modify the MCP client setup to register the sampling callback with all MCP server connections.
   - Acceptance Criteria:
     - Update the _get_mcp_tools function or MCP client initialization to include the sampling callback.
       - **File to modify:** `assistant/src/assistant/assistant_container.py` in `_get_mcp_tools()` function
