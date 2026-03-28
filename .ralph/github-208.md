@@ -51,7 +51,7 @@ The Chat Assistant should be able to provide an LLM via MCP sampling to an attac
       - Sampling callback operates independently from tool invocation
       - Verify that no changes to tool-related logic are needed
 
-- [ ] 4. Add tests to verify the sampling callback works correctly with different MCP server configurations.
+- [x] 4. Add tests to verify the sampling callback works correctly with different MCP server configurations.
   - Acceptance Criteria:
     - Write unit tests that simulate MCP sampling requests from servers.
       - **Test file location:** `assistant/tests/test_mcp_sampling.py`
@@ -87,20 +87,21 @@ The Chat Assistant should be able to provide an LLM via MCP sampling to an attac
       - All checks should pass with zero errors
     - All existing tests continue to pass.
       - MCP tool tests in `assistant/tests/test_assistant_container.py` should pass without modification
-      - Verify that `_get_mcp_tools()` in assistant_container.py tests still pass with sampling callback integration
+      - Verify that `_get_mcp_tools()` in assistant_container.py tests still pass with sampling callback integration via `create_sampling_callback(context, llm)` and `session_kwargs={"sampling_callback": sampling_callback}`
       - MCP-related integration tests should verify tool discovery still works (callbacks registered via session_kwargs do not affect tool discovery)
       - Other assistant-related tests should pass unaffected
       - Verify no regressions in existing MCP tool functionality
     - New tests for sampling functionality pass.
       - All unit tests in `assistant/tests/test_mcp_sampling.py` should pass
-      - Verify specific test cases:
-        - Message conversion via `_convert_mcp_messages()` (SamplingMessage to LangChain message format)
-        - LLM invocation with various parameter combinations and kwargs mapping
-        - Error handling with different exception scenarios returning `types.ErrorData`
-        - Response formatting (CreateMessageResult with role="assistant", content, model)
-        - Optional parameter handling (systemPrompt, temperature, maxTokens, stopSequences)
-        - Model name extraction with fallback logic (`model_name` or `model` attribute)
-      - Sampling callback tests should be async and use pytest async fixtures
-      - Integration tests should verify callback is properly registered in MultiServerMCPClient via `session_kwargs` parameter
+      - Verify test cases using pytest async fixtures with AsyncMock for LLM mocking:
+        - Message conversion from `mcp.types.SamplingMessage` objects to LangChain message format (HumanMessage, AIMessage, SystemMessage)
+        - LLM invocation via `llm.ainvoke()` with parameter mapping: `temperature`, `max_tokens` (from maxTokens), `stop` (from stopSequences)
+        - Error handling scenarios where LLM raises exceptions (ValueError, timeout, service errors) returns `types.ErrorData` with `types.INTERNAL_ERROR` code
+        - Response formatting as `types.CreateMessageResult` with role="assistant", content as `types.TextContent`, and model name
+        - Optional parameter handling for `systemPrompt` (prepended to messages), `temperature`, `maxTokens`, `stopSequences`
+        - Model name extraction using `getattr(llm, "model_name", getattr(llm, "model", "unknown"))` pattern
+      - Sampling callback tests verify async function behavior with `await` keyword on callback invocation
+      - Tests confirm callback works transport-agnostic when registered via `MultiServerMCPClient(server_dict, session_kwargs=session_kwargs)` for both stdio and HTTP transports
+      - Verify `create_sampling_callback(context, llm)` returns an async callable that accepts `params: types.CreateMessageRequestParams`
 
 (End of file - total 78 lines)
