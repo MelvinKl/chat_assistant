@@ -25,7 +25,6 @@ class GraphNodeNames(StrEnum):
     REPHRASE_QUESTION = "rephrase_question"
     DETERMINE_LANGUAGE = "determine_language"
     DECIDE = "decide"
-    ERROR_NODE = "error_node"
     REPHRASE_ANSWER = "rephrase_answer"
 
 

@@ -72,7 +72,6 @@ class TestGraphNodeNames:
         assert GraphNodeNames.REPHRASE_QUESTION == "rephrase_question"
         assert GraphNodeNames.DETERMINE_LANGUAGE == "determine_language"
         assert GraphNodeNames.DECIDE == "decide"
-        assert GraphNodeNames.ERROR_NODE == "error_node"
         assert GraphNodeNames.REPHRASE_ANSWER == "rephrase_answer"
 
 
