@@ -8,6 +8,5 @@ class OpenAISetttings(BaseSettings):
     )
 
     api_key: str = Field(default="")
-    embedder: str = Field(default="")
     model: str = Field(default="")
     base_url: str = Field(default="")
