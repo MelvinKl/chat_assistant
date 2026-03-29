@@ -1,8 +1,6 @@
 """Module for the string enum class GraphNodeNames and the DefaultChatGraph class."""
 
-import asyncio
 import logging
-import threading
 from enum import StrEnum
 from pathlib import Path
 from typing import Any, Optional
@@ -17,7 +15,6 @@ from langgraph.graph import END, START, StateGraph
 
 from assistant.impl.graph.graph_state import GraphState
 from assistant.impl.settings.information_settings import InformationSettings
-from assistant.interfaces.knowledge_db import KnowledgeDB
 
 logger = logging.getLogger(__name__)
 
@@ -133,9 +130,7 @@ class ChatGraph:
     #########
     # nodes #
     #########
-    async def _determine_language_node(
-        self, state: dict, config: Optional[RunnableConfig] = None
-    ) -> dict:
+    async def _determine_language_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
         question_language = detect(state["question"])
         logger.info(
             'Detected langauge for question "%s": %s',
@@ -144,9 +139,7 @@ class ChatGraph:
         )
         return {"question_language": question_language}
 
-    async def _rephrase_question_node(
-        self, state: dict, config: Optional[RunnableConfig] = None
-    ) -> dict:
+    async def _rephrase_question_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
 
         rephrased_question = await self._question_rephraser.ainvoke(state, config)
         logger.info(
@@ -157,39 +150,27 @@ class ChatGraph:
         )
         return {"question": rephrased_question}
 
-    async def _answer_rephraser_node(
-        self, state: dict, config: Optional[RunnableConfig] = None
-    ) -> dict:
+    async def _answer_rephraser_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
         rephrased_answer = await self._answer_rephraser.ainvoke(state, config)
         return {"processed_answer": rephrased_answer}
 
-    async def _decide_node(
-        self, state: dict, config: Optional[RunnableConfig] = None
-    ) -> dict:
+    async def _decide_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
         answer = await self._mcp_agent.ainvoke({"messages": state["question"]}, config)
         answer = answer["messages"][-1].content
         return {"raw_answer": answer}
 
     def _add_nodes(self):
-        self._state_graph.add_node(
-            GraphNodeNames.REPHRASE_QUESTION, self._rephrase_question_node
-        )
-        self._state_graph.add_node(
-            GraphNodeNames.DETERMINE_LANGUAGE, self._determine_language_node
-        )
+        self._state_graph.add_node(GraphNodeNames.REPHRASE_QUESTION, self._rephrase_question_node)
+        self._state_graph.add_node(GraphNodeNames.DETERMINE_LANGUAGE, self._determine_language_node)
         self._state_graph.add_node(GraphNodeNames.DECIDE, self._decide_node)
-        self._state_graph.add_node(
-            GraphNodeNames.REPHRASE_ANSWER, self._answer_rephraser_node
-        )
+        self._state_graph.add_node(GraphNodeNames.REPHRASE_ANSWER, self._answer_rephraser_node)
 
     def _wire_graph(self):
         self._state_graph.add_edge(START, GraphNodeNames.DETERMINE_LANGUAGE)
         self._state_graph.add_edge(START, GraphNodeNames.REPHRASE_QUESTION)
+        self._state_graph.add_edge(GraphNodeNames.REPHRASE_QUESTION, GraphNodeNames.DECIDE)
         self._state_graph.add_edge(
-            GraphNodeNames.REPHRASE_QUESTION, GraphNodeNames.DECIDE
-        )
-        self._state_graph.add_edge(
-            [GraphNodeNames.DETERMINE_LANGUAGE, GraphNodeNames.REPHRASE_QUESTION],
+            [GraphNodeNames.DETERMINE_LANGUAGE, GraphNodeNames.DECIDE],
             GraphNodeNames.REPHRASE_ANSWER,
         )
         self._state_graph.add_edge(GraphNodeNames.REPHRASE_ANSWER, END)
