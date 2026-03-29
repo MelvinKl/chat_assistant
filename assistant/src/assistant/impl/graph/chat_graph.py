@@ -30,8 +30,6 @@ class GraphNodeNames(StrEnum):
     DECIDE = "decide"
     ERROR_NODE = "error_node"
     REPHRASE_ANSWER = "rephrase_answer"
-    ADD_DYNAMIC_KNOWLEDGE = "add_dynamic_knowledge"
-    UPDATE_DYNAMIC_KNOWLEDGE = "update_dynamic_knowledge"
 
 
 class ChatGraph:
@@ -43,7 +41,6 @@ class ChatGraph:
         answer_rephraser="answer_rephraser",
         mcp_agent="mcp_agent",
         information_settings=InformationSettings,
-        knowledge_db=KnowledgeDB,
     )
     def __init__(
         self,
@@ -52,13 +49,11 @@ class ChatGraph:
         answer_rephraser: Runnable,
         mcp_agent: RunnableSequence,
         information_settings: InformationSettings,
-        knowledge_db: KnowledgeDB,
     ):
         self._information_settings = information_settings
         self._question_rephraser = question_rephraser
         self._answer_rephraser = answer_rephraser
         self._llm = llm
-        self._knowledge_db = knowledge_db
         self._mcp_agent = mcp_agent
         self._state_graph = StateGraph(GraphState)
         self._graph = self._setup_graph()
@@ -138,7 +133,9 @@ class ChatGraph:
     #########
     # nodes #
     #########
-    async def _determine_language_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
+    async def _determine_language_node(
+        self, state: dict, config: Optional[RunnableConfig] = None
+    ) -> dict:
         question_language = detect(state["question"])
         logger.info(
             'Detected langauge for question "%s": %s',
@@ -147,7 +144,9 @@ class ChatGraph:
         )
         return {"question_language": question_language}
 
-    async def _rephrase_question_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
+    async def _rephrase_question_node(
+        self, state: dict, config: Optional[RunnableConfig] = None
+    ) -> dict:
 
         rephrased_question = await self._question_rephraser.ainvoke(state, config)
         logger.info(
@@ -158,48 +157,42 @@ class ChatGraph:
         )
         return {"question": rephrased_question}
 
-    async def _add_dynamic_knowledge_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
-        dynamic_knowledge = await self._knowledge_db.aretrieve_knowledge(state["question"])
-        dynamic_knowledge_string = "\n".join([x.information for x in dynamic_knowledge])
-        total_knowledge = self._information_settings.information + dynamic_knowledge_string
-        return {"additional_info": total_knowledge}
-
-    async def _answer_rephraser_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
+    async def _answer_rephraser_node(
+        self, state: dict, config: Optional[RunnableConfig] = None
+    ) -> dict:
         rephrased_answer = await self._answer_rephraser.ainvoke(state, config)
         return {"processed_answer": rephrased_answer}
 
-    async def _decide_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
+    async def _decide_node(
+        self, state: dict, config: Optional[RunnableConfig] = None
+    ) -> dict:
         answer = await self._mcp_agent.ainvoke({"messages": state["question"]}, config)
         answer = answer["messages"][-1].content
         return {"raw_answer": answer}
 
-    async def _update_knowledge_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
-        history = state["history"]
-        history.append(f"assistant:{state['processed_answer']}")
-        threading.Thread(
-            target=lambda: asyncio.run(self._knowledge_db.update_knowledge(history)),
-        ).start()
-        return state
-
     def _add_nodes(self):
-        self._state_graph.add_node(GraphNodeNames.REPHRASE_QUESTION, self._rephrase_question_node)
-        self._state_graph.add_node(GraphNodeNames.DETERMINE_LANGUAGE, self._determine_language_node)
-        self._state_graph.add_node(GraphNodeNames.ADD_DYNAMIC_KNOWLEDGE, self._add_dynamic_knowledge_node)
+        self._state_graph.add_node(
+            GraphNodeNames.REPHRASE_QUESTION, self._rephrase_question_node
+        )
+        self._state_graph.add_node(
+            GraphNodeNames.DETERMINE_LANGUAGE, self._determine_language_node
+        )
         self._state_graph.add_node(GraphNodeNames.DECIDE, self._decide_node)
-        self._state_graph.add_node(GraphNodeNames.REPHRASE_ANSWER, self._answer_rephraser_node)
-        self._state_graph.add_node(GraphNodeNames.UPDATE_DYNAMIC_KNOWLEDGE, self._update_knowledge_node)
+        self._state_graph.add_node(
+            GraphNodeNames.REPHRASE_ANSWER, self._answer_rephraser_node
+        )
 
     def _wire_graph(self):
         self._state_graph.add_edge(START, GraphNodeNames.DETERMINE_LANGUAGE)
         self._state_graph.add_edge(START, GraphNodeNames.REPHRASE_QUESTION)
-        self._state_graph.add_edge(GraphNodeNames.REPHRASE_QUESTION, GraphNodeNames.ADD_DYNAMIC_KNOWLEDGE)
-        self._state_graph.add_edge(GraphNodeNames.ADD_DYNAMIC_KNOWLEDGE, GraphNodeNames.DECIDE)
         self._state_graph.add_edge(
-            [GraphNodeNames.ADD_DYNAMIC_KNOWLEDGE, GraphNodeNames.DETERMINE_LANGUAGE],
+            GraphNodeNames.REPHRASE_QUESTION, GraphNodeNames.DECIDE
+        )
+        self._state_graph.add_edge(
+            [GraphNodeNames.DETERMINE_LANGUAGE, GraphNodeNames.REPHRASE_QUESTION],
             GraphNodeNames.REPHRASE_ANSWER,
         )
-        self._state_graph.add_edge(GraphNodeNames.REPHRASE_ANSWER, GraphNodeNames.UPDATE_DYNAMIC_KNOWLEDGE)
-        self._state_graph.add_edge(GraphNodeNames.UPDATE_DYNAMIC_KNOWLEDGE, END)
+        self._state_graph.add_edge(GraphNodeNames.REPHRASE_ANSWER, END)
 
     def _setup_graph(self):
         self._add_nodes()
