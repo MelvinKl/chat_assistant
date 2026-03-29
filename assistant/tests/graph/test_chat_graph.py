@@ -72,7 +72,6 @@ class TestGraphNodeNames:
         assert GraphNodeNames.REPHRASE_QUESTION == "rephrase_question"
         assert GraphNodeNames.DETERMINE_LANGUAGE == "determine_language"
         assert GraphNodeNames.DECIDE == "decide"
-        assert GraphNodeNames.ERROR_NODE == "error_node"
         assert GraphNodeNames.REPHRASE_ANSWER == "rephrase_answer"
 
 
@@ -152,4 +151,4 @@ class TestChatGraph:
             sg_mock.add_node.assert_any_call(GraphNodeNames.DETERMINE_LANGUAGE, chat_graph._determine_language_node)
             sg_mock.add_node.assert_any_call(GraphNodeNames.DECIDE, chat_graph._decide_node)
             sg_mock.add_node.assert_any_call(GraphNodeNames.REPHRASE_ANSWER, chat_graph._answer_rephraser_node)
-            assert sg_mock.add_node.call_count == 6
+            assert sg_mock.add_node.call_count == 4

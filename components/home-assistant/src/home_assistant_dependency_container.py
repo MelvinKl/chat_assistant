@@ -7,10 +7,7 @@ from base_library.impl.settings.ollama_settings import OllamaSettings
 
 from inject import Binder
 from langchain_community.llms import Ollama
-from langchain_core.embeddings.embeddings import Embeddings
 from langchain_core.language_models.llms import LLM
-from langchain_ollama import OllamaEmbeddings
-from qdrant_client import QdrantClient
 
 from impl.endpoints.home_assist_assist_endpoint import HomeAssistAssistEndpoint
 
@@ -23,13 +20,6 @@ def _di_config(binder: Binder):
     match settings_llm.provider:
         case "ollama":
             settings_ollama = OllamaSettings()
-            binder.bind(
-                Embeddings,
-                OllamaEmbeddings(
-                    model=settings_ollama.model,
-                    base_url=settings_ollama.url,
-                ),
-            )
             binder.bind(
                 LLM,
                 Ollama(
