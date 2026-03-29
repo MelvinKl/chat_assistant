@@ -95,7 +95,21 @@ class ChatGraph:
 
         logger.info("RECEIVED question: %s", state["question"])
 
-        response_state = await self._graph.ainvoke(input=state, config=config)
+        # Ensure we have a valid config to avoid langgraph timeout issues
+        if config is None:
+            config = RunnableConfig()
+
+        try:
+            response_state = await self._graph.ainvoke(input=state, config=config)
+        except RuntimeError as e:
+            if "Timeout should be used inside a task" in str(e):
+                # Handle the specific asyncio timeout error by creating a proper task context
+                import asyncio
+
+                task = asyncio.create_task(self._graph.ainvoke(input=state, config=config))
+                response_state = await task
+            else:
+                raise
 
         logger.info("GENERATED answer: %s", response_state["processed_answer"])
 
