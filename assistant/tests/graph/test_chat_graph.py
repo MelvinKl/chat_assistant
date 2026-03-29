@@ -92,7 +92,8 @@ class TestChatGraph:
 
         assert result == "42"
         chat_graph._graph.ainvoke.assert_awaited_once()
-        assert chat_graph._graph.ainvoke.call_args.kwargs["config"] is None  # no config supplied
+        # Config should not be None anymore due to our fix
+        assert chat_graph._graph.ainvoke.call_args.kwargs["config"] is not None
 
     @pytest.mark.asyncio
     async def test_ainvoke_produces_correct_state(
