@@ -1,5 +1,6 @@
 """Module for the string enum class GraphNodeNames and the DefaultChatGraph class."""
 
+import asyncio
 import logging
 from enum import StrEnum
 from pathlib import Path
@@ -95,21 +96,9 @@ class ChatGraph:
 
         logger.info("RECEIVED question: %s", state["question"])
 
-        # Ensure we have a valid config to avoid langgraph timeout issues
-        if config is None:
-            config = RunnableConfig()
-
-        try:
-            response_state = await self._graph.ainvoke(input=state, config=config)
-        except RuntimeError as e:
-            if "Timeout should be used inside a task" in str(e):
-                # Handle the specific asyncio timeout error by creating a proper task context
-                import asyncio
-
-                task = asyncio.create_task(self._graph.ainvoke(input=state, config=config))
-                response_state = await task
-            else:
-                raise
+        # Wrap in asyncio.create_task to ensure a proper task context.
+        # Python 3.14's asyncio.wait_for (used by langgraph) requires this.
+        response_state = await asyncio.create_task(self._graph.ainvoke(input=state, config=config))
 
         logger.info("GENERATED answer: %s", response_state["processed_answer"])
 
