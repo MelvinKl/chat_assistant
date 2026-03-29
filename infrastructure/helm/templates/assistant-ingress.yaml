@@ -23,16 +23,16 @@ spec:
   tls:
   - hosts:
     - {{ .Values.assistant.ingress.host }}
-    secretName: tls-certificate
+    secretName: assitant-tls-certificate
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: tls-certificate
+  name: assitant-tls-certificate
 spec:
   dnsNames:
     - {{ .Values.assistant.ingress.host }}    
-  secretName: tls-certificate
+  secretName: assitant-tls-certificate
   issuerRef:
     name: cert-issuer
     kind: ClusterIssuer    
