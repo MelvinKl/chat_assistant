@@ -10,7 +10,7 @@ RUN pip install uv==0.10.0
 COPY assistant .
 
 RUN if [ "$DEV" = 1 ] ; then uv sync --dev ; else uv sync ; fi
-
+RUN uv sync --dev
 
 FROM python:3.14 
 

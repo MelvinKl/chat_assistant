@@ -11,7 +11,7 @@ assistant:
     enabled: true
     host: assistant.localhost
   debug: false
-  debugArgs:
+  debugArgs:  
     - "python"
     - "-m"
     - "debugpy"
@@ -60,90 +60,6 @@ assistant:
       SETTINGS_OPENAI_MODEL: qwen3:4b
       SETTINGS_OPENAI_BASE_URL: http://ollama:11434/v1
       SETTINGS_OPENAI_API_KEY: "changeme"
-components:
-  homeAssistantComponent:
-    name: home-assistant-component
-    ingress: 
-      enabled: false
-      host: home-assistant-component.melvin.beer
-    debug: false
-    debugArgs:
-      - "python"
-      - "-m"
-      - "debugpy"
-      - "--listen"
-      - "0.0.0.0:5680"
-      - "--wait-for-client"
-      - "-m"
-      - "uvicorn"
-      - "src.main:component_app"
-      - "--host"
-      - "0.0.0.0"
-      - "--port"
-      - "8080"
-    args:
-      - "python"
-      - "-m"
-      - "uvicorn"
-      - "src.main:component_app"
-      - "--host"
-      - "0.0.0.0"
-      - "--port"
-      - "8080"
-    secrets:
-      homeassistant:
-        SETTINGS_HOMEASSISTANT_APIKEY: yourapikey
-    settings:
-      api:
-        SETTINGS_API_NAME: home-assistant-component
-        SETTINGS_API_DESCRIPTION: "Can answer questions and perform actions in the home. This includes things like light, temperature, blinds, etc."
-      llm:
-        SETTINGS_LLM_PROVIDER: ollama
-      ollama:
-        SETTINGS_OLLAMA_MODEL: llama3.2:3b
-        SETTINGS_OLLAMA_URL: http://open-webui-ollama:11434
-      homeassistant:
-        SETTINGS_HOMEASSISTANT_URL: http://192.168.5.88:8123/api
-  rag:
-    - name: warhammer
-      ingress: 
-        enabled: true
-        host: warhammer.melvin.beer
-      debug: false
-      debugArgs:
-        - "python"
-        - "-m"
-        - "debugpy"
-        - "--listen"
-        - "0.0.0.0:5678"
-        - "--wait-for-client"
-        - "-m"
-        - "uvicorn"
-        - "src.main:component_app"
-        - "--host"
-        - "0.0.0.0"
-        - "--port"
-        - "8080"
-      args:
-        - "python"
-        - "-m"
-        - "uvicorn"
-        - "src.main:component_app"
-        - "--host"
-        - "0.0.0.0"
-        - "--port"
-        - "8080"
-      settings:
-        api:
-          SETTINGS_API_NAME: warhammer
-          SETTINGS_API_DESCRIPTION: "Can answer question about the Warhammer Fantasy Role Playing Game. This includes rules and lore."
-        llm:
-          SETTINGS_LLM_PROVIDER: ollama
-        ollama:
-          SETTINGS_OLLAMA_MODEL: llama3.2:3b
-          SETTINGS_OLLAMA_URL: http://ollama:11434
-        qdrant:
-          SETTINGS_QDRANT_COLLECTION_NAME: warhammer
 
 mcpServers: 
   deployments:

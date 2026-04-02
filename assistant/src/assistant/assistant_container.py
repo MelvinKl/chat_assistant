@@ -8,22 +8,18 @@ from inject import Binder
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.tools import BaseTool
 from langchain_mcp_adapters.client import MultiServerMCPClient
-from langchain_ollama import ChatOllama
 from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
 
-from assistant.impl.component_handler import ComponentHandler
 from assistant.impl.mcp_sampling import create_sampling_callback
 from assistant.impl.graph.chat_graph import ChatGraph
 from assistant.impl.rephraser.rephraser import Rephraser
 from assistant.impl.settings.component_settings import ComponentSetttings
 from assistant.impl.settings.information_settings import InformationSettings
-from assistant.impl.settings.llm_settings import LLMSetttings
 from assistant.impl.settings.mcp_server_settings import (
     MCPSettings,
     load_mcp_settings_from_json,
 )
-from assistant.impl.settings.ollama_settings import OllamaSettings
 from assistant.impl.settings.openai_settings import OpenAISetttings
 from assistant.impl.settings.prompt_settings import PromptSettings
 
@@ -63,23 +59,18 @@ def _get_mcp_tools(settings_mcp: MCPSettings, llm: BaseChatModel) -> list[BaseTo
 
 
 def _di_config(binder: Binder) -> None:
-    settings_llm = LLMSetttings()
-    settings_openai = OpenAISetttings()
-    settings_prompt = PromptSettings()
+    settings_openai = OpenAISetttings()    
     settings_information = InformationSettings()
-
+    settings_prompt = PromptSettings()
     settings_mcp = load_mcp_settings_from_json()
     settings_components = ComponentSetttings()
 
-    if settings_llm.provider == "ollama":
-        settings_ollama = OllamaSettings()
-        llm = ChatOllama(model=settings_ollama.model, base_url=settings_ollama.url)
-    else:
-        llm = ChatOpenAI(
-            model=settings_openai.model,
-            base_url=settings_openai.base_url,
-            api_key=settings_openai.api_key,
-        )
+    
+    llm = ChatOpenAI(
+        model=settings_openai.model,
+        base_url=settings_openai.base_url,
+        api_key=settings_openai.api_key,
+    )
 
     tools = _get_mcp_tools(settings_mcp, llm)
     mcp_agent = create_react_agent(llm, tools)
@@ -105,7 +96,6 @@ def _di_config(binder: Binder) -> None:
     binder.bind(InformationSettings, settings_information)
     binder.bind(ComponentSetttings, settings_components)
     binder.bind_to_constructor(ChatGraph, ChatGraph)
-    binder.bind_to_constructor(ComponentHandler, ComponentHandler)
     binder.bind("mcp_agent", mcp_agent)
 
 
