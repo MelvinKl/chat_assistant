@@ -24,10 +24,9 @@
       "--network=host",
   ],
   "features": {
-    //"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
-    //"ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {},
-    //"ghcr.io/lentzi90/features/tilt:0": {}
-   // "ghcr.io/nucleuscloud/devcontainer-features/helmfile:0": {}
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
+    "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {},
+    "ghcr.io/lentzi90/features/tilt:0": {}
   },  
   "remoteEnv": {
     "KUBECONFIG": "/workspaces/chat_assistant/config"
