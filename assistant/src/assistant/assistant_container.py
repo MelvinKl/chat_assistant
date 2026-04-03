@@ -15,7 +15,6 @@ from langchain.agents.middleware import LLMToolSelectorMiddleware
 from assistant.impl.graph.chat_graph import ChatGraph
 from assistant.impl.mcp_sampling import create_sampling_callback
 from assistant.impl.rephraser.rephraser import Rephraser
-from assistant.impl.settings.component_settings import ComponentSetttings
 from assistant.impl.settings.information_settings import InformationSettings
 from assistant.impl.settings.mcp_server_settings import (
     MCPSettings,
@@ -50,8 +49,9 @@ def _get_mcp_tools(settings_mcp: MCPSettings, llm: BaseChatModel) -> list[BaseTo
             }
             if server_definition.headers:
                 server_dict[server_definition.name]["headers"] = server_definition.headers
-        mcp_client = MultiServerMCPClient(server_dict, session_kwargs=session_kwargs)
+        mcp_client = MultiServerMCPClient(server_dict)#, session_kwargs=session_kwargs)
         try:
+            logger.info("Adding mcp-server %s" % server_definition.name)
             server_tools = asyncio.run(mcp_client.get_tools())
             tools += server_tools
         except Exception as e:
@@ -63,8 +63,7 @@ def _di_config(binder: Binder) -> None:
     settings_openai = OpenAISetttings()
     settings_information = InformationSettings()
     settings_prompt = PromptSettings()
-    settings_mcp = load_mcp_settings_from_json()
-    settings_components = ComponentSetttings()
+    settings_mcp = load_mcp_settings_from_json()    
 
     llm = ChatOpenAI(
         model=settings_openai.model,
@@ -102,7 +101,6 @@ def _di_config(binder: Binder) -> None:
     binder.bind(BaseChatModel, llm)
     binder.bind(MCPSettings, load_mcp_settings_from_json())
     binder.bind(InformationSettings, settings_information)
-    binder.bind(ComponentSetttings, settings_components)
     binder.bind_to_constructor(ChatGraph, ChatGraph)
     binder.bind("mcp_agent", mcp_agent)
 
