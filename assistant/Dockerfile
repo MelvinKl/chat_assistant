@@ -1,4 +1,4 @@
-FROM python:3.14 AS build
+FROM python:3.13 AS build
 
 ARG DEV 0
 
@@ -12,7 +12,7 @@ COPY assistant .
 RUN if [ "$DEV" = 1 ] ; then uv sync --dev ; else uv sync ; fi
 RUN uv sync --dev
 
-FROM python:3.14 
+FROM python:3.13 
 
 WORKDIR /app/assistant
 

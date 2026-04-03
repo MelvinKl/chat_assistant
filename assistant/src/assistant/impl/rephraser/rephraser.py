@@ -46,7 +46,9 @@ class Rephraser(Runnable[Input, Output]):
         str
             The rephrased input
         """
-        return (await self._llm.ainvoke(self._prompt_template.invoke(state), config, **kwargs)).content
+        prompt = self._prompt_template.invoke(state)
+        answer = await self._llm.ainvoke(prompt, config, **kwargs)
+        return answer.content
 
     def invoke(self, state: Input, config: Optional[RunnableConfig] = None, **kwargs: Any) -> Output:
         """
@@ -66,4 +68,6 @@ class Rephraser(Runnable[Input, Output]):
         str
             The rephrased input
         """
-        return asyncio.run(self.ainvoke(state, config, **kwargs))
+        prompt = self._prompt_template.invoke(state)
+        answer = self._llm.invoke(prompt, config, **kwargs)
+        return answer.content

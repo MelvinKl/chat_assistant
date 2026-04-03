@@ -67,9 +67,7 @@ dependencies = [
   "langchain-mcp-adapters>=0.1.1",
   "langgraph>=1.0.10",
   "nest-asyncio>=1.6.0",
-  "langchain-ollama>=1.0.1",
-  "qdrant-client>=1.15.1",
-  "langchain-qdrant>=1.1.0",
+  "debugpy>=1.8.14",
 ]
 
 [project.optional-dependencies]
