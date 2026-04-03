@@ -12,8 +12,6 @@ from langchain_openai import ChatOpenAI
 from langchain.agents import create_agent
 from langchain.agents.middleware import LLMToolSelectorMiddleware
 
-
-
 from assistant.impl.graph.chat_graph import ChatGraph
 from assistant.impl.mcp_sampling import create_sampling_callback
 from assistant.impl.rephraser.rephraser import Rephraser
