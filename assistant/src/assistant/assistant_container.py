@@ -11,8 +11,8 @@ from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
 
-from assistant.impl.mcp_sampling import create_sampling_callback
 from assistant.impl.graph.chat_graph import ChatGraph
+from assistant.impl.mcp_sampling import create_sampling_callback
 from assistant.impl.rephraser.rephraser import Rephraser
 from assistant.impl.settings.component_settings import ComponentSetttings
 from assistant.impl.settings.information_settings import InformationSettings
@@ -59,13 +59,12 @@ def _get_mcp_tools(settings_mcp: MCPSettings, llm: BaseChatModel) -> list[BaseTo
 
 
 def _di_config(binder: Binder) -> None:
-    settings_openai = OpenAISetttings()    
+    settings_openai = OpenAISetttings()
     settings_information = InformationSettings()
     settings_prompt = PromptSettings()
     settings_mcp = load_mcp_settings_from_json()
     settings_components = ComponentSetttings()
 
-    
     llm = ChatOpenAI(
         model=settings_openai.model,
         base_url=settings_openai.base_url,

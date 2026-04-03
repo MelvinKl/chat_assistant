@@ -1,26 +1,22 @@
 """Unit tests for settings modules"""
 
-import pytest
-import os
 import json
+import os
 import tempfile
-from pathlib import Path
 
-from assistant.impl.settings.mcp_server_settings import load_mcp_settings_from_json, MCPServer, MCPSettings
+import pytest
+
+from assistant.impl.settings.mcp_server_settings import (
+    MCPServer,
+    MCPSettings,
+    load_mcp_settings_from_json,
+)
 
 
 def test_load_mcp_settings_from_valid_json():
     """Test loading MCP settings from valid JSON file."""
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
-        json.dump({
-            "servers": [
-                {
-                    "name": "weather",
-                    "url": "http://weather:8080/sse",
-                    "transport": "sse"
-                }
-            ]
-        }, f)
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+        json.dump({"servers": [{"name": "weather", "url": "http://weather:8080/sse", "transport": "sse"}]}, f)
         temp_path = f.name
 
     try:
@@ -35,7 +31,7 @@ def test_load_mcp_settings_from_valid_json():
 
 def test_load_mcp_settings_empty_servers():
     """Test loading MCP settings with empty servers list."""
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
         json.dump({"servers": []}, f)
         temp_path = f.name
 
@@ -54,7 +50,7 @@ def test_load_mcp_settings_missing_file():
 
 def test_load_mcp_settings_invalid_json():
     """Test loading invalid JSON raises ValueError."""
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
         f.write("{invalid json")
         temp_path = f.name
 
@@ -67,7 +63,7 @@ def test_load_mcp_settings_invalid_json():
 
 def test_load_mcp_settings_respects_env_variable():
     """Test that environment variable overrides default path."""
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
         json.dump({"servers": [{"name": "test", "url": "http://test", "transport": "sse"}]}, f)
         temp_path = f.name
 
@@ -84,11 +80,7 @@ def test_load_mcp_settings_respects_env_variable():
 
 def test_mcp_server_model_validation():
     """Test MCPServer model validation."""
-    server = MCPServer(
-        name="test",
-        transport="sse",
-        url="http://test:8080"
-    )
+    server = MCPServer(name="test", transport="sse", url="http://test:8080")
     assert server.name == "test"
     assert server.transport == "sse"
     assert server.command == ""
@@ -97,7 +89,5 @@ def test_mcp_server_model_validation():
 
 def test_mcp_settings_model_validation():
     """Test MCPSettings model validation."""
-    settings = MCPSettings(servers=[
-        MCPServer(name="test", transport="sse", url="http://test")
-    ])
+    settings = MCPSettings(servers=[MCPServer(name="test", transport="sse", url="http://test")])
     assert len(settings.servers) == 1

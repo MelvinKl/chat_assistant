@@ -1,11 +1,6 @@
 """Integration tests for full chat flow"""
 
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
-
-from assistant.impl.graph.chat_graph import ChatGraph
-from assistant.models.chat_completion_request import ChatCompletionRequest
-from assistant.models.chat_completion_messages import ChatCompletionMessages
 
 
 @pytest.fixture

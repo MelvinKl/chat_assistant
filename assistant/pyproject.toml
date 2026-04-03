@@ -51,7 +51,7 @@ name = "assistant"
 version = "0.1.0"
 description = ""
 authors = [{name = "Melvin Klein"}]
-requires-python = ">=3.13,<3.15"
+requires-python = ">=3.13,<3.14"
 dependencies = [
   "pydantic-settings>=2.4.0",
   "langchain-openai>=1.1.10",

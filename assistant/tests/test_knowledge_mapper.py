@@ -1,9 +1,9 @@
 """Unit tests for knowledge_mapper.py"""
 
-import pytest
 from datetime import datetime
 from uuid import uuid4
 
+import pytest
 from langchain_core.documents import Document
 
 from assistant.impl.mapper.knowledge_mapper import KnowledgeMapper

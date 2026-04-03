@@ -1,11 +1,12 @@
 """Unit tests for chat_api.py"""
 
+from unittest.mock import AsyncMock
+
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
 
 from assistant.impl.apis.chat_api import ChatApi
-from assistant.models.chat_completion_request import ChatCompletionRequest
 from assistant.models.chat_completion_messages import ChatCompletionMessages
+from assistant.models.chat_completion_request import ChatCompletionRequest
 
 
 @pytest.fixture
