@@ -39,6 +39,14 @@ Here is an explanation of the configuration options available through the `infra
 |`assistant.ingress.enabled`|`true`|Enables or disables the ingress.|
 |`assistant.ingress.host`|`assistant.localhost`|The host for the ingress.|
 
+### Egress
+|Key|Default value|Explanation|
+|---|---|---|
+|`assistant.egress.enabled`|`false`|Enables or disables the egress network policy for the assistant.|
+|`assistant.egress.rules`|`[]`|List of egress rules following the [Kubernetes NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/) spec.|
+|`mcpServers.egress.enabled`|`false`|Enables or disables the egress network policy for all MCP server deployments.|
+|`mcpServers.egress.rules`|`[]`|List of egress rules applied to each MCP server deployment.|
+
 ### Prompts
 |Key|Default value|Explanation|
 |---|---|---|

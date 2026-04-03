@@ -2,16 +2,16 @@ features:
    qdrant: true
 
 ghcrIo:
-   username: 
+   username:
    pat:
    email:
 
-assistant:    
-   ingress: 
+assistant:
+   ingress:
      enabled: true
      host: assistant.localhost
    debug: false
-   debugArgs:  
+   debugArgs:
      - "python"
      - "-m"
      - "debugpy"
@@ -46,59 +46,25 @@ assistant:
      #   - to:
      #       - ipBlock:
      #           cidr: 10.0.0.0/16
-     #       - ports:
-     #           - protocol: TCP
-     #             port: 443
+     #     ports:
+     #       - protocol: TCP
+     #         port: 443
      rules: []
-
-mcpServers: 
-   deployments:
-     - name: weather
-       port: 8080
-       image: ghcr.io/melvinkl/mcp-weather/server:latest
-       config: {}
-       command:
-         - "uv"
-         - "run"
-         - "python"
-         - "src/main.py"
-       secrets: 
-         TRANSPORT: sse
-   servers:
-     - name: weather
-       url: "http://weather:8080/sse"
-       command: ""
-       env: ""
-       transport: "sse"
-       args: []
-   # -- Egress network policies for MCP servers
-   egress:
-     enabled: false
-     # -- List of egress rules for MCP servers
-     # Example:
-     # rules:
-     #   - to:
-     #       - ipBlock:
-     #           cidr: 10.0.0.0/16
-     #       - ports:
-     #           - protocol: TCP
-     #             port: 443
-     rules: []
-  settings:
+   settings:
     additionalInformation: |
       Fun Fact: Your source code is available under Apache2 license
     prompt:
       SETTINGS_PROMPTS_REPHRASE_QUESTION_SYSTEM_PROMPT: |
         Your job is to rephrase the questions so they contain all the relevant information from the history required to answer the question.
-      SETTINGS_PROMPTS_REPHRASE_QUESTION_USER_PROMPT: |                                                       
+      SETTINGS_PROMPTS_REPHRASE_QUESTION_USER_PROMPT: |
         Question: {question}
         History: {history}
         Additional Information: {additional_info}
       SETTINGS_PROMPTS_REPHRASE_ANSWER_SYSTEM_PROMPT: |
-        You are James, a butler of the aristocracy. 
+        You are James, a butler of the aristocracy.
         You will get asked questions and will be provided with the correct answer.
         However the answer might not be worded suitable for your master. Your job is to rephrase the answer in a way that is suitable for your master.
-        Answer in the following language: {question_language}        
+        Answer in the following language: {question_language}
       SETTINGS_PROMPTS_REPHRASE_ANSWER_USER_PROMPT: |
         Question: {question}
         Answer: {raw_answer}
@@ -108,7 +74,7 @@ mcpServers:
       SETTINGS_OPENAI_BASE_URL: http://ollama:11434/v1
       SETTINGS_OPENAI_API_KEY: "changeme"
 
-mcpServers: 
+mcpServers:
   deployments:
     - name: weather
       port: 8080
@@ -119,7 +85,7 @@ mcpServers:
         - "run"
         - "python"
         - "src/main.py"
-      secrets: 
+      secrets:
         TRANSPORT: sse
   servers:
     - name: weather
@@ -128,6 +94,19 @@ mcpServers:
       env: ""
       transport: "sse"
       args: []
+  # -- Egress network policies for MCP servers
+  egress:
+    enabled: false
+    # -- List of egress rules for MCP servers
+    # Example:
+    # rules:
+    #   - to:
+    #       - ipBlock:
+    #           cidr: 10.0.0.0/16
+    #     ports:
+    #       - protocol: TCP
+    #         port: 443
+    rules: []
 
 ollama:
   image:
@@ -149,6 +128,6 @@ ollama:
         - nomic-embed-text
   #  #  - llama3.2:1b
   #    - llama3.2:3b
-  runtimeClassName: 
+  runtimeClassName:
   persistentVolume:
     enabled: true

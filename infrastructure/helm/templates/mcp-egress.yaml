@@ -14,7 +14,7 @@ spec:
   policyTypes:
   - Egress
   egress:
-  {{- range .Values.mcpServers.egress.rules }}
+  {{- range $.Values.mcpServers.egress.rules }}
   - {{- toYaml . | nindent 4 }}
   {{- end }}
 {{- end }}
