@@ -1,3 +1,7 @@
+# NetworkPolicy applies to mcp-server pods via `component: mcp-server` label
+# Conditional rendering on `.Values.mcpServers.egress.enabled`
+# Creates one policy per MCP server deployment (iterates over `.Values.mcpServers.deployments`)
+# Follows Kubernetes v1 NetworkPolicy API
 {{- if .Values.mcpServers.egress.enabled }}
 {{- range $.Values.mcpServers.deployments }}
 ---

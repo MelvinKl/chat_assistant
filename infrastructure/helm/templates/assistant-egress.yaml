@@ -1,3 +1,6 @@
+# NetworkPolicy applies to assistant pods via `component: assistant` label
+# Conditional rendering on `.Values.assistant.egress.enabled`
+# Follows Kubernetes v1 NetworkPolicy API
 {{- if .Values.assistant.egress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy

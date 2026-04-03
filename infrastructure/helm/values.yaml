@@ -37,19 +37,31 @@ assistant:
      - "0.0.0.0"
      - "--port"
      - "8080"
-   # -- Egress network policies for the assistant
-   egress:
-     enabled: false
-     # -- List of egress rules for the assistant
-     # Example:
-     # rules:
-     #   - to:
-     #       - ipBlock:
-     #           cidr: 10.0.0.0/16
-     #     ports:
-     #       - protocol: TCP
-     #         port: 443
-     rules: []
+    # -- Egress network policies for the assistant
+    # enabled: flag to enable/disable egress NetworkPolicy (default: false)
+    # rules: list of egress rules, each rule contains:
+    #   - to: destination specification (ipBlock, podSelector, or namespaceSelector)
+    #   - ports: list of port restrictions (protocol and port)
+    # Note: Egress is disabled by default for security - must be explicitly enabled
+    # Example for external API access (HTTPS):
+    #   rules:
+    #     - to:
+    #         - ipBlock:
+    #             cidr: 0.0.0.0/0
+    #       ports:
+    #         - protocol: TCP
+    #           port: 443
+    # Example for DNS access:
+    #   rules:
+    #     - to:
+    #         - ipBlock:
+    #             cidr: 0.0.0.0/0
+    #       ports:
+    #         - protocol: UDP
+    #           port: 53
+    egress:
+      enabled: false
+      rules: []
    settings:
     additionalInformation: |
       Fun Fact: Your source code is available under Apache2 license
@@ -94,19 +106,31 @@ mcpServers:
       env: ""
       transport: "sse"
       args: []
-  # -- Egress network policies for MCP servers
-  egress:
-    enabled: false
-    # -- List of egress rules for MCP servers
-    # Example:
-    # rules:
-    #   - to:
-    #       - ipBlock:
-    #           cidr: 10.0.0.0/16
-    #     ports:
-    #       - protocol: TCP
-    #         port: 443
-    rules: []
+   # -- Egress network policies for MCP servers
+   # enabled: flag to enable/disable egress NetworkPolicy (default: false)
+   # rules: list of egress rules, each rule contains:
+   #   - to: destination specification (ipBlock, podSelector, or namespaceSelector)
+   #   - ports: list of port restrictions (protocol and port)
+   # Note: Egress is disabled by default for security - must be explicitly enabled
+   # Example for external API access (HTTPS):
+   #   rules:
+   #     - to:
+   #         - ipBlock:
+   #             cidr: 0.0.0.0/0
+   #       ports:
+     #         - protocol: TCP
+     #           port: 443
+   # Example for DNS access:
+   #   rules:
+   #     - to:
+   #         - ipBlock:
+   #             cidr: 0.0.0.0/0
+   #       ports:
+   #         - protocol: UDP
+   #           port: 53
+   egress:
+     enabled: false
+     rules: []
 
 ollama:
   image:
