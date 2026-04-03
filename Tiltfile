@@ -22,9 +22,6 @@ values = [
     "ghcrIo.pat=%s" % os.environ.get("GH_PAT", ""),
     "ghcrIo.email=%s" % os.environ.get("GH_MAIL", ""),    
     "open-webui.ollama.runtimeClassName=",
-    "components.homeAssistantComponent.ingress.enabled=false",
-    "components.homeAssistantComponent.debug=true",
-    "components.homeAssistantComponent.secrets.homeassistant.SETTINGS_HOMEASSISTANT_APIKEY=%s" % os.environ.get("SETTINGS_HOMEASSISTANT_APIKEY", ""),
 ]
 
 if os.environ.get("SETTINGS_OPENAI_API_KEY", None):
