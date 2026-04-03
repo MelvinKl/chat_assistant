@@ -8,8 +8,7 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "chat-assistant.name" . }}
-      component: assistant
+      app: assistant
   policyTypes:
   - Egress
   egress:

@@ -1,19 +1,21 @@
 {{- if .Values.mcpServers.egress.enabled }}
+{{- range $.Values.mcpServers.deployments }}
+---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "chat-assistant.fullname" . }}-mcp-egress
+  name: {{ include "chat-assistant.fullname" $ }}-mcp-{{ .name }}-egress
   labels:
-    {{- include "assistant.labels" . | nindent 4 }}
+    {{- include "assistant.labels" $ | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "chat-assistant.name" . }}
-      component: mcp-server
+      app: {{ .name }}
   policyTypes:
   - Egress
   egress:
-  {{- range .Values.mcpServers.egress.rules }}
+  {{- range $.Values.mcpServers.egress.rules }}
   - {{- toYaml . | nindent 4 }}
   {{- end }}
+{{- end }}
 {{- end }}
