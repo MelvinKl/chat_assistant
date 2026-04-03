@@ -3,9 +3,9 @@
 
 from unittest.mock import AsyncMock, MagicMock
 
-from mcp import types
 import pytest
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
+from mcp import types
 
 from assistant.impl.mcp_sampling import (
     _convert_mcp_messages,
