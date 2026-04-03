@@ -8,9 +8,10 @@ metadata:
   labels:
     {{- include "assistant.labels" $ | nindent 4 }}
 spec:
-  podSelector:
-    matchLabels:
-      app: {{ .name }}
+   podSelector:
+     matchLabels:
+       app.kubernetes.io/name: {{ include "chat-assistant.name" $ }}
+       component: mcp-server
   policyTypes:
   - Egress
   egress:
