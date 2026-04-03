@@ -2,9 +2,9 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "assistant.fullname" . }}-egress
+  name: assistant-egress
   labels:
-    {{- include "assistant.labels" . | nindent 4 }}
+    app: assistant
 spec:
   podSelector:
     matchLabels:
