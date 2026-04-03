@@ -13,4 +13,3 @@ data:
 {{ .Values.assistant.settings.prompt.SETTINGS_PROMPTS_REPHRASE_ANSWER_SYSTEM_PROMPT |indent 6 }}
   SETTINGS_PROMPTS_REPHRASE_ANSWER_USER_PROMPT: |
 {{ .Values.assistant.settings.prompt.SETTINGS_PROMPTS_REPHRASE_ANSWER_USER_PROMPT |indent 6 }}
-  SETTINGS_COMPONENTS_APIS: '[{{- range $index, $deploy :=  .Values.components.rag }}{{ if $index }}, {{ end }}"http://{{ $deploy.name }}:8080"{{ end }}]'
