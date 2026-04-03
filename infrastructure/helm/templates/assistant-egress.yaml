@@ -2,13 +2,14 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: assistant-egress
+  name: {{ include "chat-assistant.fullname" . }}-assistant-egress
   labels:
-    app: assistant
+    {{- include "assistant.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app: assistant
+      app.kubernetes.io/name: {{ include "chat-assistant.name" . }}
+      component: assistant
   policyTypes:
   - Egress
   egress:

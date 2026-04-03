@@ -22,3 +22,11 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 app.kubernetes.io/name: {{ include "assistant.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
+
+{{- define "chat-assistant.name" -}}
+{{- include "assistant.name" . | trunc 63 | trimSuffix "-" -}}
+{{- end }}
+
+{{- define "chat-assistant.fullname" -}}
+{{- printf "%s-%s" .Release.Name .Chart.Name | trunc 63 | trimSuffix "-" -}}
+{{- end }}
