@@ -48,7 +48,7 @@ def _get_mcp_tools(settings_mcp: MCPSettings, llm: BaseChatModel) -> list[BaseTo
             }
             if server_definition.headers:
                 server_dict[server_definition.name]["headers"] = server_definition.headers
-        mcp_client = MultiServerMCPClient(server_dict)#, session_kwargs=session_kwargs)
+        mcp_client = MultiServerMCPClient(server_dict, session_kwargs=session_kwargs)
         try:
             logger.info("Adding mcp-server %s" % server_definition.name)
             server_tools = asyncio.run(mcp_client.get_tools())
@@ -62,7 +62,7 @@ def _di_config(binder: Binder) -> None:
     settings_openai = OpenAISetttings()
     settings_information = InformationSettings()
     settings_prompt = PromptSettings()
-    settings_mcp = load_mcp_settings_from_json()    
+    settings_mcp = load_mcp_settings_from_json()
 
     llm = ChatOpenAI(
         model=settings_openai.model,
