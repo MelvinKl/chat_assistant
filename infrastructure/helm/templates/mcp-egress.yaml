@@ -1,0 +1,21 @@
+{{- if .Values.mcpServers.egress.enabled }}
+{{- range $server := .Values.mcpServers.deployments }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ $server.name }}-egress
+  labels:
+    app: {{ $server.name }}
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ $server.name }}
+  policyTypes:
+  - Egress
+  egress:
+  {{- range .Values.mcpServers.egress.rules }}
+  - {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}
+{{- end }}

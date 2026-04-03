@@ -28,6 +28,12 @@ class MCPSettings(BaseSettings):
 def load_mcp_settings_from_json(
     json_file_path="/config/mcp/SETTINGS_MCP_SERVERS",
 ) -> MCPSettings:
+    import os
+
+    env_path = os.getenv("MCP_SETTINGS_PATH")
+    if env_path:
+        json_file_path = env_path
+
     try:
         with open(json_file_path, "r") as f:
             data = json.load(f)
@@ -36,3 +42,5 @@ def load_mcp_settings_from_json(
         return MCPSettings(**cleaned_data)
     except FileNotFoundError:
         return MCPSettings(servers=[])
+    except json.JSONDecodeError:
+        raise ValueError("MCP settings file contains invalid JSON")

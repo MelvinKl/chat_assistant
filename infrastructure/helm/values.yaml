@@ -1,42 +1,89 @@
 features:
-  qdrant: true
+   qdrant: true
 
 ghcrIo:
-  username: 
-  pat:
-  email:
+   username: 
+   pat:
+   email:
 
 assistant:    
-  ingress: 
-    enabled: true
-    host: assistant.localhost
-  debug: false
-  debugArgs:  
-    - "python"
-    - "-m"
-    - "debugpy"
-    - "--listen"
-    - "0.0.0.0:5679"
-    - "--wait-for-client"
-    - "-m"
-    - "uvicorn"
-    - "src.assistant.main:app"
-    - "--host"
-    - "0.0.0.0"
-    - "--port"
-    - "8080"
-    - "--reload"
-    - "--reload-dir"
-    - "/app/assistant"
-  args:
-    - "python"
-    - "-m"
-    - "uvicorn"
-    - "src.assistant.main:app"
-    - "--host"
-    - "0.0.0.0"
-    - "--port"
-    - "8080"
+   ingress: 
+     enabled: true
+     host: assistant.localhost
+   debug: false
+   debugArgs:  
+     - "python"
+     - "-m"
+     - "debugpy"
+     - "--listen"
+     - "0.0.0.0:5679"
+     - "--wait-for-client"
+     - "-m"
+     - "uvicorn"
+     - "src.assistant.main:app"
+     - "--host"
+     - "0.0.0.0"
+     - "--port"
+     - "8080"
+     - "--reload"
+     - "--reload-dir"
+     - "/app/assistant"
+   args:
+     - "python"
+     - "-m"
+     - "uvicorn"
+     - "src.assistant.main:app"
+     - "--host"
+     - "0.0.0.0"
+     - "--port"
+     - "8080"
+   # -- Egress network policies for the assistant
+   egress:
+     enabled: false
+     # -- List of egress rules for the assistant
+     # Example:
+     # rules:
+     #   - to:
+     #       - ipBlock:
+     #           cidr: 10.0.0.0/16
+     #       - ports:
+     #           - protocol: TCP
+     #             port: 443
+     rules: []
+
+mcpServers: 
+   deployments:
+     - name: weather
+       port: 8080
+       image: ghcr.io/melvinkl/mcp-weather/server:latest
+       config: {}
+       command:
+         - "uv"
+         - "run"
+         - "python"
+         - "src/main.py"
+       secrets: 
+         TRANSPORT: sse
+   servers:
+     - name: weather
+       url: "http://weather:8080/sse"
+       command: ""
+       env: ""
+       transport: "sse"
+       args: []
+   # -- Egress network policies for MCP servers
+   egress:
+     enabled: false
+     # -- List of egress rules for MCP servers
+     # Example:
+     # rules:
+     #   - to:
+     #       - ipBlock:
+     #           cidr: 10.0.0.0/16
+     #       - ports:
+     #           - protocol: TCP
+     #             port: 443
+     rules: []
   settings:
     additionalInformation: |
       Fun Fact: Your source code is available under Apache2 license
