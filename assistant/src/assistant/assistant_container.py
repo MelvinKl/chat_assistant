@@ -13,6 +13,7 @@ from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_openai import ChatOpenAI
 
 from assistant.impl.graph.chat_graph import ChatGraph
+from assistant.impl.mcp_sampling import create_sampling_callback
 from assistant.impl.rephraser.rephraser import Rephraser
 from assistant.impl.settings.information_settings import InformationSettings
 from assistant.impl.settings.mcp_server_settings import (
@@ -28,8 +29,13 @@ nest_asyncio.apply()
 logger = logging.getLogger(__name__)
 
 
-def _get_mcp_tools(settings_mcp: MCPSettings) -> list[BaseTool]:
+def _get_mcp_tools(settings_mcp: MCPSettings, llm: BaseChatModel) -> list[BaseTool]:
     tools = []
+
+    if not settings_mcp.servers:
+        return tools
+
+    sampling_callback = create_sampling_callback(llm)
 
     for server_definition in settings_mcp.servers:
         server_dict = {}
@@ -45,19 +51,14 @@ def _get_mcp_tools(settings_mcp: MCPSettings) -> list[BaseTool]:
                 "transport": server_definition.transport,
             }
             if server_definition.headers:
-                server_dict[server_definition.name]["headers"] = (
-                    server_definition.headers
-                )
-        mcp_client = MultiServerMCPClient(server_dict)
+                server_dict[server_definition.name]["headers"] = server_definition.headers
+        mcp_client = MultiServerMCPClient(server_dict, session_kwargs={"sampling_callback": sampling_callback})
         try:
             logger.info("Adding mcp-server %s" % server_definition.name)
             server_tools = asyncio.run(mcp_client.get_tools())
             tools += server_tools
         except Exception as e:
-            logger.error(
-                "Could not load MCP Tools from server %s\t%s "
-                % (server_definition.name, e)
-            )
+            logger.error("Could not load MCP Tools from server %s\t%s " % (server_definition.name, e))
     return tools
 
 
@@ -73,7 +74,7 @@ def _di_config(binder: Binder) -> None:
         api_key=settings_openai.api_key,
     )
 
-    tools = _get_mcp_tools(settings_mcp)
+    tools = _get_mcp_tools(settings_mcp, llm)
     mcp_agent = create_agent(
         model=llm,
         tools=tools,
