@@ -69,14 +69,17 @@ def _di_config(binder: Binder) -> None:
     )
 
     tools = _get_mcp_tools(settings_mcp)
-    mcp_agent = create_agent(
-        model=llm,
-        tools=tools,
-        middleware=[
+    middleware = []
+    if settings_prompt.max_tools > 0:
+        middleware.append(
             LLMToolSelectorMiddleware(
                 max_tools=settings_prompt.max_tools,
             ),
-        ],
+        )
+    mcp_agent = create_agent(
+        model=llm,
+        tools=tools,
+        middleware=[middleware],
     )
 
     binder.bind(
