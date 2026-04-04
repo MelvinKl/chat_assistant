@@ -78,5 +78,7 @@ jobs:
     - name: Test with curl
       run: |
         kubectl port-forward svc/assistant 8080:8080 &
+        PORT_FORWARD_PID=$!
         sleep 10
-        curl -f http://localhost:8080/health || exit 1
+        ./test-e2e.sh
+        kill $PORT_FORWARD_PID 2>/dev/null || true
