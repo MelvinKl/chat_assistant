@@ -79,7 +79,7 @@ def _di_config(binder: Binder) -> None:
     mcp_agent = create_agent(
         model=llm,
         tools=tools,
-        middleware=[middleware],
+        middleware=middleware,
     )
 
     binder.bind(
