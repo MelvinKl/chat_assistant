@@ -51,21 +51,14 @@ def _get_mcp_tools(settings_mcp: MCPSettings, llm: BaseChatModel) -> list[BaseTo
                 "transport": server_definition.transport,
             }
             if server_definition.headers:
-                server_dict[server_definition.name]["headers"] = (
-                    server_definition.headers
-                )
-        mcp_client = MultiServerMCPClient(
-            server_dict, session_kwargs={"sampling_callback": sampling_callback}
-        )
+                server_dict[server_definition.name]["headers"] = server_definition.headers
+        mcp_client = MultiServerMCPClient(server_dict, session_kwargs={"sampling_callback": sampling_callback})
         try:
             logger.info("Adding mcp-server %s" % server_definition.name)
             server_tools = asyncio.run(mcp_client.get_tools())
             tools += server_tools
         except Exception as e:
-            logger.error(
-                "Could not load MCP Tools from server %s\t%s "
-                % (server_definition.name, e)
-            )
+            logger.error("Could not load MCP Tools from server %s\t%s " % (server_definition.name, e))
     return tools
 
 
@@ -81,7 +74,7 @@ def _di_config(binder: Binder) -> None:
         api_key=settings_openai.api_key,
     )
 
-    tools = _get_mcp_tools(settings_mcp)
+    tools = _get_mcp_tools(settings_mcp, llm)
     middleware = []
     if settings_prompt.max_tools > 0:
         middleware.append(
@@ -92,7 +85,7 @@ def _di_config(binder: Binder) -> None:
     mcp_agent = create_agent(
         model=llm,
         tools=tools,
-        middleware=[middleware],
+        middleware=middleware,
     )
 
     binder.bind(
