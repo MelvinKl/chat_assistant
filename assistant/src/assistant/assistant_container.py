@@ -5,15 +5,14 @@ import logging
 import inject
 import nest_asyncio
 from inject import Binder
+from langchain.agents import create_agent
+from langchain.agents.middleware import LLMToolSelectorMiddleware
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.tools import BaseTool
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_openai import ChatOpenAI
-from langchain.agents import create_agent
-from langchain.agents.middleware import LLMToolSelectorMiddleware
 
 from assistant.impl.graph.chat_graph import ChatGraph
-from assistant.impl.mcp_sampling import create_sampling_callback
 from assistant.impl.rephraser.rephraser import Rephraser
 from assistant.impl.settings.information_settings import InformationSettings
 from assistant.impl.settings.mcp_server_settings import (
@@ -30,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 
 def _get_mcp_tools(settings_mcp: MCPSettings) -> list[BaseTool]:
-    tools = []    
+    tools = []
 
     for server_definition in settings_mcp.servers:
         server_dict = {}
