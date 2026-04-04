@@ -1,0 +1,55 @@
+name: E2E Test
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  e2e-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+
+    - name: Set up KinD
+      uses: helm/kind-action@v1.12.0
+      with:
+        cluster_name: chat-assistant-test
+        config: .github/workflows/kind-config.yaml
+
+    - name: Set up Helm
+      uses: azure/setup-helm@v4
+      with:
+        version: v3.16.0
+
+    - name: Build Docker image
+      run: |
+        docker build . -f assistant/Dockerfile -t local/assistant:test
+
+    - name: Load Docker image to KinD
+      run: |
+        kind load docker-image local/assistant:test --name chat-assistant-test
+
+    - name: Deploy Helm chart
+      run: |
+        helm install chat-assistant infrastructure/helm \
+          --set assistant.image.repository=local/assistant \
+          --set assistant.image.tag=test \
+          --set assistant.ingress.enabled=false \
+          --set ghcrIo.username=test \
+          --set ghcrIo.pat=test \
+          --set ghcrIo.email=test@test.com \
+          --timeout 10m \
+          --wait
+
+    - name: Wait for deployment
+      run: |
+        kubectl wait --for=condition=available --timeout=300s deployment/assistant -n default
+
+    - name: Test with curl
+      run: |
+        kubectl port-forward svc/assistant 8080:8080 &
+        sleep 10
+        curl -f http://localhost:8080/health || exit 1

@@ -6,8 +6,12 @@ ghcrIo:
   pat:
   email:
 
-assistant:    
-  ingress: 
+assistant:
+  image:
+    repository: ghcr.io/melvinkl/chat_assistant/assistant
+    tag: latest
+    pullPolicy: Always
+  ingress:
     enabled: true
     host: assistant.localhost
   debug: false

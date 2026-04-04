@@ -13,6 +13,7 @@ from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_openai import ChatOpenAI
 
 from assistant.impl.graph.chat_graph import ChatGraph
+from assistant.impl.mcp_sampling import create_sampling_callback
 from assistant.impl.rephraser.rephraser import Rephraser
 from assistant.impl.settings.information_settings import InformationSettings
 from assistant.impl.settings.mcp_server_settings import (
@@ -28,8 +29,10 @@ nest_asyncio.apply()
 logger = logging.getLogger(__name__)
 
 
-def _get_mcp_tools(settings_mcp: MCPSettings) -> list[BaseTool]:
+def _get_mcp_tools(settings_mcp: MCPSettings, llm: BaseChatModel) -> list[BaseTool]:
     tools = []
+    sampling_callback = create_sampling_callback(llm)
+    session_kwargs = {"sampling_callback": sampling_callback}
 
     for server_definition in settings_mcp.servers:
         server_dict = {}
@@ -46,7 +49,7 @@ def _get_mcp_tools(settings_mcp: MCPSettings) -> list[BaseTool]:
             }
             if server_definition.headers:
                 server_dict[server_definition.name]["headers"] = server_definition.headers
-        mcp_client = MultiServerMCPClient(server_dict)
+        mcp_client = MultiServerMCPClient(server_dict, session_kwargs=session_kwargs)
         try:
             logger.info("Adding mcp-server %s" % server_definition.name)
             server_tools = asyncio.run(mcp_client.get_tools())
@@ -68,7 +71,7 @@ def _di_config(binder: Binder) -> None:
         api_key=settings_openai.api_key,
     )
 
-    tools = _get_mcp_tools(settings_mcp)
+    tools = _get_mcp_tools(settings_mcp, llm)
     middleware = []
     if settings_prompt.max_tools > 0:
         middleware.append(
@@ -79,7 +82,7 @@ def _di_config(binder: Binder) -> None:
     mcp_agent = create_agent(
         model=llm,
         tools=tools,
-        middleware=[middleware],
+        middleware=middleware,
     )
 
     binder.bind(

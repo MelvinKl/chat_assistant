@@ -22,11 +22,11 @@ spec:
           name: assistant-mcp-cm
       containers:
       - name: assistant
-        imagePullPolicy: Always
+        imagePullPolicy: {{ .Values.assistant.image.pullPolicy }}
         volumeMounts:
           - name: mcp-config-volume
             mountPath: /config/mcp
-        image: ghcr.io/melvinkl/chat_assistant/assistant:latest
+        image: {{ .Values.assistant.image.repository }}:{{ .Values.assistant.image.tag }}
         envFrom:
           - configMapRef:
               name: assistant-cm
