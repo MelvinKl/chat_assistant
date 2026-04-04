@@ -129,10 +129,25 @@ This repository provides a `Tiltfile` for local development. It supports live-re
 
 ## Testing
 
-### Unit Tests
-Unit tests can be run using:
+### Full Testing Pipeline
+The full testing pipeline (unit tests, linting, and e2e tests) can be run using:
 ```bash
 make test
+```
+
+Note: E2E tests require the chat assistant service to be deployed and accessible at `http://localhost:8080`. If the service is not available, E2E tests will wait and eventually fail.
+
+### Unit Tests Only
+To run only unit tests and linting (without E2E tests):
+```bash
+make lint
+cd assistant; uv run --extra dev pytest .
+```
+
+### E2E Tests Only
+To run only end-to-end tests:
+```bash
+make test-e2e
 ```
 
 ### Mock Servers for Testing

@@ -80,5 +80,6 @@ jobs:
         kubectl port-forward svc/assistant 8080:8080 &
         PORT_FORWARD_PID=$!
         sleep 10
-        ./test-e2e.sh
+        export KUBECTL_PORT_FORWARD=1
+        make test
         kill $PORT_FORWARD_PID 2>/dev/null || true
