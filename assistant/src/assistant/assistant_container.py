@@ -29,10 +29,8 @@ nest_asyncio.apply()
 logger = logging.getLogger(__name__)
 
 
-def _get_mcp_tools(settings_mcp: MCPSettings, llm: BaseChatModel) -> list[BaseTool]:
-    tools = []
-    sampling_callback = create_sampling_callback(llm)
-    session_kwargs = {"sampling_callback": sampling_callback}
+def _get_mcp_tools(settings_mcp: MCPSettings) -> list[BaseTool]:
+    tools = []    
 
     for server_definition in settings_mcp.servers:
         server_dict = {}
@@ -49,7 +47,7 @@ def _get_mcp_tools(settings_mcp: MCPSettings, llm: BaseChatModel) -> list[BaseTo
             }
             if server_definition.headers:
                 server_dict[server_definition.name]["headers"] = server_definition.headers
-        mcp_client = MultiServerMCPClient(server_dict, session_kwargs=session_kwargs)
+        mcp_client = MultiServerMCPClient(server_dict)
         try:
             logger.info("Adding mcp-server %s" % server_definition.name)
             server_tools = asyncio.run(mcp_client.get_tools())
@@ -71,13 +69,13 @@ def _di_config(binder: Binder) -> None:
         api_key=settings_openai.api_key,
     )
 
-    tools = _get_mcp_tools(settings_mcp, llm)
+    tools = _get_mcp_tools(settings_mcp)
     mcp_agent = create_agent(
         model=llm,
         tools=tools,
         middleware=[
             LLMToolSelectorMiddleware(
-                max_tools=5,
+                max_tools=settings_prompt.max_tools,
             ),
         ],
     )
