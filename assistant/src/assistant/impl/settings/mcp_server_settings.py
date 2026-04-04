@@ -30,9 +30,7 @@ def load_mcp_settings_from_json(
     json_file_path: str | None = None,
 ) -> MCPSettings:
     if json_file_path is None:
-        json_file_path = os.environ.get(
-            "MCP_SETTINGS_PATH", "/config/mcp/SETTINGS_MCP_SERVERS"
-        )
+        json_file_path = os.environ.get("MCP_SETTINGS_PATH", "/config/mcp/SETTINGS_MCP_SERVERS")
     else:
         json_file_path = os.environ.get("MCP_SETTINGS_PATH", json_file_path)
     path = json_file_path
