@@ -107,6 +107,18 @@ ollama:
         - nomic-embed-text
   #  #  - llama3.2:1b
   #    - llama3.2:3b
-  runtimeClassName: 
+  runtimeClassName:
   persistentVolume:
     enabled: true
+
+additionalDeployments: []
+# Example:
+# - name: mock-openai-server
+#   image: local/mock-openai-server:test
+#   replicas: 1
+#   ports:
+#     - 11434
+#   service:
+#     ports:
+#       - port: 11434
+#         targetPort: 11434
