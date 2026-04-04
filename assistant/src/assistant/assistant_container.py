@@ -5,11 +5,12 @@ import logging
 import inject
 import nest_asyncio
 from inject import Binder
+from langchain.agents import create_agent
+from langchain.agents.middleware import LLMToolSelectorMiddleware
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.tools import BaseTool
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_openai import ChatOpenAI
-from langgraph.prebuilt import create_react_agent
 
 from assistant.impl.graph.chat_graph import ChatGraph
 from assistant.impl.rephraser.rephraser import Rephraser
@@ -27,7 +28,7 @@ nest_asyncio.apply()
 logger = logging.getLogger(__name__)
 
 
-def _get_mcp_tools(settings_mcp: MCPSettings, llm: BaseChatModel) -> list[BaseTool]:
+def _get_mcp_tools(settings_mcp: MCPSettings) -> list[BaseTool]:
     tools = []
 
     for server_definition in settings_mcp.servers:
@@ -45,6 +46,7 @@ def _get_mcp_tools(settings_mcp: MCPSettings, llm: BaseChatModel) -> list[BaseTo
             }
             if server_definition.headers:
                 server_dict[server_definition.name]["headers"] = server_definition.headers
+<<<<<<< HEAD
         mcp_client = MultiServerMCPClient(server_dict)  # , session_kwargs=session_kwargs)
         try:
             logger.info("Adding mcp-server %s" % server_definition.name)
@@ -67,8 +69,16 @@ def _di_config(binder: Binder) -> None:
         api_key=settings_openai.api_key,
     )
 
-    tools = _get_mcp_tools(settings_mcp, llm)
-    mcp_agent = create_react_agent(llm, tools)
+    tools = _get_mcp_tools(settings_mcp)
+    mcp_agent = create_agent(
+        model=llm,
+        tools=tools,
+        middleware=[
+            LLMToolSelectorMiddleware(
+                max_tools=settings_prompt.max_tools,
+            ),
+        ],
+    )
 
     binder.bind(
         "question_rephraser",
