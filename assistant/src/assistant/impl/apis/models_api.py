@@ -9,7 +9,12 @@ from assistant.models.model import Model
 class ModelsApi(BaseModelsApi):
     """Implementation of OpenAI compatible models API for chat assistant."""
 
-    model = Model(id="chat_assistant", created=0, owned_by="No one. This model is a free spirit", object="model")
+    model = Model(
+        id="chat_assistant",
+        created=0,
+        owned_by="No one. This model is a free spirit",
+        object="model",
+    )
 
     async def list_models(
         self,
@@ -38,4 +43,9 @@ class ModelsApi(BaseModelsApi):
         -------
         Model: The model instance with the specified ID.
         """
-        return self.model
+        return Model(
+            id=model,
+            created=0,
+            owned_by="No one. This model is a free spirit",
+            object="model",
+        )
