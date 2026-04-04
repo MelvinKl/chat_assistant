@@ -12,7 +12,6 @@ from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
 
 from assistant.impl.graph.chat_graph import ChatGraph
-from assistant.impl.mcp_sampling import create_sampling_callback
 from assistant.impl.rephraser.rephraser import Rephraser
 from assistant.impl.settings.information_settings import InformationSettings
 from assistant.impl.settings.mcp_server_settings import (
@@ -30,8 +29,6 @@ logger = logging.getLogger(__name__)
 
 def _get_mcp_tools(settings_mcp: MCPSettings, llm: BaseChatModel) -> list[BaseTool]:
     tools = []
-    sampling_callback = create_sampling_callback(llm)
-    session_kwargs = {"sampling_callback": sampling_callback}
 
     for server_definition in settings_mcp.servers:
         server_dict = {}
@@ -48,7 +45,7 @@ def _get_mcp_tools(settings_mcp: MCPSettings, llm: BaseChatModel) -> list[BaseTo
             }
             if server_definition.headers:
                 server_dict[server_definition.name]["headers"] = server_definition.headers
-        mcp_client = MultiServerMCPClient(server_dict)#, session_kwargs=session_kwargs)
+        mcp_client = MultiServerMCPClient(server_dict)  # , session_kwargs=session_kwargs)
         try:
             logger.info("Adding mcp-server %s" % server_definition.name)
             server_tools = asyncio.run(mcp_client.get_tools())
@@ -62,7 +59,7 @@ def _di_config(binder: Binder) -> None:
     settings_openai = OpenAISetttings()
     settings_information = InformationSettings()
     settings_prompt = PromptSettings()
-    settings_mcp = load_mcp_settings_from_json()    
+    settings_mcp = load_mcp_settings_from_json()
 
     llm = ChatOpenAI(
         model=settings_openai.model,
