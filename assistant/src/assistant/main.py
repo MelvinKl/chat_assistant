@@ -6,6 +6,7 @@ from assistant.apis.assistant_api import router as assistant_api_router
 from assistant.apis.chat_api import router as chat_api_router
 from assistant.apis.models_api import router as models_api_router
 from assistant.assistant_container import configure
+from assistant.endpoints.health_endpoints import router as health_router
 
 app = FastAPI(
     title="Chat assistant API",
@@ -35,5 +36,6 @@ def readiness():
 app.include_router(chat_api_router)
 app.include_router(models_api_router)
 app.include_router(assistant_api_router)
+app.include_router(health_router)
 
 configure()

@@ -30,10 +30,11 @@ def load_mcp_settings_from_json(
     json_file_path="/config/mcp/SETTINGS_MCP_SERVERS",
 ) -> MCPSettings:
     # Check for environment variable override
-    file_path = os.environ.get("MCP_SETTINGS_PATH", json_file_path)
+<<<<<<< HEAD
+    path = os.environ.get("MCP_SETTINGS_PATH", json_file_path)
 
     try:
-        with open(file_path, "r") as f:
+        with open(path, "r") as f:
             data = json.load(f)
 
         cleaned_data = {"servers": data["servers"]} if "servers" in data else {}
