@@ -81,6 +81,7 @@ assistant:
         Question: {question}
         Answer: {raw_answer}
         Additional Information: {additional_info}
+      SETTINGS_PROMPTS_MAX_TOOLS: "10"
     openai:
       SETTINGS_OPENAI_MODEL: qwen3:4b
       SETTINGS_OPENAI_BASE_URL: http://ollama:11434/v1
