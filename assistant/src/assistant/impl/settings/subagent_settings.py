@@ -8,7 +8,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Subagent(BaseModel):
     name: str
     description: str
-    system_prompt: str    
+    system_prompt: str
 
 
 class SubagentSettings(BaseSettings):

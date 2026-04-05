@@ -3,11 +3,9 @@
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass
 from typing import TYPE_CHECKING, Annotated, Any, Literal, Union
 
 from langchain.agents.middleware import LLMToolSelectorMiddleware
-from langchain_core.messages import HumanMessage
 from pydantic import Field, TypeAdapter
 from typing_extensions import TypedDict
 
@@ -17,7 +15,6 @@ if TYPE_CHECKING:
     from langchain.tools import BaseTool
 
     from langchain.agents.middleware.types import (
-        AgentState,
         ContextT,
         ModelRequest,
         ModelResponse,
@@ -33,21 +30,15 @@ class OpenRouterCompatibleToolSelector(LLMToolSelectorMiddleware):
     async def awrap_model_call(
         self,
         request: "ModelRequest[ContextT]",
-        handler: Callable[
-            ["ModelRequest[ContextT]"], Awaitable["ModelResponse[ResponseT]"]
-        ],
+        handler: Callable[["ModelRequest[ContextT]"], Awaitable["ModelResponse[ResponseT]"]],
     ) -> "ModelResponse[ResponseT]":
         selection_request = self._prepare_selection_request(request)
         if selection_request is None:
             return await handler(request)
 
-        type_adapter = self._create_tool_selection_response(
-            selection_request.available_tools
-        )
+        type_adapter = self._create_tool_selection_response(selection_request.available_tools)
         schema = type_adapter.json_schema()
-        structured_model = selection_request.model.with_structured_output(
-            schema, method="function_calling"
-        )
+        structured_model = selection_request.model.with_structured_output(schema, method="function_calling")
 
         response = await structured_model.ainvoke(
             [
@@ -77,13 +68,9 @@ class OpenRouterCompatibleToolSelector(LLMToolSelectorMiddleware):
         if selection_request is None:
             return handler(request)
 
-        type_adapter = self._create_tool_selection_response(
-            selection_request.available_tools
-        )
+        type_adapter = self._create_tool_selection_response(selection_request.available_tools)
         schema = type_adapter.json_schema()
-        structured_model = selection_request.model.with_structured_output(
-            schema, method="function_calling"
-        )
+        structured_model = selection_request.model.with_structured_output(schema, method="function_calling")
 
         response = structured_model.invoke(
             [
@@ -110,10 +97,7 @@ class OpenRouterCompatibleToolSelector(LLMToolSelectorMiddleware):
             msg = "Invalid usage: tools must be non-empty"
             raise AssertionError(msg)
 
-        literals = [
-            Annotated[Literal[tool.name], Field(description=tool.description)]
-            for tool in tools
-        ]
+        literals = [Annotated[Literal[tool.name], Field(description=tool.description)] for tool in tools]
         selected_tool_type = Union[tuple(literals)]  # type: ignore[valid-type]
 
         description = "Tools to use. Place the most relevant tools first."

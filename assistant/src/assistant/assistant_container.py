@@ -19,7 +19,6 @@ from assistant.impl.settings.mcp_server_settings import (
     load_mcp_settings_from_json,
 )
 from assistant.impl.settings.subagent_settings import (
-    SubagentSettings,
     load_subagent_settings_from_json,
 )
 from assistant.impl.settings.openai_settings import OpenAISetttings
@@ -31,7 +30,7 @@ nest_asyncio.apply()
 logger = logging.getLogger(__name__)
 
 
-def _get_mcp_tools(settings_mcp: MCPSettings) -> dict[str|None, BaseTool]:
+def _get_mcp_tools(settings_mcp: MCPSettings) -> dict[str | None, BaseTool]:
     tools = {}
 
     for server_definition in settings_mcp.servers:
@@ -81,7 +80,8 @@ def _di_config(binder: Binder) -> None:
             "description": subagent.description,
             "system_prompt": subagent.system_prompt,
             "tools": tools.get(subagent.name, []),
-        } for subagent in settings_subagents.subagents
+        }
+        for subagent in settings_subagents.subagents
     ]
 
     mcp_agent = create_deep_agent(

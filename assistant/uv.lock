@@ -111,7 +111,6 @@ name = "assistant"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
-    { name = "debugpy" },
     { name = "deepagents" },
     { name = "fastapi" },
     { name = "inject" },
@@ -157,7 +156,6 @@ dev = [
 requires-dist = [
     { name = "black", marker = "extra == 'dev'", specifier = ">=25.1.0" },
     { name = "coverage", marker = "extra == 'dev'", specifier = ">=7.8.0" },
-    { name = "debugpy", specifier = ">=1.8.14" },
     { name = "debugpy", marker = "extra == 'dev'", specifier = ">=1.8.14" },
     { name = "deepagents", specifier = ">=0.4.12" },
     { name = "fastapi", specifier = ">=0.135.0" },
