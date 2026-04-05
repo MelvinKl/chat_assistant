@@ -15,7 +15,9 @@ def test_stdio_server_gets_sampling_callback(mock_mcp_client_cls):
 
     settings = MCPSettings(
         servers=[
-            MCPServer(name="test-stdio", command="echo", args=["hello"], transport="stdio"),
+            MCPServer(
+                name="test-stdio", command="echo", args=["hello"], transport="stdio"
+            ),
         ]
     )
 
@@ -34,7 +36,9 @@ def test_http_server_gets_sampling_callback(mock_mcp_client_cls):
 
     settings = MCPSettings(
         servers=[
-            MCPServer(name="test-sse", url="http://localhost:8080/sse", transport="sse"),
+            MCPServer(
+                name="test-sse", url="http://localhost:8080/sse", transport="sse"
+            ),
         ]
     )
 
@@ -93,7 +97,7 @@ def test_empty_servers_returns_no_tools(mock_mcp_client_cls):
 
     tools = _get_mcp_tools(settings)
 
-    assert tools == []
+    assert tools == {}
     mock_mcp_client_cls.assert_not_called()
 
 
@@ -122,4 +126,4 @@ def test_failing_server_does_not_break_others(mock_mcp_client_cls):
 
     tools = _get_mcp_tools(settings)
 
-    assert tools == [good_tool]
+    assert tools == {None: [good_tool]}

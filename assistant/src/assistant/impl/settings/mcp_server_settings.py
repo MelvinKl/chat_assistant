@@ -12,6 +12,7 @@ class MCPServer(BaseModel):
     args: list[str] = []
     env: str = ""
     transport: str
+    agent: str | None = None
     headers: dict[str, str] | None = None
 
 
