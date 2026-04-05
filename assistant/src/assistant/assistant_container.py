@@ -3,7 +3,6 @@ import asyncio
 import logging
 
 import inject
-import nest_asyncio
 from inject import Binder
 from deepagents import create_deep_agent
 from langchain_core.language_models.chat_models import BaseChatModel
@@ -24,12 +23,11 @@ from assistant.impl.settings.subagent_settings import (
 )
 from assistant.impl.settings.openai_settings import OpenAISetttings
 from assistant.impl.settings.prompt_settings import PromptSettings
-from assistant.impl.middleware.tool_selector import LLMToolSelectorMiddleware
+
+logger = logging.getLogger(__name__)
 
 
-def _get_mcp_tools(
-    settings_mcp: MCPSettings, llm: BaseChatModel
-) -> dict[str | None, BaseTool]:
+def _get_mcp_tools(settings_mcp: MCPSettings, llm: BaseChatModel) -> dict[str | None, BaseTool]:
     tools = {}
 
     if not settings_mcp.servers:
@@ -51,12 +49,8 @@ def _get_mcp_tools(
                 "transport": server_definition.transport,
             }
             if server_definition.headers:
-                server_dict[server_definition.name]["headers"] = (
-                    server_definition.headers
-                )
-        mcp_client = MultiServerMCPClient(
-            server_dict, session_kwargs={"sampling_callback": sampling_callback}
-        )
+                server_dict[server_definition.name]["headers"] = server_definition.headers
+        mcp_client = MultiServerMCPClient(server_dict, session_kwargs={"sampling_callback": sampling_callback})
         try:
             logger.info("Adding mcp-server %s" % server_definition.name)
             server_tools = asyncio.run(mcp_client.get_tools())
@@ -64,10 +58,7 @@ def _get_mcp_tools(
                 tools[server_definition.agent] = []
             tools[server_definition.agent] += server_tools
         except Exception as e:
-            logger.error(
-                "Could not load MCP Tools from server %s\t%s "
-                % (server_definition.name, e)
-            )
+            logger.error("Could not load MCP Tools from server %s\t%s " % (server_definition.name, e))
     return tools
 
 
