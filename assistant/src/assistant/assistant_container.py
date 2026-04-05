@@ -5,8 +5,7 @@ import logging
 import inject
 import nest_asyncio
 from inject import Binder
-from langchain.agents import create_agent
-from langchain.agents.middleware import LLMToolSelectorMiddleware
+from deepagents import create_deep_agent
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.tools import BaseTool
 from langchain_mcp_adapters.client import MultiServerMCPClient
@@ -20,6 +19,9 @@ from assistant.impl.settings.mcp_server_settings import (
     load_mcp_settings_from_json,
 )
 from assistant.impl.mcp_sampling import create_sampling_callback
+from assistant.impl.settings.subagent_settings import (
+    load_subagent_settings_from_json,
+)
 from assistant.impl.settings.openai_settings import OpenAISetttings
 from assistant.impl.settings.prompt_settings import PromptSettings
 
@@ -29,8 +31,10 @@ nest_asyncio.apply()
 logger = logging.getLogger(__name__)
 
 
-def _get_mcp_tools(settings_mcp: MCPSettings, llm: BaseChatModel) -> list[BaseTool]:
-    tools = []
+def _get_mcp_tools(
+    settings_mcp: MCPSettings, llm: BaseChatModel
+) -> dict[str | None, BaseTool]:
+    tools = {}
     sampling_callback = create_sampling_callback(llm)
 
     for server_definition in settings_mcp.servers:
@@ -47,14 +51,23 @@ def _get_mcp_tools(settings_mcp: MCPSettings, llm: BaseChatModel) -> list[BaseTo
                 "transport": server_definition.transport,
             }
             if server_definition.headers:
-                server_dict[server_definition.name]["headers"] = server_definition.headers
-        mcp_client = MultiServerMCPClient(server_dict, session_kwargs={"sampling_callback": sampling_callback})
+                server_dict[server_definition.name]["headers"] = (
+                    server_definition.headers
+                )
+        mcp_client = MultiServerMCPClient(
+            server_dict, session_kwargs={"sampling_callback": sampling_callback}
+        )
         try:
             logger.info("Adding mcp-server %s" % server_definition.name)
             server_tools = asyncio.run(mcp_client.get_tools())
-            tools += server_tools
+            if server_definition.agent not in tools:
+                tools[server_definition.agent] = []
+            tools[server_definition.agent] += server_tools
         except Exception as e:
-            logger.error("Could not load MCP Tools from server %s\t%s " % (server_definition.name, e))
+            logger.error(
+                "Could not load MCP Tools from server %s\t%s "
+                % (server_definition.name, e)
+            )
     return tools
 
 
@@ -63,6 +76,7 @@ def _di_config(binder: Binder) -> None:
     settings_information = InformationSettings()
     settings_prompt = PromptSettings()
     settings_mcp = load_mcp_settings_from_json()
+    settings_subagents = load_subagent_settings_from_json()
 
     llm = ChatOpenAI(
         model=settings_openai.model,
@@ -78,10 +92,20 @@ def _di_config(binder: Binder) -> None:
                 max_tools=settings_prompt.max_tools,
             ),
         )
-    mcp_agent = create_agent(
+    subagents = [
+        {
+            "name": subagent.name,
+            "description": subagent.description,
+            "system_prompt": subagent.system_prompt,
+            "tools": tools.get(subagent.name, []),
+        }
+        for subagent in settings_subagents.subagents
+    ]
+
+    mcp_agent = create_deep_agent(
         model=llm,
-        tools=tools,
-        middleware=middleware,
+        tools=tools.get(None, []),
+        subagents=subagents,
     )
 
     binder.bind(
