@@ -59,6 +59,18 @@ Here is an explanation of the configuration options available through the `infra
 |---|---|---|
 |`assistant.settings.additionalInformation`|`Fun Fact: Your source code is available under Apache2 license`|Additional information that is given to the LLM. This can be things like, the position of the home, the name of the user, etc. This value is loaded as a string, there are no requirements on the format.|
 
+### Subagents
+This configuration is for configuring special subagent. This configuration is optional.
+It allows for a sepcial system prompt and can reduce the context the main agent.
+All subagents settings are an array under the key `subagents.subagents`. In this explanation the array-index will be replaced with `x`.
+If subagents are used none of their settings are optional.
+
+|Key|Explanation|
+|---|---|
+|`subagents.subagents[x].name`|The name of the subagent. Is used in the configuration of the mcp-servers to give the subagent the correct tools.|
+|`subagents.subagents[x].description`|Description of the purpose of the subagent. Is used by the main agent to know which tasks the subagent can perform.|
+|`subagents.subagents[x].system_prompt`|The system prompt of the subagent.|
+
 ### MCP Server
 This configuration is for the available skills in the chat assistant. By default [this](https://github.com/MelvinKl/mcp-weather) mcp server for weather information is configured. Keep in mind that this mcp server requires the geo coordinates of the location you want a weather forecast for.
 An example prompt using this mcp server would be:
@@ -77,6 +89,7 @@ Each deployment should be an array item containing the following information:
 |`port`|`8080`|Port of the MCP server|
 |`image`|`ghcr.io/melvinkl/mcp-weather/server:latest`|Image of the MCP server|
 |`command`|`["uv","run","python","src/main.py"]`|(Optional) Run command for the MCP server|
+|`agent`|-|(Optional) Decides which subagent will get this tool. If not set, the main agent will receive the tool.|
 |`secrets`|`TRANSPORT: sse`|Values that will  be saved as kubernetes secret and injected as env vars into the MCP server.|
 
 #### Servers

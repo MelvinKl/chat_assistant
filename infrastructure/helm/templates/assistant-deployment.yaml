@@ -20,12 +20,17 @@ spec:
       - name: mcp-config-volume
         configMap:
           name: assistant-mcp-cm
+      - name: subagents-config-volume
+        configMap:
+          name: assistant-subagents-cm
       containers:
       - name: assistant
         imagePullPolicy: {{ .Values.assistant.image.pullPolicy }}
         volumeMounts:
           - name: mcp-config-volume
             mountPath: /config/mcp
+          - name: subagents-config-volume
+            mountPath: /config/subagents
         image: {{ .Values.assistant.image.repository }}:{{ .Values.assistant.image.tag }}
         envFrom:
           - configMapRef:
