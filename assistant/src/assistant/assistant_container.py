@@ -89,7 +89,6 @@ def _di_config(binder: Binder) -> None:
         tools=tools.get(None, []),
         subagents=subagents,
     )
-    )
 
     binder.bind(
         "question_rephraser",

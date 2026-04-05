@@ -15,9 +15,7 @@ def test_stdio_server_gets_sampling_callback(mock_mcp_client_cls):
 
     settings = MCPSettings(
         servers=[
-            MCPServer(
-                name="test-stdio", command="echo", args=["hello"], transport="stdio"
-            ),
+            MCPServer(name="test-stdio", command="echo", args=["hello"], transport="stdio"),
         ]
     )
 
@@ -36,9 +34,7 @@ def test_http_server_gets_sampling_callback(mock_mcp_client_cls):
 
     settings = MCPSettings(
         servers=[
-            MCPServer(
-                name="test-sse", url="http://localhost:8080/sse", transport="sse"
-            ),
+            MCPServer(name="test-sse", url="http://localhost:8080/sse", transport="sse"),
         ]
     )
 
