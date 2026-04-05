@@ -11,6 +11,7 @@ from langchain_core.tools import BaseTool
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_openai import ChatOpenAI
 
+from langchain.agents.middleware.tool_selection import LLMToolSelectorMiddleware
 from assistant.impl.graph.chat_graph import ChatGraph
 from assistant.impl.rephraser.rephraser import Rephraser
 from assistant.impl.settings.information_settings import InformationSettings
@@ -31,9 +32,7 @@ nest_asyncio.apply()
 logger = logging.getLogger(__name__)
 
 
-def _get_mcp_tools(
-    settings_mcp: MCPSettings, llm: BaseChatModel
-) -> dict[str | None, BaseTool]:
+def _get_mcp_tools(settings_mcp: MCPSettings, llm: BaseChatModel) -> dict[str | None, BaseTool]:
     tools = {}
     sampling_callback = create_sampling_callback(llm)
 
@@ -51,12 +50,8 @@ def _get_mcp_tools(
                 "transport": server_definition.transport,
             }
             if server_definition.headers:
-                server_dict[server_definition.name]["headers"] = (
-                    server_definition.headers
-                )
-        mcp_client = MultiServerMCPClient(
-            server_dict, session_kwargs={"sampling_callback": sampling_callback}
-        )
+                server_dict[server_definition.name]["headers"] = server_definition.headers
+        mcp_client = MultiServerMCPClient(server_dict, session_kwargs={"sampling_callback": sampling_callback})
         try:
             logger.info("Adding mcp-server %s" % server_definition.name)
             server_tools = asyncio.run(mcp_client.get_tools())
@@ -64,10 +59,7 @@ def _get_mcp_tools(
                 tools[server_definition.agent] = []
             tools[server_definition.agent] += server_tools
         except Exception as e:
-            logger.error(
-                "Could not load MCP Tools from server %s\t%s "
-                % (server_definition.name, e)
-            )
+            logger.error("Could not load MCP Tools from server %s\t%s " % (server_definition.name, e))
     return tools
 
 

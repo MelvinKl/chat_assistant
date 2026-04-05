@@ -21,7 +21,7 @@ def test_stdio_server_gets_tools(mock_mcp_client_cls):
     )
     llm = FakeChatModel(answer="test")
 
-    _get_mcp_tools(settings)
+    _get_mcp_tools(settings, llm)
 
     server_dict = mock_mcp_client_cls.call_args[0][0]
     assert "test-stdio" in server_dict
@@ -41,7 +41,7 @@ def test_http_server_gets_tools(mock_mcp_client_cls):
     )
     llm = FakeChatModel(answer="test")
 
-    _get_mcp_tools(settings)
+    _get_mcp_tools(settings, llm)
 
     server_dict = mock_mcp_client_cls.call_args[0][0]
     assert "test-sse" in server_dict
@@ -67,7 +67,7 @@ def test_http_server_preserves_headers(mock_mcp_client_cls):
     )
     llm = FakeChatModel(answer="test")
 
-    _get_mcp_tools(settings)
+    _get_mcp_tools(settings, llm)
 
     server_dict = mock_mcp_client_cls.call_args[0][0]
     assert server_dict["test-sse"]["headers"] == {"Authorization": "Bearer token"}
@@ -87,7 +87,7 @@ def test_multiple_servers(mock_mcp_client_cls):
     )
     llm = FakeChatModel(answer="test")
 
-    _get_mcp_tools(settings)
+    _get_mcp_tools(settings, llm)
 
     assert mock_mcp_client_cls.call_count == 2
 
@@ -97,7 +97,7 @@ def test_empty_servers_returns_no_tools(mock_mcp_client_cls):
     settings = MCPSettings(servers=[])
     llm = FakeChatModel(answer="test")
 
-    tools = _get_mcp_tools(settings)
+    tools = _get_mcp_tools(settings, llm)
 
     assert tools == {}
     mock_mcp_client_cls.assert_not_called()
@@ -108,7 +108,7 @@ def test_failing_server_does_not_break_others(mock_mcp_client_cls):
     """When one server fails to load tools, the others still contribute their tools."""
     good_tool = MagicMock()
 
-    def client_side_effect(server_dict):
+    def client_side_effect(server_dict, **kwargs):
         client = MagicMock()
         name = list(server_dict.keys())[0]
         if name == "bad-server":
@@ -127,6 +127,6 @@ def test_failing_server_does_not_break_others(mock_mcp_client_cls):
     )
     llm = FakeChatModel(answer="test")
 
-    tools = _get_mcp_tools(settings)
+    tools = _get_mcp_tools(settings, llm)
 
     assert tools == {None: [good_tool]}
