@@ -13,4 +13,3 @@ class PromptSettings(BaseSettings):
     rephrase_answer_system_prompt: str = Field(default="")
     rephrase_answer_user_prompt: str = Field(default="")
 
-    max_tools: int = Field(default=10)

@@ -20,12 +20,17 @@ spec:
       - name: mcp-config-volume
         configMap:
           name: assistant-mcp-cm
+      - name: subagents-config-volume
+        configMap:
+          name: assistant-subagents-cm
       containers:
       - name: assistant
         imagePullPolicy: Always
         volumeMounts:
           - name: mcp-config-volume
             mountPath: /config/mcp
+          - name: subagents-config-volume
+            mountPath: /config/subagents
         image: ghcr.io/melvinkl/chat_assistant/assistant:latest
         envFrom:
           - configMapRef:
