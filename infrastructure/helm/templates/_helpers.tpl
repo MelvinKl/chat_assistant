@@ -7,7 +7,6 @@
 {{- end -}}
 
 {{- define "egressNetworkPolicy" -}}
-{{- if .enabled -}}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -23,6 +22,7 @@ spec:
   policyTypes:
   - Egress
   egress:
+  {{- if .enabled }}
   {{- if .allowedHosts }}
   {{- range $host := .allowedHosts }}
   - to:
@@ -32,5 +32,7 @@ spec:
   {{- else }}
   - {}  # Allow all egress if no specific hosts defined
   {{- end }}
-{{- end }}
+  {{- else }}
+  # Deny all egress when disabled
+  {{- end }}
 {{- end -}}
