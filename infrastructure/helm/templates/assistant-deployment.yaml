@@ -52,6 +52,28 @@ spec:
           - {{ $arg | quote -}}
           {{ end }}
           {{- end }}
+---
 {{- if .Values.assistant.egress.enabled }}
-{{- include "egressNetworkPolicy" (dict "enabled" .Values.assistant.egress.enabled "allowedHosts" .Values.assistant.egress.allowedHosts "chartName" .Chart.Name) | nindent 2 }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: assistant-egress
+  labels:
+    app: assistant
+spec:
+  podSelector:
+    matchLabels:
+      app: assistant
+  policyTypes:
+  - Egress
+  egress:
+  {{- if .Values.assistant.egress.allowedHosts }}
+  {{- range $host := .Values.assistant.egress.allowedHosts }}
+  - to:
+    - ipBlock:
+        cidr: {{ $host }}
+  {{- end }}
+  {{- else }}
+  - {}
+  {{- end }}
 {{- end }}
