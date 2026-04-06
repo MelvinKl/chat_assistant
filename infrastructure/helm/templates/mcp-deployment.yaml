@@ -33,6 +33,7 @@ spec:
         ports:
         - containerPort: {{ $server.port }}
 {{- if $server.egress.enabled }}
-{{- include "egressNetworkPolicy" (dict "enabled" $server.egress.enabled "allowedHosts" $server.egress.allowedHosts "chartName" .Chart.Name) | nindent 2 }}
+---
+{{- include "egressNetworkPolicy" (dict "enabled" $server.egress.enabled "allowedHosts" $server.egress.allowedHosts "chartName" $server.name "podSelectorLabels" (dict "app" $server.name)) | nindent 0 }}
 {{- end }}
 {{ end }}

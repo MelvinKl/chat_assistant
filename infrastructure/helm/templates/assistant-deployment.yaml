@@ -53,4 +53,4 @@ spec:
           {{ end }}
           {{- end }}
 ---
-{{- include "egressNetworkPolicy" (dict "enabled" .Values.assistant.egress.enabled "allowedHosts" .Values.assistant.egress.allowedHosts "chartName" "assistant") }}
+{{- include "egressNetworkPolicy" (dict "enabled" .Values.assistant.egress.enabled "allowedHosts" .Values.assistant.egress.allowedHosts "chartName" "assistant" "podSelectorLabels" (dict "app" "assistant")) }}

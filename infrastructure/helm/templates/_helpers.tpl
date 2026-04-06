@@ -11,13 +11,15 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "{{ .chartName }}-fullname" . }}-egress
+  name: {{ .chartName }}-egress
   labels:
-    {{- include "{{ .chartName }}.labels" . | nindent 4 }}
+    app: {{ .chartName }}
 spec:
   podSelector:
     matchLabels:
-      {{- include "{{ .chartName }}.selectors" . | nindent 6 }}
+      {{- range $key, $value := .podSelectorLabels }}
+      {{ $key }}: {{ $value }}
+      {{- end }}
   policyTypes:
   - Egress
   egress:
