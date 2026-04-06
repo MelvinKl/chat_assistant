@@ -1,6 +1,9 @@
 features:
   qdrant: true
 
+egress:
+  enabled: true
+
 ghcrIo:
   username: 
   pat:
@@ -43,7 +46,8 @@ assistant:
        - 10.0.0.0/8  # Internal network
        - 172.16.0.0/12
        - 192.168.0.0/16
-   settings:    
+       # Add mcp-server services here as needed
+   settings:
      additionalInformation: |
        Fun Fact: Your source code is available under Apache2 license
      prompt:
