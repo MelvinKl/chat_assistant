@@ -25,11 +25,14 @@ spec:
         command: {{ $server.command | toJson }}
         {{- end }}
         envFrom:
-          - configMapRef:
-              name: {{ $server.name }}
-          - secretRef:
-              name: {{ $server.name }}     
+        - configMapRef:
+            name: {{ $server.name }}
+        - secretRef:
+            name: {{ $server.name }}     
         image:  {{ $server.image }}
         ports:
         - containerPort: {{ $server.port }}
+{{- if $server.egress.enabled }}
+{{- include "egressNetworkPolicy" (dict "enabled" $server.egress.enabled "allowedHosts" $server.egress.allowedHosts "chartName" .Chart.Name) | nindent 2 }}
+{{- end }}
 {{ end }}
