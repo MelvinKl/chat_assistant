@@ -27,10 +27,10 @@ spec:
       - name: assistant
         imagePullPolicy: Always
         volumeMounts:
-          - name: mcp-config-volume
-            mountPath: /config/mcp
-          - name: subagents-config-volume
-            mountPath: /config/subagents
+        - name: mcp-config-volume
+          mountPath: /config/mcp
+        - name: subagents-config-volume
+          mountPath: /config/subagents
         image: ghcr.io/melvinkl/chat_assistant/assistant:latest
         envFrom:
           - configMapRef:
@@ -52,3 +52,5 @@ spec:
           - {{ $arg | quote -}}
           {{ end }}
           {{- end }}
+---
+{{- include "egressNetworkPolicy" (dict "enabled" .Values.assistant.egress.enabled "allowedHosts" .Values.assistant.egress.allowedHosts "chartName" "assistant" "podSelectorLabels" (dict "app" "assistant")) }}
