@@ -39,6 +39,16 @@ Here is an explanation of the configuration options available through the `infra
 |`assistant.ingress.enabled`|`true`|Enables or disables the ingress.|
 |`assistant.ingress.host`|`assistant.localhost`|The host for the ingress.|
 
+### Egress
+|Key|Default value|Explanation|
+|---|---|---|
+|`assistant.egress.enabled`|`true`|Enables or disables egress for the assistant deployment.|
+|`assistant.egress.allowedHosts`|`[10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16]`|List of CIDR blocks that the assistant can access.|
+|`mcpServers.deployments[x].egress.enabled`|`false`|Enables or disables egress for a specific MCP server deployment.|
+|`mcpServers.deployments[x].egress.allowedHosts`|`[]`|List of CIDR blocks that the MCP server can access.|
+
+By default, the assistant has egress enabled to internal networks (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16) to access configured MCP servers. MCP servers have egress disabled by default for security.
+
 ### Prompts
 |Key|Default value|Explanation|
 |---|---|---|

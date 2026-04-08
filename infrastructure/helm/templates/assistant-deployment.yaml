@@ -25,13 +25,13 @@ spec:
           name: assistant-subagents-cm
       containers:
       - name: assistant
+        image: {{ .Values.assistant.image.repository }}:{{ .Values.assistant.image.tag }}
         imagePullPolicy: {{ .Values.assistant.image.pullPolicy }}
         volumeMounts:
           - name: mcp-config-volume
             mountPath: /config/mcp
           - name: subagents-config-volume
             mountPath: /config/subagents
-        image: {{ .Values.assistant.image.repository }}:{{ .Values.assistant.image.tag }}
         envFrom:
           - configMapRef:
               name: assistant-cm
@@ -52,3 +52,5 @@ spec:
           - {{ $arg | quote -}}
           {{ end }}
           {{- end }}
+---
+{{- include "egressNetworkPolicy" (dict "enabled" .Values.assistant.egress.enabled "allowedHosts" .Values.assistant.egress.allowedHosts "chartName" "assistant" "podSelectorLabels" (dict "app" "assistant")) }}
