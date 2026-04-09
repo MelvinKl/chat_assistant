@@ -36,14 +36,10 @@ USER appuser
 ENV PYTHONPATH=/app/assistant/src
 
 # Additional security hardening for production (when DEV=0)
-# Drop capabilities that are not needed
-# Note: Full capability dropping is done via Kubernetes security context
-# but we can set some basic security measures here
+# These measures are applied after application code is copied
 RUN if [ "$DEV" = 0 ]; then \
     echo "Applying production security hardening..."; \
-    # Make files immutable where possible (commented out as it might break functionality) \
-    # chattr +i /etc/passwd /etc/group || true; \
-    # Ensure no sensitive files are world-readable \
+    # Ensure application files have secure permissions \
     find /app/assistant -type f -exec chmod 644 {} \; 2>/dev/null || true; \
     find /app/assistant -type d -exec chmod 755 {} \; 2>/dev/null || true; \
     # Remove SUID/SGID bits from executables for security \
@@ -55,7 +51,7 @@ RUN if [ "$DEV" = 0 ]; then \
     # Ensure temporary directories have safe permissions \
     chmod 1777 /tmp /var/tmp 2>/dev/null || true; \
     # Remove any unnecessary users and groups (keep only essential ones) \
-    delgroup -r audio video dialout floppy tape sudo 2>/dev/null || true; \
+    delgroup -r audio video dialout floppy tape 2>/dev/null || true; \
     fi
 
 # Security hardening for production: drop capabilities, restrict syscalls, etc.
