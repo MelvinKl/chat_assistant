@@ -44,12 +44,18 @@ RUN if [ "$DEV" = 0 ]; then \
     # Make files immutable where possible (commented out as it might break functionality) \
     # chattr +i /etc/passwd /etc/group || true; \
     # Ensure no sensitive files are world-readable \
-    find /app/assistant -type f -name "*.py" -exec chmod 644 {} \;; \
-    find /app/assistant -type d -exec chmod 755 {} \;; \
+    find /app/assistant -type f -exec chmod 644 {} \; 2>/dev/null || true; \
+    find /app/assistant -type d -exec chmod 755 {} \; 2>/dev/null || true; \
+    # Remove SUID/SGID bits from executables for security \
+    find /app/assistant -type f -perm /4000 -exec chmod a-s {} \; 2>/dev/null || true; \
+    find /app/assistant -type f -perm /2000 -exec chmod a-s {} \; 2>/dev/null || true; \
     # Set umask to restrict default permissions for newly created files \
-    umask 022 && \
-    echo "umask 022" >> /etc/profile.d/umask.sh && \
-    chmod +x /etc/profile.d/umask.sh; \
+    echo "umask 022" > /etc/profile.d/umask.sh && \
+    chmod +x /etc/profile.d/umask.sh && \
+    # Ensure temporary directories have safe permissions \
+    chmod 1777 /tmp /var/tmp 2>/dev/null || true; \
+    # Remove any unnecessary users and groups (keep only essential ones) \
+    delgroup -r audio video dialout floppy tape sudo 2>/dev/null || true; \
     fi
 
 # Security hardening for production: drop capabilities, restrict syscalls, etc.
