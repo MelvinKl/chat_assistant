@@ -27,7 +27,7 @@ assistant:
     # Prevent privilege escalation
     allowPrivilegeEscalation: false
     # Run as read-only root filesystem
-    readOnlyRootFilesystem: false
+    readOnlyRootFilesystem: true
   debug: false
   debugArgs:
     - "python"
@@ -270,7 +270,7 @@ mcpServers:
         # Prevent privilege escalation
         allowPrivilegeEscalation: false
         # Run as read-only root filesystem
-        readOnlyRootFilesystem: false
+        readOnlyRootFilesystem: true
   servers:
     - name: weather
       url: "http://weather:8080/sse"

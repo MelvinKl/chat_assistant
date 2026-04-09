@@ -46,6 +46,8 @@ RUN if [ "$DEV" = 0 ]; then \
     # Ensure no sensitive files are world-readable \
     find /app/assistant -type f -name "*.py" -exec chmod 644 {} \;; \
     find /app/assistant -type d -exec chmod 755 {} \;; \
+    # Set umask to restrict default permissions for newly created files \
+    umask 022; \
     fi
 
 # Security hardening for production: drop capabilities, restrict syscalls, etc.
