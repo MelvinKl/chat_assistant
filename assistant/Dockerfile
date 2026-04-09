@@ -47,7 +47,9 @@ RUN if [ "$DEV" = 0 ]; then \
     find /app/assistant -type f -name "*.py" -exec chmod 644 {} \;; \
     find /app/assistant -type d -exec chmod 755 {} \;; \
     # Set umask to restrict default permissions for newly created files \
-    umask 022; \
+    umask 022 && \
+    echo "umask 022" >> /etc/profile.d/umask.sh && \
+    chmod +x /etc/profile.d/umask.sh; \
     fi
 
 # Security hardening for production: drop capabilities, restrict syscalls, etc.
