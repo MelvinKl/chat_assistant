@@ -13,6 +13,21 @@ assistant:
   ingress:
     enabled: true
     host: assistant.localhost
+  securityContext:
+    # Security context configuration - will be enabled/disabled in templates based on debug mode
+    enabled: true
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 2000
+    # Drop all privileges and add only necessary ones
+    capabilities:
+      drop:
+        - ALL
+    # Prevent privilege escalation
+    allowPrivilegeEscalation: false
+    # Run as read-only root filesystem
+    readOnlyRootFilesystem: false
   debug: false
   debugArgs:
     - "python"
@@ -241,6 +256,21 @@ mcpServers:
       egress:
         enabled: false
         allowedHosts: []
+      securityContext:
+        # Security context configuration - will be enabled/disabled in templates based on debug mode
+        enabled: true
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 2000
+        # Drop all privileges and add only necessary ones
+        capabilities:
+          drop:
+            - ALL
+        # Prevent privilege escalation
+        allowPrivilegeEscalation: false
+        # Run as read-only root filesystem
+        readOnlyRootFilesystem: false
   servers:
     - name: weather
       url: "http://weather:8080/sse"

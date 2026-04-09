@@ -1,3 +1,4 @@
+{{- $debug := .Values.assistant.debug }}
 {{- range $server :=  .Values.mcpServers.deployments }}
 ---
 apiVersion: apps/v1
@@ -7,6 +8,18 @@ metadata:
   labels:
     app: {{ $server.name }}
 spec:
+  {{- if and $server.securityContext.enabled (not $debug) }}
+  securityContext:
+    runAsNonRoot: {{ $server.securityContext.runAsNonRoot }}
+    runAsUser: {{ $server.securityContext.runAsUser }}
+    runAsGroup: {{ $server.securityContext.runAsGroup }}
+    fsGroup: {{ $server.securityContext.fsGroup }}
+    capabilities:
+      drop:
+        {{- toYaml $server.securityContext.capabilities.drop | nindent 6 }}
+    allowPrivilegeEscalation: {{ $server.securityContext.allowPrivilegeEscalation }}
+    readOnlyRootFilesystem: {{ $server.securityContext.readOnlyRootFilesystem }}
+  {{- end }}
   replicas: 1
   selector:
     matchLabels:
