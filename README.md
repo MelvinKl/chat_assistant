@@ -149,3 +149,48 @@ To get started with the chat assistant, follow these steps:
 
 ## Development
 This repository provides a `Tiltfile` for local development. It supports live-reloading for the assistant component and easy debugging.
+
+## Testing
+
+### Full Testing Pipeline
+The full testing pipeline (unit tests, linting, and e2e tests) can be run using:
+```bash
+make test
+```
+
+Note: E2E tests require the chat assistant service to be deployed and accessible at `http://localhost:8080`. If the service is not available, E2E tests will wait and eventually fail.
+
+### Unit Tests Only
+To run only unit tests and linting (without E2E tests):
+```bash
+make lint
+cd assistant; uv run --extra dev pytest .
+```
+
+### E2E Tests Only
+To run only end-to-end tests:
+```bash
+make test-e2e
+```
+
+### Mock Servers for Testing
+The repository includes lightweight mock servers for CI/CD testing:
+
+#### Mock MCP Server (`infrastructure/mock-mcp-server`)
+A mock Model Context Protocol server that provides test tools without requiring actual MCP deployments.
+
+#### Mock OpenAI Server (`infrastructure/mock-openai-server`)
+A mock OpenAI-compatible server that provides fast, deterministic responses for testing without requiring LLM deployments.
+
+**Decision Note**: For CI/CD testing, we use mock servers instead of Ollama because:
+- No model downloads required (faster test runs)
+- Deterministic responses (more reliable tests)
+- Lower resource usage (more efficient CI/CD)
+
+For local development and production, real LLM providers like Ollama should be used.
+
+### E2E Testing Pipeline
+The GitHub Actions workflow (`.github/workflows/test-pipeline.yml`) runs end-to-end tests by:
+1. Creating a KinD cluster
+2. Building and deploying the chat assistant with mock servers
+3. Running curl-based tests against the deployed services

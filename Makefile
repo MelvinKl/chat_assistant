@@ -6,3 +6,6 @@ lint:
 
 test: lint
 	cd assistant; uv run --extra dev pytest .
+
+test-e2e:
+	./test-e2e.sh

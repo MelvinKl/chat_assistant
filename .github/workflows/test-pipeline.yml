@@ -1,0 +1,85 @@
+name: Test Pipeline
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+
+    - name: Set up KinD
+      uses: helm/kind-action@v1.12.0
+      with:
+        cluster_name: chat-assistant-test
+        config: .github/workflows/kind-config.yaml
+
+    - name: Set up Helm
+      uses: azure/setup-helm@v4
+      with:
+        version: v3.16.0
+
+    - name: Build Docker images
+      run: |
+        docker build . -f assistant/Dockerfile -t local/assistant:test
+        docker build . -f infrastructure/mock-mcp-server/Dockerfile -t local/mock-mcp-server:test -t local/mock-mcp-server:latest
+        docker build . -f infrastructure/mock-openai-server/Dockerfile -t local/mock-openai-server:test
+
+    - name: Load Docker images to KinD
+      run: |
+        kind load docker-image local/assistant:test --name chat-assistant-test
+        kind load docker-image local/mock-mcp-server:test --name chat-assistant-test
+        kind load docker-image local/mock-mcp-server:latest --name chat-assistant-test
+        kind load docker-image local/mock-openai-server:test --name chat-assistant-test
+
+    - name: Deploy Helm chart
+      run: |
+        helm install chat-assistant infrastructure/helm \
+          --set assistant.image.repository=local/assistant \
+          --set assistant.image.tag=test \
+          --set assistant.ingress.enabled=false \
+          --set ghcrIo.username=test \
+          --set ghcrIo.pat=test \
+          --set ghcrIo.email=test@test.com \
+          --set ollama.enabled=false \
+          --set 'assistant.settings.openai.SETTINGS_OPENAI_BASE_URL=http://mock-openai-server:11434/v1' \
+          --set 'assistant.settings.openai.SETTINGS_OPENAI_API_KEY=test-key' \
+          --set mcpServers.deployments[0].name=mock-mcp \
+          --set mcpServers.deployments[0].port=8080 \
+          --set mcpServers.deployments[0].image=local/mock-mcp-server:test \
+          --set mcpServers.deployments[0].command='[]' \
+          --set mcpServers.deployments[0].secrets.TRANSPORT=sse \
+          --set mcpServers.servers[0].name=mock-mcp \
+          --set mcpServers.servers[0].url='http://mock-mcp:8080/sse' \
+          --set mcpServers.servers[0].transport=sse \
+          --set 'additionalDeployments[0].name=mock-openai-server' \
+          --set 'additionalDeployments[0].image=local/mock-openai-server:test' \
+          --set 'additionalDeployments[0].ports[0]=11434' \
+          --set 'additionalDeployments[0].service.ports[0].port=11434' \
+          --set 'additionalDeployments[0].service.ports[0].targetPort=11434' \
+          --timeout 10m \
+          --wait
+
+    - name: Wait for deployment
+      run: |
+        kubectl wait --for=condition=available --timeout=300s deployment/assistant -n default
+        kubectl wait --for=condition=available --timeout=300s deployment/mock-openai-server -n default
+        kubectl wait --for=condition=available --timeout=300s deployment/mock-mcp -n default
+
+    - name: Verify mock servers are running
+      run: |
+        kubectl get pods -l app=mock-openai-server
+        kubectl get pods -l app=mock-mcp
+
+    - name: Test with curl
+      run: |
+        kubectl port-forward svc/assistant 8080:8080 &
+        PORT_FORWARD_PID=$!
+        sleep 10
+        export KUBECTL_PORT_FORWARD=1
+        make test
+        kill $PORT_FORWARD_PID 2>/dev/null || true
