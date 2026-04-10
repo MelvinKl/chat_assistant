@@ -13,16 +13,28 @@ spec:
     metadata:
       labels:
         app: assistant
-    spec:
-      imagePullSecrets:
-      - name: "pull-secret"
-      volumes: 
-      - name: mcp-config-volume
-        configMap:
-          name: assistant-mcp-cm
-      - name: subagents-config-volume
-        configMap:
-          name: assistant-subagents-cm
+spec:
+  {{- if and .Values.assistant.securityContext.enabled (not .Values.assistant.debug) }}
+  securityContext:
+    runAsNonRoot: {{ .Values.assistant.securityContext.runAsNonRoot }}
+    runAsUser: {{ .Values.assistant.securityContext.runAsUser }}
+    runAsGroup: {{ .Values.assistant.securityContext.runAsGroup }}
+    fsGroup: {{ .Values.assistant.securityContext.fsGroup }}
+    capabilities:
+      drop:
+        {{- toYaml .Values.assistant.securityContext.capabilities.drop | nindent 8 }}
+    allowPrivilegeEscalation: {{ .Values.assistant.securityContext.allowPrivilegeEscalation }}
+    readOnlyRootFilesystem: {{ .Values.assistant.securityContext.readOnlyRootFilesystem }}
+  {{- end }}
+  imagePullSecrets:
+    - name: "pull-secret"
+  volumes: 
+    - name: mcp-config-volume
+      configMap:
+        name: assistant-mcp-cm
+    - name: subagents-config-volume
+      configMap:
+        name: assistant-subagents-cm
       containers:
       - name: assistant
         imagePullPolicy: Always
