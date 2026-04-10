@@ -52,8 +52,7 @@ spec:
         ports:
         - containerPort: 8080
         command:
-          - "uv"
-          - "run"
+          - "python"
         args:
           {{- if .Values.assistant.debug }}
           {{- range $arg :=  .Values.assistant.debugArgs }}

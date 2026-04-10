@@ -30,7 +30,6 @@ assistant:
     readOnlyRootFilesystem: true
   debug: false
   debugArgs:
-    - "python"
     - "-m"
     - "debugpy"
     - "--listen"
@@ -47,7 +46,6 @@ assistant:
     - "--reload-dir"
     - "/app/assistant"
   args:
-    - "python"
     - "-m"
     - "uvicorn"
     - "src.assistant.main:app"
