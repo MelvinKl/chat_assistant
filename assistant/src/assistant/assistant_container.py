@@ -11,6 +11,7 @@ from langchain_core.tools import BaseTool
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_openai import ChatOpenAI
 
+from langchain.agents.middleware.tool_selection import LLMToolSelectorMiddleware
 from assistant.impl.graph.chat_graph import ChatGraph
 from assistant.impl.rephraser.rephraser import Rephraser
 from assistant.impl.settings.information_settings import InformationSettings
@@ -18,6 +19,7 @@ from assistant.impl.settings.mcp_server_settings import (
     MCPSettings,
     load_mcp_settings_from_json,
 )
+from assistant.impl.mcp_sampling import create_sampling_callback
 from assistant.impl.settings.subagent_settings import (
     load_subagent_settings_from_json,
 )
@@ -30,8 +32,9 @@ nest_asyncio.apply()
 logger = logging.getLogger(__name__)
 
 
-def _get_mcp_tools(settings_mcp: MCPSettings) -> dict[str | None, BaseTool]:
+def _get_mcp_tools(settings_mcp: MCPSettings, llm: BaseChatModel) -> dict[str | None, BaseTool]:
     tools = {}
+    sampling_callback = create_sampling_callback(llm)
 
     for server_definition in settings_mcp.servers:
         server_dict = {}
@@ -48,7 +51,7 @@ def _get_mcp_tools(settings_mcp: MCPSettings) -> dict[str | None, BaseTool]:
             }
             if server_definition.headers:
                 server_dict[server_definition.name]["headers"] = server_definition.headers
-        mcp_client = MultiServerMCPClient(server_dict)
+        mcp_client = MultiServerMCPClient(server_dict, session_kwargs={"sampling_callback": sampling_callback})
         try:
             logger.info("Adding mcp-server %s" % server_definition.name)
             server_tools = asyncio.run(mcp_client.get_tools())
@@ -73,7 +76,14 @@ def _di_config(binder: Binder) -> None:
         api_key=settings_openai.api_key,
     )
 
-    tools = _get_mcp_tools(settings_mcp)
+    tools = _get_mcp_tools(settings_mcp, llm)
+    middleware = []
+    if settings_prompt.max_tools > 0:
+        middleware.append(
+            LLMToolSelectorMiddleware(
+                max_tools=settings_prompt.max_tools,
+            ),
+        )
     subagents = [
         {
             "name": subagent.name,
