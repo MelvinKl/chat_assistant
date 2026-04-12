@@ -76,7 +76,8 @@ def test_load_mcp_settings_respects_env_variable():
     """Test that environment variable overrides default path."""
     with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
         json.dump(
-            {"servers": [{"name": "test", "url": "http://test", "transport": "sse"}]}, f
+            {"servers": [{"name": "test", "url": "http://test", "transport": "sse"}]},
+            f,
         )
         temp_path = f.name
 
@@ -103,7 +104,7 @@ def test_mcp_server_model_validation():
 def test_mcp_settings_model_validation():
     """Test MCPSettings model validation."""
     settings = MCPSettings(
-        servers=[MCPServer(name="test", transport="sse", url="http://test")]
+        servers=[MCPServer(name="test", transport="sse", url="http://test")],
     )
     assert len(settings.servers) == 1
     assert settings.strict is False  # Default value

@@ -142,7 +142,7 @@ if __name__ == "__main__":
         import uvicorn
 
         # Binding to 0.0.0.0 is intentional for containerized deployment
-        uvicorn.run(app, host="0.0.0.0", port=8080)
+        uvicorn.run(app, host="0.0.0.0", port=8080)  # nosec: S104
     except ImportError:
         logger.warning("uvicorn not available, skipping server start")
         # For testing purposes, we can still run the application logic
