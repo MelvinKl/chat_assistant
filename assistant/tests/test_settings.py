@@ -16,7 +16,18 @@ from assistant.impl.settings.mcp_server_settings import (
 def test_load_mcp_settings_from_valid_json():
     """Test loading MCP settings from valid JSON file."""
     with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
-        json.dump({"servers": [{"name": "weather", "url": "http://weather:8080/sse", "transport": "sse"}]}, f)
+        json.dump(
+            {
+                "servers": [
+                    {
+                        "name": "weather",
+                        "url": "http://weather:8080/sse",
+                        "transport": "sse",
+                    }
+                ]
+            },
+            f,
+        )
         temp_path = f.name
 
     try:
@@ -64,7 +75,9 @@ def test_load_mcp_settings_invalid_json():
 def test_load_mcp_settings_respects_env_variable():
     """Test that environment variable overrides default path."""
     with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
-        json.dump({"servers": [{"name": "test", "url": "http://test", "transport": "sse"}]}, f)
+        json.dump(
+            {"servers": [{"name": "test", "url": "http://test", "transport": "sse"}]}, f
+        )
         temp_path = f.name
 
     try:
@@ -83,11 +96,77 @@ def test_mcp_server_model_validation():
     server = MCPServer(name="test", transport="sse", url="http://test:8080")
     assert server.name == "test"
     assert server.transport == "sse"
-    assert server.command == ""
+    assert server.command is None  # Default is None, not empty string
     assert server.args == []
 
 
 def test_mcp_settings_model_validation():
     """Test MCPSettings model validation."""
-    settings = MCPSettings(servers=[MCPServer(name="test", transport="sse", url="http://test")])
+    settings = MCPSettings(
+        servers=[MCPServer(name="test", transport="sse", url="http://test")]
+    )
     assert len(settings.servers) == 1
+    assert settings.strict is False  # Default value
+
+
+def test_mcp_settings_model_validation_with_strict():
+    """Test MCPSettings model validation with strict field."""
+    settings = MCPSettings(
+        servers=[MCPServer(name="test", transport="sse", url="http://test")],
+        strict=True,
+    )
+    assert len(settings.servers) == 1
+    assert settings.strict is True
+
+
+def test_load_mcp_settings_with_strict_field():
+    """Test loading MCP settings with strict field from JSON."""
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+        json.dump(
+            {
+                "servers": [
+                    {
+                        "name": "weather",
+                        "url": "http://weather:8080/sse",
+                        "transport": "sse",
+                    }
+                ],
+                "strict": True,
+            },
+            f,
+        )
+        temp_path = f.name
+
+    try:
+        settings = load_mcp_settings_from_json(temp_path)
+        assert len(settings.servers) == 1
+        assert settings.servers[0].name == "weather"
+        assert settings.strict is True
+    finally:
+        os.unlink(temp_path)
+
+
+def test_load_mcp_settings_strict_field_default_false():
+    """Test that strict field defaults to False when not provided."""
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+        json.dump(
+            {
+                "servers": [
+                    {
+                        "name": "weather",
+                        "url": "http://weather:8080/sse",
+                        "transport": "sse",
+                    }
+                ]
+            },
+            f,
+        )
+        temp_path = f.name
+
+    try:
+        settings = load_mcp_settings_from_json(temp_path)
+        assert len(settings.servers) == 1
+        assert settings.servers[0].name == "weather"
+        assert settings.strict is False  # Default value
+    finally:
+        os.unlink(temp_path)
