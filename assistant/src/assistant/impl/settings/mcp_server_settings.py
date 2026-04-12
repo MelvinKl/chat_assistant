@@ -1,19 +1,19 @@
 import json
 import os
+from typing import Literal
 
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class MCPServer(BaseModel):
-    url: str = ""
     name: str
-    command: str = ""
-    args: list[str] = []
-    env: str = ""
-    transport: str
-    agent: str | None = None
-    headers: dict[str, str] | None = None
+    description: str = Field(default="")
+    url: str
+    transport: Literal["sse", "stdio"] = Field(default="sse")
+    command: str | None = Field(default=None)
+    args: list[str] = Field(default_factory=list)
+    env: dict[str, str] = Field(default_factory=dict)
 
 
 class MCPSettings(BaseSettings):
@@ -24,11 +24,12 @@ class MCPSettings(BaseSettings):
         extra="ignore",
     )
 
-    servers: list[MCPServer] = Field()
+    servers: list[MCPServer] = Field(default_factory=list)
+    strict: bool = Field(default=False)
 
 
 def load_mcp_settings_from_json(
-    json_file_path="/config/mcp/SETTINGS_MCP_SERVERS",
+    json_file_path="/config/mcp/SETTINGS_MCP",
 ) -> MCPSettings:
     # Check for environment variable override
     path = os.environ.get("MCP_SETTINGS_PATH", json_file_path)
@@ -38,8 +39,11 @@ def load_mcp_settings_from_json(
             data = json.load(f)
 
         cleaned_data = {"servers": data["servers"]} if "servers" in data else {}
+        # Handle strict field if present in JSON
+        if "strict" in data:
+            cleaned_data["strict"] = data["strict"]
         return MCPSettings(**cleaned_data)
     except FileNotFoundError:
-        return MCPSettings(servers=[])
+        return MCPSettings(servers=[], strict=False)
     except json.JSONDecodeError as e:
         raise ValueError("MCP settings file contains invalid JSON") from e
