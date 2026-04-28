@@ -25,6 +25,7 @@ class MCPSettings(BaseSettings):
     )
 
     servers: list[MCPServer] = Field()
+    health_check_interval_seconds: int = Field(default=60)
 
 
 def load_mcp_settings_from_json(

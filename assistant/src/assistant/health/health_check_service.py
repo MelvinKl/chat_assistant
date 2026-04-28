@@ -14,8 +14,8 @@ class HealthStatus:
 
 class HealthCheckService:
     def __init__(self, check_interval_seconds: int = 60):
-        self.check_interval_seconds = check_interval_seconds
-        self.server_health: dict[str, HealthStatus] = {}
+        self.check_interval_seconds = check_interval_seconds if check_interval_seconds > 0 else 60
+        self.server_health: dict[str, HealthStatus | None] = {}
         self._task: Optional[asyncio.Task] = None
         self._running = False
 
