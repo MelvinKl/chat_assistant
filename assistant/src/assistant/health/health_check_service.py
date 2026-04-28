@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
 import asyncio
 from typing import Optional
@@ -30,18 +30,12 @@ class HealthCheckService:
                 await self._check_server(server_name)
             except Exception as e:
                 self.server_health[server_name] = HealthStatus(
-                    server_name=server_name,
-                    healthy=False,
-                    last_checked=datetime.now(),
-                    error_message=str(e)
+                    server_name=server_name, healthy=False, last_checked=datetime.now(), error_message=str(e)
                 )
 
     async def _check_server(self, server_name: str):
         self.server_health[server_name] = HealthStatus(
-            server_name=server_name,
-            healthy=True,
-            last_checked=datetime.now(),
-            error_message=None
+            server_name=server_name, healthy=True, last_checked=datetime.now(), error_message=None
         )
 
     def start(self):

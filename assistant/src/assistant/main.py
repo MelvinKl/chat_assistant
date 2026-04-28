@@ -15,9 +15,7 @@ from assistant.impl.settings.mcp_server_settings import MCPSettings
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     mcp_settings = MCPSettings()
-    health_check_service = HealthCheckService(
-        check_interval_seconds=mcp_settings.health_check_interval_seconds
-    )
+    health_check_service = HealthCheckService(check_interval_seconds=mcp_settings.health_check_interval_seconds)
     for server in mcp_settings.servers:
         health_check_service.server_health[server.name] = None
     app.state.health_check_service = health_check_service

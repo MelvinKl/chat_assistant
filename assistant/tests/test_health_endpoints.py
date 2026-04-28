@@ -68,9 +68,10 @@ def test_health_endpoint(mock_health_service):
         os.environ["SETTINGS_PROMPTS_REPHRASE_ANSWER_USER_PROMPT"] = "User prompt"
         os.environ["SETTINGS_ADDITIONAL_INFORMATION"] = "Additional context"
         os.environ["SETTINGS_DYNAMIC_KNOWLEDGE_ENABLED"] = "false"
-        os.environ["MCP_SETTINGS_PATH"] = "/tmp/non_existent_mcp_config.json"
+        os.environ["MCP_SETTINGS_PATH"] = "/tmp/non_existent_mcp_config.json"  # noqa: S108
 
         from assistant.main import app
+
         app.state.health_check_service = mock_health_service
 
         client = TestClient(app)
@@ -99,9 +100,10 @@ def test_readiness_endpoint(mock_health_service):
         os.environ["SETTINGS_PROMPTS_REPHRASE_ANSWER_USER_PROMPT"] = "User prompt"
         os.environ["SETTINGS_ADDITIONAL_INFORMATION"] = "Additional context"
         os.environ["SETTINGS_DYNAMIC_KNOWLEDGE_ENABLED"] = "false"
-        os.environ["MCP_SETTINGS_PATH"] = "/tmp/non_existent_mcp_config.json"
+        os.environ["MCP_SETTINGS_PATH"] = "/tmp/non_existent_mcp_config.json"  # noqa: S108
 
         from assistant.main import app
+
         app.state.health_check_service = mock_health_service
 
         client = TestClient(app)
@@ -130,9 +132,10 @@ def test_health_response_format(mock_health_service):
         os.environ["SETTINGS_PROMPTS_REPHRASE_ANSWER_USER_PROMPT"] = "User prompt"
         os.environ["SETTINGS_ADDITIONAL_INFORMATION"] = "Additional context"
         os.environ["SETTINGS_DYNAMIC_KNOWLEDGE_ENABLED"] = "false"
-        os.environ["MCP_SETTINGS_PATH"] = "/tmp/non_existent_mcp_config.json"
+        os.environ["MCP_SETTINGS_PATH"] = "/tmp/non_existent_mcp_config.json"  # noqa: S108
 
         from assistant.main import app
+
         app.state.health_check_service = mock_health_service
 
         client = TestClient(app)
@@ -174,9 +177,10 @@ def test_health_endpoint_healthy(mock_health_service):
         os.environ["SETTINGS_PROMPTS_REPHRASE_ANSWER_USER_PROMPT"] = "User prompt"
         os.environ["SETTINGS_ADDITIONAL_INFORMATION"] = "Additional context"
         os.environ["SETTINGS_DYNAMIC_KNOWLEDGE_ENABLED"] = "false"
-        os.environ["MCP_SETTINGS_PATH"] = "/tmp/non_existent_mcp_config.json"
+        os.environ["MCP_SETTINGS_PATH"] = "/tmp/non_existent_mcp_config.json"  # noqa: S108
 
         from assistant.main import app
+
         app.state.health_check_service = mock_health_service
 
         client = TestClient(app)
@@ -197,10 +201,7 @@ def test_health_endpoint_unhealthy(mock_health_service):
     mock_health_service.get_overall_health.return_value = False
     mock_health_service.server_health = {
         "server1": HealthStatus(
-            server_name="server1",
-            healthy=False,
-            last_checked=datetime.now(),
-            error_message="Connection refused"
+            server_name="server1", healthy=False, last_checked=datetime.now(), error_message="Connection refused"
         )
     }
 
@@ -217,9 +218,10 @@ def test_health_endpoint_unhealthy(mock_health_service):
         os.environ["SETTINGS_PROMPTS_REPHRASE_ANSWER_USER_PROMPT"] = "User prompt"
         os.environ["SETTINGS_ADDITIONAL_INFORMATION"] = "Additional context"
         os.environ["SETTINGS_DYNAMIC_KNOWLEDGE_ENABLED"] = "false"
-        os.environ["MCP_SETTINGS_PATH"] = "/tmp/non_existent_mcp_config.json"
+        os.environ["MCP_SETTINGS_PATH"] = "/tmp/non_existent_mcp_config.json"  # noqa: S108
 
         from assistant.main import app
+
         app.state.health_check_service = mock_health_service
 
         client = TestClient(app)
@@ -244,18 +246,10 @@ def test_health_endpoint_unhealthy_multiple_servers(mock_health_service):
     """Test /health returns 503 with multiple server details when servers are unhealthy."""
     mock_health_service.get_overall_health.return_value = False
     mock_health_service.server_health = {
-        "server1": HealthStatus(
-            server_name="server1",
-            healthy=True,
-            last_checked=datetime.now(),
-            error_message=None
-        ),
+        "server1": HealthStatus(server_name="server1", healthy=True, last_checked=datetime.now(), error_message=None),
         "server2": HealthStatus(
-            server_name="server2",
-            healthy=False,
-            last_checked=datetime.now(),
-            error_message="Timeout"
-        )
+            server_name="server2", healthy=False, last_checked=datetime.now(), error_message="Timeout"
+        ),
     }
 
     # Set up environment
@@ -271,9 +265,10 @@ def test_health_endpoint_unhealthy_multiple_servers(mock_health_service):
         os.environ["SETTINGS_PROMPTS_REPHRASE_ANSWER_USER_PROMPT"] = "User prompt"
         os.environ["SETTINGS_ADDITIONAL_INFORMATION"] = "Additional context"
         os.environ["SETTINGS_DYNAMIC_KNOWLEDGE_ENABLED"] = "false"
-        os.environ["MCP_SETTINGS_PATH"] = "/tmp/non_existent_mcp_config.json"
+        os.environ["MCP_SETTINGS_PATH"] = "/tmp/non_existent_mcp_config.json"  # noqa: S108
 
         from assistant.main import app
+
         app.state.health_check_service = mock_health_service
 
         client = TestClient(app)
@@ -316,9 +311,10 @@ def test_health_endpoint_healthy_no_servers(mock_health_service):
         os.environ["SETTINGS_PROMPTS_REPHRASE_ANSWER_USER_PROMPT"] = "User prompt"
         os.environ["SETTINGS_ADDITIONAL_INFORMATION"] = "Additional context"
         os.environ["SETTINGS_DYNAMIC_KNOWLEDGE_ENABLED"] = "false"
-        os.environ["MCP_SETTINGS_PATH"] = "/tmp/non_existent_mcp_config.json"
+        os.environ["MCP_SETTINGS_PATH"] = "/tmp/non_existent_mcp_config.json"  # noqa: S108
 
         from assistant.main import app
+
         app.state.health_check_service = mock_health_service
 
         client = TestClient(app)

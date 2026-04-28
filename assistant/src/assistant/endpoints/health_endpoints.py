@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter, Request
 from starlette.responses import JSONResponse
-from assistant.health import HealthCheckService, HealthStatus
+from assistant.health import HealthCheckService
 
 router = APIRouter()
 
@@ -21,7 +21,7 @@ async def health(request: Request):
     for server_name, status in health_check_service.server_health.items():
         if status is not None:
             server_detail = {
-                "name": status.server_name,
+                "name": server_name,
                 "healthy": status.healthy,
                 "last_checked": status.last_checked.isoformat() if status.last_checked else None,
             }
@@ -29,10 +29,7 @@ async def health(request: Request):
                 server_detail["error"] = status.error_message
             servers.append(server_detail)
 
-    return JSONResponse(
-        status_code=503,
-        content={"status": "unhealthy", "version": "2.3.0", "servers": servers}
-    )
+    return JSONResponse(status_code=503, content={"status": "unhealthy", "version": "2.3.0", "servers": servers})
 
 
 @router.get("/readiness")

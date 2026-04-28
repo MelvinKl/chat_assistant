@@ -4,7 +4,7 @@ import asyncio
 import os
 from dataclasses import is_dataclass
 from datetime import datetime
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock
 
 import pytest
 
@@ -15,12 +15,7 @@ def test_health_status_dataclass():
     """Test HealthStatus is a proper dataclass with correct fields."""
     assert is_dataclass(HealthStatus)
 
-    status = HealthStatus(
-        server_name="test-server",
-        healthy=True,
-        last_checked=datetime.now(),
-        error_message=None
-    )
+    status = HealthStatus(server_name="test-server", healthy=True, last_checked=datetime.now(), error_message=None)
     assert status.server_name == "test-server"
     assert status.healthy is True
     assert isinstance(status.last_checked, datetime)
@@ -30,10 +25,7 @@ def test_health_status_dataclass():
 def test_health_status_dataclass_with_error():
     """Test HealthStatus with error message."""
     status = HealthStatus(
-        server_name="test-server",
-        healthy=False,
-        last_checked=datetime.now(),
-        error_message="Connection failed"
+        server_name="test-server", healthy=False, last_checked=datetime.now(), error_message="Connection failed"
     )
     assert status.healthy is False
     assert status.error_message == "Connection failed"
@@ -154,10 +146,7 @@ async def test_server_health_updated_on_successful_check():
     # Mock _check_server to simulate healthy state
     async def mock_check(server_name):
         service.server_health[server_name] = HealthStatus(
-            server_name=server_name,
-            healthy=True,
-            last_checked=datetime.now(),
-            error_message=None
+            server_name=server_name, healthy=True, last_checked=datetime.now(), error_message=None
         )
 
     service._check_server = mock_check
@@ -220,6 +209,7 @@ def test_mcp_settings_default_interval():
             del os.environ["SETTINGS_MCP_HEALTH_CHECK_INTERVAL_SECONDS"]
 
         from assistant.impl.settings.mcp_server_settings import MCPSettings
+
         settings = MCPSettings(servers=[])
         assert settings.health_check_interval_seconds == 60
     finally:
@@ -232,5 +222,6 @@ def test_mcp_settings_interval_from_env(monkeypatch):
     monkeypatch.setenv("SETTINGS_MCP_HEALTH_CHECK_INTERVAL_SECONDS", "120")
 
     from assistant.impl.settings.mcp_server_settings import MCPSettings
+
     settings = MCPSettings(servers=[])
     assert settings.health_check_interval_seconds == 120
