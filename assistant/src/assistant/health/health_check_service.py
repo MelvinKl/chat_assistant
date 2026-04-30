@@ -73,4 +73,4 @@ class HealthCheckService:
     def get_overall_health(self) -> bool:
         if not self.server_health:
             return True
-        return all(status.healthy for status in self.server_health.values())
+        return all(status is not None and status.healthy for status in self.server_health.values())
