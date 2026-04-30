@@ -397,3 +397,43 @@ def test_health_endpoint_with_none_status(mock_health_service):
     finally:
         os.environ.clear()
         os.environ.update(old_env)
+
+
+def test_health_endpoint_unhealthy_with_none_values():
+    """Test /health returns 503 when server_health has None values (unhealthy)."""
+    from assistant.health.health_check_service import HealthCheckService
+
+    service = HealthCheckService()
+    service.server_health = {"server1": None}
+
+    # Set up environment
+    old_env = os.environ.copy()
+    try:
+        os.environ["SETTINGS_OPENAI_API_KEY"] = "test-api-key"
+        os.environ["SETTINGS_OPENAI_EMBEDDER"] = "test-embedder"
+        os.environ["SETTINGS_OPENAI_MODEL"] = "test-model"
+        os.environ["SETTINGS_OPENAI_BASE_URL"] = "http://test-url"
+        os.environ["SETTINGS_PROMPTS_REPHRASE_QUESTION_SYSTEM_PROMPT"] = "System prompt"
+        os.environ["SETTINGS_PROMPTS_REPHRASE_QUESTION_USER_PROMPT"] = "User prompt"
+        os.environ["SETTINGS_PROMPTS_REPHRASE_ANSWER_SYSTEM_PROMPT"] = "System prompt"
+        os.environ["SETTINGS_PROMPTS_REPHRASE_ANSWER_USER_PROMPT"] = "User prompt"
+        os.environ["SETTINGS_ADDITIONAL_INFORMATION"] = "Additional context"
+        os.environ["SETTINGS_DYNAMIC_KNOWLEDGE_ENABLED"] = "false"
+        os.environ["MCP_SETTINGS_PATH"] = "/tmp/non_existent_mcp_config.json"  # noqa: S108
+
+        from assistant.main import app
+
+        app.state.health_check_service = service
+
+        client = TestClient(app)
+        response = client.get("/health")
+
+        assert response.status_code == 503
+        data = response.json()
+        assert data["status"] == "unhealthy"
+        assert "servers" in data
+        # None values are skipped in the response
+        assert len(data["servers"]) == 0
+    finally:
+        os.environ.clear()
+        os.environ.update(old_env)

@@ -337,6 +337,26 @@ async def test_perform_checks_with_empty_server_health():
     assert service.server_health == {}
 
 
+def test_get_overall_health_with_none_values():
+    """Test get_overall_health returns False when server_health contains None values."""
+    service = HealthCheckService()
+    service.server_health = {
+        "server1": None,
+        "server2": HealthStatus("server2", True, datetime.now()),
+    }
+    assert service.get_overall_health() is False
+
+
+def test_get_overall_health_all_none():
+    """Test get_overall_health returns False when all server_health values are None."""
+    service = HealthCheckService()
+    service.server_health = {
+        "server1": None,
+        "server2": None,
+    }
+    assert service.get_overall_health() is False
+
+
 @pytest.mark.asyncio
 async def test_check_loop_stops_on_stop_call():
     """Test that _check_loop stops when stop() is called."""
