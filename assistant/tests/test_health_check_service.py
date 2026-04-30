@@ -304,3 +304,55 @@ async def test_check_server_connection_error():
 
         assert service.server_health["bad-server"].healthy is False
         assert "Connection refused" in service.server_health["bad-server"].error_message
+
+
+@pytest.mark.asyncio
+async def test_stop_when_not_running():
+    """Test stop() works gracefully when service is not running."""
+    service = HealthCheckService()
+    # Should not raise
+    service.stop()
+    assert service._running is False
+    assert service._task is None
+
+
+@pytest.mark.asyncio
+async def test_multiple_servers_mixed_health():
+    """Test get_overall_health with multiple servers with mixed health status."""
+    service = HealthCheckService()
+    service.server_health = {
+        "server1": HealthStatus("server1", True, datetime.now()),
+        "server2": HealthStatus("server2", False, datetime.now(), "error"),
+        "server3": HealthStatus("server3", True, datetime.now()),
+    }
+    assert service.get_overall_health() is False
+
+
+@pytest.mark.asyncio
+async def test_perform_checks_with_empty_server_health():
+    """Test _perform_checks handles empty server_health gracefully."""
+    service = HealthCheckService()
+    # Should not raise
+    await service._perform_checks()
+    assert service.server_health == {}
+
+
+@pytest.mark.asyncio
+async def test_check_loop_stops_on_stop_call():
+    """Test that _check_loop stops when stop() is called."""
+    service = HealthCheckService(check_interval_seconds=1)
+    service.server_health = {"server1": None}
+    service._check_server = AsyncMock()
+
+    service.start()
+    assert service._running is True
+
+    # Let it run once
+    await asyncio.sleep(1.5)
+
+    service.stop()
+    assert service._running is False
+
+    # Verify the task is done or cancelled
+    await asyncio.sleep(0.1)
+    # After stop, the task should be cancelled

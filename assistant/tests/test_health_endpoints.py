@@ -327,3 +327,73 @@ def test_health_endpoint_healthy_no_servers(mock_health_service):
     finally:
         os.environ.clear()
         os.environ.update(old_env)
+
+
+def test_readiness_endpoint_unhealthy(mock_health_service):
+    """Test /readiness returns 503 when not ready."""
+    mock_health_service.get_overall_health.return_value = False
+
+    # Set up environment
+    old_env = os.environ.copy()
+    try:
+        os.environ["SETTINGS_OPENAI_API_KEY"] = "test-api-key"
+        os.environ["SETTINGS_OPENAI_EMBEDDER"] = "test-embedder"
+        os.environ["SETTINGS_OPENAI_MODEL"] = "test-model"
+        os.environ["SETTINGS_OPENAI_BASE_URL"] = "http://test-url"
+        os.environ["SETTINGS_PROMPTS_REPHRASE_QUESTION_SYSTEM_PROMPT"] = "System prompt"
+        os.environ["SETTINGS_PROMPTS_REPHRASE_QUESTION_USER_PROMPT"] = "User prompt"
+        os.environ["SETTINGS_PROMPTS_REPHRASE_ANSWER_SYSTEM_PROMPT"] = "System prompt"
+        os.environ["SETTINGS_PROMPTS_REPHRASE_ANSWER_USER_PROMPT"] = "User prompt"
+        os.environ["SETTINGS_ADDITIONAL_INFORMATION"] = "Additional context"
+        os.environ["SETTINGS_DYNAMIC_KNOWLEDGE_ENABLED"] = "false"
+        os.environ["MCP_SETTINGS_PATH"] = "/tmp/non_existent_mcp_config.json"  # noqa: S108
+
+        from assistant.main import app
+
+        app.state.health_check_service = mock_health_service
+
+        client = TestClient(app)
+        response = client.get("/readiness")
+
+        assert response.status_code == 503
+        data = response.json()
+        assert data["status"] == "not ready"
+        assert data["version"] == "2.3.0"
+    finally:
+        os.environ.clear()
+        os.environ.update(old_env)
+
+
+def test_health_endpoint_with_none_status(mock_health_service):
+    """Test /health handles None values in server_health gracefully."""
+    mock_health_service.get_overall_health.return_value = True
+    mock_health_service.server_health = {"server1": None}
+
+    # Set up environment
+    old_env = os.environ.copy()
+    try:
+        os.environ["SETTINGS_OPENAI_API_KEY"] = "test-api-key"
+        os.environ["SETTINGS_OPENAI_EMBEDDER"] = "test-embedder"
+        os.environ["SETTINGS_OPENAI_MODEL"] = "test-model"
+        os.environ["SETTINGS_OPENAI_BASE_URL"] = "http://test-url"
+        os.environ["SETTINGS_PROMPTS_REPHRASE_QUESTION_SYSTEM_PROMPT"] = "System prompt"
+        os.environ["SETTINGS_PROMPTS_REPHRASE_QUESTION_USER_PROMPT"] = "User prompt"
+        os.environ["SETTINGS_PROMPTS_REPHRASE_ANSWER_SYSTEM_PROMPT"] = "System prompt"
+        os.environ["SETTINGS_PROMPTS_REPHRASE_ANSWER_USER_PROMPT"] = "User prompt"
+        os.environ["SETTINGS_ADDITIONAL_INFORMATION"] = "Additional context"
+        os.environ["SETTINGS_DYNAMIC_KNOWLEDGE_ENABLED"] = "false"
+        os.environ["MCP_SETTINGS_PATH"] = "/tmp/non_existent_mcp_config.json"  # noqa: S108
+
+        from assistant.main import app
+
+        app.state.health_check_service = mock_health_service
+
+        client = TestClient(app)
+        response = client.get("/health")
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["status"] == "healthy"
+    finally:
+        os.environ.clear()
+        os.environ.update(old_env)
