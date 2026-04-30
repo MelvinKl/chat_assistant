@@ -2,6 +2,7 @@
 
 from fastapi import APIRouter, Request
 from starlette.responses import JSONResponse
+
 from assistant.health import HealthCheckService
 
 router = APIRouter()

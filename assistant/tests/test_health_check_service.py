@@ -4,7 +4,7 @@ import asyncio
 import os
 from dataclasses import is_dataclass
 from datetime import datetime
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
@@ -36,6 +36,7 @@ def test_health_check_service_init_default_interval():
     service = HealthCheckService()
     assert service.check_interval_seconds == 60
     assert service.server_health == {}
+    assert service.server_configs == {}
     assert service._task is None
     assert service._running is False
 
@@ -62,6 +63,13 @@ def test_health_check_service_init_invalid_interval_small_positive():
     """Test HealthCheckService falls back to 60 when interval is <=0 (edge case)."""
     service = HealthCheckService(check_interval_seconds=-1)
     assert service.check_interval_seconds == 60
+
+
+def test_health_check_service_init_with_server_configs():
+    """Test HealthCheckService initializes with server configs."""
+    configs = {"server1": {"url": "http://localhost:8080", "transport": "sse"}}
+    service = HealthCheckService(server_configs=configs)
+    assert service.server_configs == configs
 
 
 def test_get_overall_health_empty():
@@ -225,3 +233,74 @@ def test_mcp_settings_interval_from_env(monkeypatch):
 
     settings = MCPSettings(servers=[])
     assert settings.health_check_interval_seconds == 120
+
+
+@pytest.mark.asyncio
+async def test_check_server_success():
+    """Test _check_server marks server as healthy on successful check."""
+    configs = {"test-server": {"url": "http://localhost:8080", "transport": "sse"}}
+    service = HealthCheckService(server_configs=configs)
+    service.server_health["test-server"] = None
+
+    with patch("assistant.health.health_check_service.MultiServerMCPClient") as mock_client_class:
+        mock_client = MagicMock()
+        mock_client.get_tools = AsyncMock(return_value=[])
+        mock_client_class.return_value = mock_client
+
+        await service._check_server("test-server")
+
+        assert service.server_health["test-server"].healthy is True
+        assert service.server_health["test-server"].error_message is None
+        assert isinstance(service.server_health["test-server"].last_checked, datetime)
+
+
+@pytest.mark.asyncio
+async def test_check_server_no_config():
+    """Test _check_server marks server as unhealthy when no config exists."""
+    service = HealthCheckService(server_configs={})
+    service.server_health["unknown-server"] = None
+
+    await service._check_server("unknown-server")
+
+    assert service.server_health["unknown-server"].healthy is False
+    assert "No configuration found" in service.server_health["unknown-server"].error_message
+
+
+@pytest.mark.asyncio
+async def test_check_server_timeout():
+    """Test _check_server marks server as unhealthy on timeout."""
+    configs = {"slow-server": {"url": "http://localhost:8080", "transport": "sse"}}
+    service = HealthCheckService(server_configs=configs)
+    service.server_health["slow-server"] = None
+
+    with patch("assistant.health.health_check_service.MultiServerMCPClient") as mock_client_class:
+        mock_client = MagicMock()
+        mock_client.get_tools = AsyncMock(side_effect=asyncio.TimeoutError())
+        mock_client_class.return_value = mock_client
+
+        await service._check_server("slow-server")
+
+        assert service.server_health["slow-server"].healthy is False
+        assert (
+            "TimeoutError" in type(service.server_health["slow-server"].error_message).__name__
+            or "TimeoutError" in str(service.server_health["slow-server"].error_message)
+            or service.server_health["slow-server"].error_message == ""
+        )
+
+
+@pytest.mark.asyncio
+async def test_check_server_connection_error():
+    """Test _check_server marks server as unhealthy on connection error."""
+    configs = {"bad-server": {"url": "http://localhost:8080", "transport": "sse"}}
+    service = HealthCheckService(server_configs=configs)
+    service.server_health["bad-server"] = None
+
+    with patch("assistant.health.health_check_service.MultiServerMCPClient") as mock_client_class:
+        mock_client = MagicMock()
+        mock_client.get_tools = AsyncMock(side_effect=ConnectionError("Connection refused"))
+        mock_client_class.return_value = mock_client
+
+        await service._check_server("bad-server")
+
+        assert service.server_health["bad-server"].healthy is False
+        assert "Connection refused" in service.server_health["bad-server"].error_message

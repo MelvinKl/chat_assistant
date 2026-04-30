@@ -113,6 +113,13 @@ Each MCP server should be an array item containing the following information:
 |`transport`|`sse`|Connection protocol used|
 |`headers`|-|Optional. Dictionary of additional values to send as headers to the server|
 
+#### Health Check
+The assistant periodically checks if all configured MCP servers are still available. The health endpoint (`/health`) uses this information and responds with unhealthy status if not all servers are healthy.
+
+|Key|Default value|Explanation|
+|---|---|---|
+|`assistant.settings.mcp.SETTINGS_MCP_HEALTH_CHECK_INTERVAL_SECONDS`|`60`|Interval in seconds between periodic health checks of MCP servers. Set via environment variable.|
+
 ### Ollama
 Ollama can be used as a local LLM provider. For a full overview of available configuration options please see [here](https://github.com/otwld/ollama-helm)
 

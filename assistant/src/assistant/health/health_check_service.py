@@ -1,7 +1,9 @@
+import asyncio
 from dataclasses import dataclass
 from datetime import datetime
-import asyncio
 from typing import Optional
+
+from langchain_mcp_adapters.client import MultiServerMCPClient
 
 
 @dataclass
@@ -13,8 +15,9 @@ class HealthStatus:
 
 
 class HealthCheckService:
-    def __init__(self, check_interval_seconds: int = 60):
+    def __init__(self, check_interval_seconds: int = 60, server_configs: dict[str, dict] | None = None):
         self.check_interval_seconds = check_interval_seconds if check_interval_seconds > 0 else 60
+        self.server_configs = server_configs or {}
         self.server_health: dict[str, HealthStatus | None] = {}
         self._task: Optional[asyncio.Task] = None
         self._running = False
@@ -34,9 +37,26 @@ class HealthCheckService:
                 )
 
     async def _check_server(self, server_name: str):
-        self.server_health[server_name] = HealthStatus(
-            server_name=server_name, healthy=True, last_checked=datetime.now(), error_message=None
-        )
+        config = self.server_configs.get(server_name)
+        if not config:
+            self.server_health[server_name] = HealthStatus(
+                server_name=server_name,
+                healthy=False,
+                last_checked=datetime.now(),
+                error_message=f"No configuration found for server {server_name}",
+            )
+            return
+
+        try:
+            client = MultiServerMCPClient({server_name: config})
+            await asyncio.wait_for(client.get_tools(), timeout=10.0)
+            self.server_health[server_name] = HealthStatus(
+                server_name=server_name, healthy=True, last_checked=datetime.now(), error_message=None
+            )
+        except Exception as e:
+            self.server_health[server_name] = HealthStatus(
+                server_name=server_name, healthy=False, last_checked=datetime.now(), error_message=str(e)
+            )
 
     def start(self):
         if self._task is not None:
