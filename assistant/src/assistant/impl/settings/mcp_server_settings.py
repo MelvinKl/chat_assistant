@@ -26,6 +26,7 @@ class MCPSettings(BaseSettings):
 
     servers: list[MCPServer] = Field()
     strict_tool_check: bool = Field(default=False)
+    """If True, exit with error when configured MCP servers don't provide tools."""
 
 
 def load_mcp_settings_from_json(
