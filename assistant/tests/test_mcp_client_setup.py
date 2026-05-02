@@ -97,9 +97,10 @@ def test_empty_servers_returns_no_tools(mock_mcp_client_cls):
     settings = MCPSettings(servers=[])
     llm = FakeChatModel(answer="test")
 
-    tools = _get_mcp_tools(settings)
+    tools, failed_servers = _get_mcp_tools(settings)
 
     assert tools == {}
+    assert failed_servers == []
     mock_mcp_client_cls.assert_not_called()
 
 
@@ -127,6 +128,7 @@ def test_failing_server_does_not_break_others(mock_mcp_client_cls):
     )
     llm = FakeChatModel(answer="test")
 
-    tools = _get_mcp_tools(settings)
+    tools, failed_servers = _get_mcp_tools(settings)
 
     assert tools == {None: [good_tool]}
+    assert failed_servers == ["bad-server"]

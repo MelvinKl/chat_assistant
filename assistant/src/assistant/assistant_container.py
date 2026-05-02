@@ -30,8 +30,9 @@ nest_asyncio.apply()
 logger = logging.getLogger(__name__)
 
 
-def _get_mcp_tools(settings_mcp: MCPSettings) -> dict[str | None, BaseTool]:
-    tools = {}
+def _get_mcp_tools(settings_mcp: MCPSettings) -> tuple[dict[str | None, list[BaseTool]], list[str]]:
+    tools: dict[str | None, list[BaseTool]] = {}
+    failed_servers: list[str] = []
 
     for server_definition in settings_mcp.servers:
         server_dict = {}
@@ -52,12 +53,16 @@ def _get_mcp_tools(settings_mcp: MCPSettings) -> dict[str | None, BaseTool]:
         try:
             logger.info("Adding mcp-server %s" % server_definition.name)
             server_tools = asyncio.run(mcp_client.get_tools())
+            if not server_tools:
+                logger.warning("MCP server %s returned no tools", server_definition.name)
+                failed_servers.append(server_definition.name)
             if server_definition.agent not in tools:
                 tools[server_definition.agent] = []
             tools[server_definition.agent] += server_tools
         except Exception as e:
             logger.error("Could not load MCP Tools from server %s\t%s " % (server_definition.name, e))
-    return tools
+            failed_servers.append(server_definition.name)
+    return tools, failed_servers
 
 
 def _di_config(binder: Binder) -> None:
@@ -73,7 +78,15 @@ def _di_config(binder: Binder) -> None:
         api_key=settings_openai.api_key,
     )
 
-    tools = _get_mcp_tools(settings_mcp)
+    tools, failed_servers = _get_mcp_tools(settings_mcp)
+
+    if settings_mcp.strict_tool_check and failed_servers:
+        logger.error(
+            "Strict tool check failed. The following MCP servers returned no tools or failed: %s",
+            failed_servers,
+        )
+        raise SystemExit(1)
+
     subagents = [
         {
             "name": subagent.name,

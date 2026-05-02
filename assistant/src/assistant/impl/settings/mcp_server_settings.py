@@ -25,6 +25,7 @@ class MCPSettings(BaseSettings):
     )
 
     servers: list[MCPServer] = Field()
+    strict_tool_check: bool = Field(default=False)
 
 
 def load_mcp_settings_from_json(
