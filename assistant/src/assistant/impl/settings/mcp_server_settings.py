@@ -39,8 +39,7 @@ def load_mcp_settings_from_json(
         with open(path, "r") as f:
             data = json.load(f)
 
-        cleaned_data = {"servers": data["servers"]} if "servers" in data else {}
-        return MCPSettings(**cleaned_data)
+        return MCPSettings(**data)
     except FileNotFoundError:
         return MCPSettings(servers=[])
     except json.JSONDecodeError as e:
