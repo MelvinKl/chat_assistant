@@ -17,7 +17,7 @@ If at least one of the configured mcp servers does not respond with a tool the h
     - The field is documented and can be set via `SETTINGS_MCP_STRICT_TOOL_CHECK` environment variable.
     - Existing tests in `assistant/tests/test_settings.py` continue to pass.
 
-- [ ] 2. Implement startup validation in `assistant/src/assistant/assistant_container.py` that exits with error when `strict_tool_check` is enabled and a configured tool is unavailable.
+- [x] 2. Implement startup validation in `assistant/src/assistant/assistant_container.py` that exits with error when `strict_tool_check` is enabled and a configured tool is unavailable.
   - Acceptance Criteria:
     - Modify `_get_mcp_tools()` to track servers that return no tools or error as `failed_servers`.
     - In `_di_config()`, after calling `_get_mcp_tools()`, if `settings_mcp.strict_tool_check` is `True` and any `failed_servers` exist, log error with failed server names and raise `SystemExit(1)`.
