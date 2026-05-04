@@ -113,6 +113,13 @@ Each MCP server should be an array item containing the following information:
 |`transport`|`sse`|Connection protocol used|
 |`headers`|-|Optional. Dictionary of additional values to send as headers to the server|
 
+#### Settings
+Global MCP settings:
+
+|Key|Default value|Explanation|
+|---|---|---|
+|`strict_tool_check`|`false`|If true, the assistant will exit with an error on startup when configured MCP servers don't provide any tools|
+
 ### Ollama
 Ollama can be used as a local LLM provider. For a full overview of available configuration options please see [here](https://github.com/otwld/ollama-helm)
 
