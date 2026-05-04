@@ -3,6 +3,8 @@
 
 from unittest.mock import AsyncMock, MagicMock, patch
 
+import pytest
+
 from assistant.assistant_container import _get_mcp_tools
 from assistant.impl.settings.mcp_server_settings import MCPServer, MCPSettings
 from tests.fake_chat_model import FakeChatModel
@@ -132,3 +134,45 @@ def test_failing_server_does_not_break_others(mock_mcp_client_cls):
 
     assert tools == {None: [good_tool]}
     assert failed_servers == ["bad-server"]
+
+
+@patch("assistant.assistant_container._get_mcp_tools")
+@patch("assistant.assistant_container.load_mcp_settings_from_json")
+def test_strict_tool_check_exits_on_failed_servers(mock_load_settings, mock_get_tools):
+    """Test that strict_tool_check=True causes SystemExit when servers fail."""
+    from assistant.assistant_container import _di_config
+    from inject import Binder
+
+    mock_load_settings.return_value = MCPSettings(
+        servers=[MCPServer(name="bad", command="fail", transport="stdio")],
+        strict_tool_check=True,
+    )
+    mock_get_tools.return_value = ({}, ["bad"])
+
+    binder = MagicMock(spec=Binder)
+    with pytest.raises(SystemExit) as exc_info:
+        _di_config(binder)
+    assert exc_info.value.code == 1
+
+
+@patch("assistant.assistant_container.create_deep_agent")
+@patch("assistant.assistant_container.ChatOpenAI")
+@patch("assistant.assistant_container._get_mcp_tools")
+@patch("assistant.assistant_container.load_mcp_settings_from_json")
+def test_strict_tool_check_no_exit_when_all_servers_ok(
+    mock_load_settings, mock_get_tools, mock_chat_openai, mock_create_deep_agent
+):
+    """Test that strict_tool_check=True does not exit when all servers provide tools."""
+    from assistant.assistant_container import _di_config
+    from inject import Binder
+
+    mock_load_settings.return_value = MCPSettings(
+        servers=[MCPServer(name="good", command="echo", transport="stdio")],
+        strict_tool_check=True,
+    )
+    mock_get_tools.return_value = ({None: []}, [])
+    mock_chat_openai.return_value = MagicMock()
+    mock_create_deep_agent.return_value = MagicMock()
+
+    binder = MagicMock(spec=Binder)
+    _di_config(binder)  # Should not raise

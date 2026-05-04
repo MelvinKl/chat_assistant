@@ -91,3 +91,38 @@ def test_mcp_settings_model_validation():
     """Test MCPSettings model validation."""
     settings = MCPSettings(servers=[MCPServer(name="test", transport="sse", url="http://test")])
     assert len(settings.servers) == 1
+
+
+def test_mcp_settings_strict_tool_check_default():
+    """Test strict_tool_check defaults to False."""
+    settings = MCPSettings(servers=[])
+    assert settings.strict_tool_check is False
+
+
+def test_mcp_settings_strict_tool_check_true():
+    """Test strict_tool_check can be set to True."""
+    settings = MCPSettings(servers=[], strict_tool_check=True)
+    assert settings.strict_tool_check is True
+
+
+def test_load_mcp_settings_strict_tool_check_from_json():
+    """Test loading strict_tool_check from JSON file."""
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+        json.dump({"servers": [], "strict_tool_check": True}, f)
+        temp_path = f.name
+
+    try:
+        settings = load_mcp_settings_from_json(temp_path)
+        assert settings.strict_tool_check is True
+    finally:
+        os.unlink(temp_path)
+
+
+def test_load_mcp_settings_strict_tool_check_env():
+    """Test strict_tool_check from environment variable."""
+    os.environ["SETTINGS_MCP_STRICT_TOOL_CHECK"] = "true"
+    try:
+        settings = MCPSettings(servers=[])
+        assert settings.strict_tool_check is True
+    finally:
+        del os.environ["SETTINGS_MCP_STRICT_TOOL_CHECK"]
