@@ -106,6 +106,7 @@ def _di_config(binder: Binder) -> None:
             user_prompt=settings_prompt.rephrase_answer_user_prompt,
         ),
     )
+    binder.bind("tool", tools)
     binder.bind(BaseChatModel, llm)
     binder.bind(MCPSettings, load_mcp_settings_from_json())
     binder.bind(InformationSettings, settings_information)
