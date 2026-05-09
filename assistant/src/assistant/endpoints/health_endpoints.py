@@ -1,12 +1,13 @@
 # coding: utf-8
 
 import asyncio
-from enum import StrEnum
-from threading import Lock
 import threading
 import time
-from fastapi import APIRouter
+from enum import StrEnum
+from threading import Lock
+
 import inject
+from fastapi import APIRouter
 from langchain_mcp_adapters.client import MultiServerMCPClient
 
 from assistant.impl.settings.mcp_server_settings import MCPSettings
@@ -16,11 +17,14 @@ router = APIRouter()
 
 lock = Lock()
 
+
 class Status(StrEnum):
-    HEALTHY="healthy"
-    UNHEALTHY="unhealthy"
+    HEALTHY = "healthy"
+    UNHEALTHY = "unhealthy"
+
 
 status = Status.HEALTHY
+
 
 @inject.params(
     mcp_settings=MCPSettings,
@@ -29,7 +33,7 @@ status = Status.HEALTHY
 def health_check(mcp_settings, tools):
     global status
     while True:
-        time.sleep(600)        
+        time.sleep(600)
         for server_definition in mcp_settings.servers:
             server_dict = {}
             if server_definition.transport == "stdio":
@@ -46,16 +50,18 @@ def health_check(mcp_settings, tools):
                 if server_definition.headers:
                     server_dict[server_definition.name]["headers"] = server_definition.headers
             mcp_client = MultiServerMCPClient(server_dict)
-            try:                    
+            try:
                 server_tools = asyncio.run(mcp_client.get_tools())
                 if server_definition.agent not in tools:
                     tools[server_definition.agent] = []
                 tools[server_definition.agent] += server_tools
-            except Exception as _:
+            except Exception:
                 with lock:
-                    status=Status.UNHEALTHY
+                    status = Status.UNHEALTHY
+
 
 threading.Thread(target=health_check).start()
+
 
 @router.get("/health")
 async def health():
