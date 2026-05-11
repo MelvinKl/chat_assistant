@@ -57,7 +57,6 @@ def _get_mcp_tools(settings_mcp: MCPSettings) -> dict[str | None, BaseTool]:
             tools[server_definition.agent] += server_tools
         except Exception as e:
             logger.error("Could not load MCP Tools from server %s\t%s " % (server_definition.name, e))
-            raise e
     return tools
 
 
