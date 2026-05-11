@@ -48,7 +48,7 @@ def _get_mcp_tools(settings_mcp: MCPSettings) -> dict[str | None, BaseTool]:
             }
             if server_definition.headers:
                 server_dict[server_definition.name]["headers"] = server_definition.headers
-        mcp_client = MultiServerMCPClient(server_dict)
+        mcp_client = MultiServerMCPClient(server_dict)  # , session_kwargs=session_kwargs)
         try:
             logger.info("Adding mcp-server %s" % server_definition.name)
             server_tools = asyncio.run(mcp_client.get_tools())
@@ -57,7 +57,7 @@ def _get_mcp_tools(settings_mcp: MCPSettings) -> dict[str | None, BaseTool]:
             tools[server_definition.agent] += server_tools
         except Exception as e:
             logger.error("Could not load MCP Tools from server %s\t%s " % (server_definition.name, e))
-            raise e
+            continue
     return tools
 
 
