@@ -1,6 +1,6 @@
 dependencies:
 - name: ollama
   repository: https://otwld.github.io/ollama-helm/
-  version: 1.55.0
-digest: sha256:00238f29b28d13d29f438a7c0677cde9b60ced472cb52c1802fb5eeb6e9358c4
-generated: "2026-04-23T02:05:21.348137754Z"
+  version: 1.56.0
+digest: sha256:5b0dd88b7eefb7fc0f4f20a5888b42e7a1bb05681c247214ef44050ddf293f85
+generated: "2026-05-09T02:25:09.339507228Z"

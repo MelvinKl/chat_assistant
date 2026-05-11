@@ -12,8 +12,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-      - name: Self-hosted Renovate
-        uses: renovatebot/github-action@v46.1.13
+       - name: Self-hosted Renovate
+        uses: renovatebot/github-action@v46.1.14
         with:
           configurationFile: .github/renovate.json
           token: ${{ secrets.RENOVATE_TOKEN }}
