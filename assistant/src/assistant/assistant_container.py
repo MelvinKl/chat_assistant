@@ -4,8 +4,8 @@ import logging
 
 import inject
 import nest_asyncio
-from inject import Binder
 from deepagents import create_deep_agent
+from inject import Binder
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.tools import BaseTool
 from langchain_mcp_adapters.client import MultiServerMCPClient
@@ -18,11 +18,11 @@ from assistant.impl.settings.mcp_server_settings import (
     MCPSettings,
     load_mcp_settings_from_json,
 )
+from assistant.impl.settings.openai_settings import OpenAISetttings
+from assistant.impl.settings.prompt_settings import PromptSettings
 from assistant.impl.settings.subagent_settings import (
     load_subagent_settings_from_json,
 )
-from assistant.impl.settings.openai_settings import OpenAISetttings
-from assistant.impl.settings.prompt_settings import PromptSettings
 
 # Apply the patch to allow nested event loops
 nest_asyncio.apply()
@@ -57,6 +57,7 @@ def _get_mcp_tools(settings_mcp: MCPSettings) -> dict[str | None, BaseTool]:
             tools[server_definition.agent] += server_tools
         except Exception as e:
             logger.error("Could not load MCP Tools from server %s\t%s " % (server_definition.name, e))
+            raise e
     return tools
 
 
@@ -106,6 +107,7 @@ def _di_config(binder: Binder) -> None:
             user_prompt=settings_prompt.rephrase_answer_user_prompt,
         ),
     )
+    binder.bind("tools", tools)
     binder.bind(BaseChatModel, llm)
     binder.bind(MCPSettings, load_mcp_settings_from_json())
     binder.bind(InformationSettings, settings_information)
