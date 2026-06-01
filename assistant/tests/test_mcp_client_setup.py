@@ -6,6 +6,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from assistant.assistant_container import _get_mcp_tools
 from assistant.impl.settings.mcp_server_settings import MCPServer, MCPSettings
 
+llm = MagicMock()
+
 
 @patch("assistant.assistant_container.MultiServerMCPClient")
 def test_stdio_server_gets_sampling_callback(mock_mcp_client_cls):
