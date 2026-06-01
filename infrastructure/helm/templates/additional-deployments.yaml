@@ -1,0 +1,63 @@
+{{- if .Values.additionalDeployments }}
+{{- range $deployment := .Values.additionalDeployments }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $deployment.name }}
+  labels:
+    app: {{ $deployment.name }}
+spec:
+  replicas: {{ $deployment.replicas | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ $deployment.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ $deployment.name }}
+    spec:
+      {{- if $deployment.imagePullSecrets }}
+      imagePullSecrets:
+      {{- range $secret := $deployment.imagePullSecrets }}
+      - name: {{ $secret }}
+      {{- end }}
+      {{- end }}
+      containers:
+      - name: {{ $deployment.name }}
+        image: {{ $deployment.image }}
+        imagePullPolicy: {{ $deployment.imagePullPolicy | default "IfNotPresent" }}
+        {{- if $deployment.command }}
+        command: {{ $deployment.command | toJson }}
+        {{- end }}
+        {{- if $deployment.ports }}
+        ports:
+        {{- range $port := $deployment.ports }}
+        - containerPort: {{ $port }}
+        {{- end }}
+        {{- end }}
+        {{- if $deployment.env }}
+        env:
+        {{- range $key, $value := $deployment.env }}
+        - name: {{ $key }}
+          value: {{ $value | quote }}
+        {{- end }}
+        {{- end }}
+{{- if $deployment.service }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $deployment.name }}
+spec:
+  selector:
+    app: {{ $deployment.name }}
+  ports:
+  {{- range $port := $deployment.service.ports }}
+  - port: {{ $port.port }}
+    targetPort: {{ $port.targetPort }}
+    protocol: {{ $port.protocol | default "TCP" }}
+  {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
