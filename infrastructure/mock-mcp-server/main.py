@@ -1,16 +1,25 @@
 """
 Mock MCP Server for Testing
 
-This is a lightweight mock MCP server that provides simple test tools
-without requiring a full LLM backend.
+A lightweight mock server that implements the MCP (Model Context Protocol)
+SSE transport and provides simple test tools, without requiring a real MCP
+tool backend.
+
+Protocol (per MCP SSE transport spec):
+  1. The client opens GET /sse.
+  2. The server sends an `endpoint` event containing the URL to POST
+     JSON-RPC messages to.
+  3. The client POSTs JSON-RPC requests to that URL; the server sends the
+     corresponding JSON-RPC responses back on the SSE stream.
 """
 
 import asyncio
 import json
 import logging
+import uuid
 from typing import Any
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 from sse_starlette.sse import EventSourceResponse
 
@@ -58,7 +67,7 @@ MOCK_TOOLS = [
 
 
 async def handle_request(request: JSONRPCRequest):
-    """Handle JSON-RPC requests."""
+    """Handle a JSON-RPC request and return the JSON-RPC response as a dict."""
     logger.info(f"Received request: {request.method}")
 
     if request.method == "initialize":
@@ -73,6 +82,9 @@ async def handle_request(request: JSONRPCRequest):
                 },
             },
         }
+    elif request.method in ("notifications/initialized", "initialized"):
+        # Notification: no response required
+        return None
     elif request.method == "tools/list":
         return {
             "jsonrpc": "2.0",
@@ -94,9 +106,7 @@ async def handle_request(request: JSONRPCRequest):
             ]
         elif tool_name == "get_time":
             timezone = arguments.get("timezone", "UTC")
-            content = [
-                {"type": "text", "text": f"Current time in {timezone}: 12:00 PM"}
-            ]
+            content = [{"type": "text", "text": f"Current time in {timezone}: 12:00 PM"}]
         else:
             content = [{"type": "text", "text": f"Unknown tool: {tool_name}"}]
 
@@ -106,6 +116,9 @@ async def handle_request(request: JSONRPCRequest):
             "result": {"content": content, "isError": False},
         }
     else:
+        if request.id is None:
+            # Unknown notification: no response required
+            return None
         return {
             "jsonrpc": "2.0",
             "id": request.id,
@@ -113,66 +126,61 @@ async def handle_request(request: JSONRPCRequest):
         }
 
 
+# Session id -> queue of JSON strings to be sent over the SSE stream
+SESSIONS: dict[str, asyncio.Queue] = {}
+
+
 @app.get("/sse")
-async def sse_endpoint():
+async def sse_endpoint(request: Request):
     """SSE endpoint for MCP server communication."""
+    session_id = uuid.uuid4().hex
+    queue: asyncio.Queue = asyncio.Queue()
+    SESSIONS[session_id] = queue
 
     async def event_generator():
-        request_queue = asyncio.Queue()
-        response_queue = asyncio.Queue()
-
-        async def handle_messages():
-            while True:
-                try:
-                    data = await asyncio.wait_for(request_queue.get(), timeout=5.0)
-                    if data is None:
-                        break
-                    request = JSONRPCRequest(**json.loads(data))
-                    response = await handle_request(request)
-                    await response_queue.put(json.dumps(response))
-                except asyncio.TimeoutError:
-                    # Send keepalive
-                    yield {"event": "keepalive", "data": ""}
-                except Exception as e:
-                    logger.error(f"Error handling message: {e}")
-
-        # Start message handler
-        handler = asyncio.create_task(handle_messages())
-
-        # Yield initial responses
         try:
-            init_request = JSONRPCRequest(id=1, method="initialize", params={})
-            init_response = await handle_request(init_request)
-            yield {"data": json.dumps(init_response)}
-
-            initialized_notification = {
-                "jsonrpc": "2.0",
-                "method": "notifications/initialized",
+            # Per the MCP SSE transport spec, the first event must be the
+            # `endpoint` event pointing at the URL to POST messages to.
+            yield {
+                "event": "endpoint",
+                "data": f"/messages?session_id={session_id}",
             }
-            yield {"data": json.dumps(initialized_notification)}
-
-            # Handle any pending responses
-            while not response_queue.empty():
-                response = await response_queue.get()
-                yield {"data": response}
-
-            # Keep the connection alive
             while True:
-                await asyncio.sleep(1)
-                yield {"event": "keepalive", "data": ""}
-        except Exception as e:
-            logger.error(f"SSE error: {e}")
+                if await request.is_disconnected():
+                    break
+                try:
+                    message = await asyncio.wait_for(queue.get(), timeout=15.0)
+                    yield {"data": message}
+                except asyncio.TimeoutError:
+                    # Keepalive comment so the connection stays alive
+                    yield {"event": "keepalive", "data": ""}
         finally:
-            handler.cancel()
+            SESSIONS.pop(session_id, None)
 
     return EventSourceResponse(event_generator())
 
 
-@app.post("/")
-async def jsonrpc_endpoint(request: JSONRPCRequest):
-    """Handle JSON-RPC POST requests."""
-    response = await handle_request(request)
-    return response
+@app.post("/messages")
+async def messages_endpoint(request: Request):
+    """Receive JSON-RPC messages and send responses back over the SSE stream."""
+    session_id = request.query_params.get("session_id")
+    queue = SESSIONS.get(session_id)
+    if queue is None:
+        raise HTTPException(status_code=404, detail="Unknown session")
+
+    raw = await request.body()
+    try:
+        jsonrpc_request = JSONRPCRequest(**json.loads(raw))
+    except (json.JSONDecodeError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=f"Invalid JSON-RPC request: {e}")
+
+    response = await handle_request(jsonrpc_request)
+    if response is not None:
+        await queue.put(json.dumps(response))
+
+    # Per the MCP SSE transport spec, the POST response is 202 Accepted and
+    # the actual result is delivered over the SSE stream.
+    return {"status": "accepted"}, 202
 
 
 @app.get("/health")

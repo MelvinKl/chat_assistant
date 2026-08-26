@@ -19,7 +19,20 @@ app = FastAPI()
 
 class Message(BaseModel):
     role: str
-    content: str
+    # The OpenAI API accepts message content as a plain string or as a list
+    # of content blocks (e.g. [{"type": "text", "text": "..."}]).
+    content: str | list[dict[str, Any]] = ""
+
+
+def _message_text(content: str | list[dict[str, Any]]) -> str:
+    """Normalize message content (string or list of content blocks) to text."""
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        return "\n".join(
+            block.get("text", "") for block in content if isinstance(block, dict) and block.get("type") == "text"
+        )
+    return ""
 
 
 class ChatCompletionRequest(BaseModel):
@@ -70,7 +83,7 @@ def generate_mock_response(messages: list[Message]) -> str:
 
     last_message = messages[-1]
     if last_message.role == "user":
-        content = last_message.content.lower()
+        content = _message_text(last_message.content).lower()
         if "weather" in content:
             return "The weather is sunny and 22°C."
         elif "time" in content:
@@ -78,7 +91,7 @@ def generate_mock_response(messages: list[Message]) -> str:
         elif "hello" in content or "hi" in content:
             return "Hello! How can I assist you today?"
         else:
-            return f"I received your message: {last_message.content}. This is a mock response for testing."
+            return f"I received your message: {_message_text(last_message.content)}. This is a mock response for testing."
     else:
         return "I understand. How can I help you further?"
 
@@ -89,6 +102,7 @@ async def chat_completions(request: ChatCompletionRequest) -> ChatCompletionResp
     logger.info(f"Received chat completion request for model: {request.model}")
 
     response_content = generate_mock_response(request.messages)
+    prompt_text = " ".join(_message_text(m.content) for m in request.messages)
 
     return ChatCompletionResponse(
         id="chatcmpl-mock-123456",
@@ -102,10 +116,9 @@ async def chat_completions(request: ChatCompletionRequest) -> ChatCompletionResp
             )
         ],
         usage=ChatCompletionResponseUsage(
-            prompt_tokens=len(" ".join(m.content for m in request.messages)),
+            prompt_tokens=len(prompt_text),
             completion_tokens=len(response_content),
-            total_tokens=len(" ".join(m.content for m in request.messages))
-            + len(response_content),
+            total_tokens=len(prompt_text) + len(response_content),
         ),
     )
 

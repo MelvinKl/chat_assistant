@@ -30,6 +30,10 @@ nest_asyncio.apply()
 
 logger = logging.getLogger(__name__)
 
+# Maximum time (in seconds) to wait for the tools of a single MCP server.
+# Prevents a broken or unresponsive MCP server from blocking application startup.
+MCP_TOOL_LOADING_TIMEOUT_SECONDS = 30
+
 
 def _get_mcp_tools(settings_mcp: MCPSettings, llm: BaseChatModel) -> dict[str | None, BaseTool]:
     tools = {}
@@ -43,23 +47,27 @@ def _get_mcp_tools(settings_mcp: MCPSettings, llm: BaseChatModel) -> dict[str | 
                 "command": server_definition.command,
                 "args": server_definition.args,
                 "transport": "stdio",
+                "session_kwargs": session_kwargs,
             }
         else:
             server_dict[server_definition.name] = {
                 "url": server_definition.url,
                 "transport": server_definition.transport,
+                "session_kwargs": session_kwargs,
             }
             if server_definition.headers:
                 server_dict[server_definition.name]["headers"] = server_definition.headers
-        mcp_client = MultiServerMCPClient(server_dict, session_kwargs=session_kwargs)
+        mcp_client = MultiServerMCPClient(server_dict)
         try:
             logger.info("Adding mcp-server %s" % server_definition.name)
-            server_tools = asyncio.run(mcp_client.get_tools())
+            server_tools = asyncio.run(
+                asyncio.wait_for(mcp_client.get_tools(), timeout=MCP_TOOL_LOADING_TIMEOUT_SECONDS)
+            )
             if server_definition.agent not in tools:
                 tools[server_definition.agent] = []
             tools[server_definition.agent] += server_tools
         except Exception as e:
-            logger.error("Could not load MCP Tools from server %s\t%s " % (server_definition.name, e))
+            logger.error("Could not load MCP Tools from server %s (giving up): %s " % (server_definition.name, e))
             continue
     return tools
 

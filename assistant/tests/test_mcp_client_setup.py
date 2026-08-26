@@ -26,6 +26,7 @@ def test_stdio_server_gets_sampling_callback(mock_mcp_client_cls):
     server_dict = mock_mcp_client_cls.call_args[0][0]
     assert "test-stdio" in server_dict
     assert server_dict["test-stdio"]["transport"] == "stdio"
+    assert callable(server_dict["test-stdio"]["session_kwargs"]["sampling_callback"])
 
 
 @patch("assistant.assistant_container.MultiServerMCPClient")
@@ -46,6 +47,7 @@ def test_http_server_gets_sampling_callback(mock_mcp_client_cls):
     assert "test-sse" in server_dict
     assert server_dict["test-sse"]["transport"] == "sse"
     assert server_dict["test-sse"]["url"] == "http://localhost:8080/sse"
+    assert callable(server_dict["test-sse"]["session_kwargs"]["sampling_callback"])
 
 
 @patch("assistant.assistant_container.MultiServerMCPClient")
@@ -69,6 +71,7 @@ def test_http_server_preserves_headers(mock_mcp_client_cls):
 
     server_dict = mock_mcp_client_cls.call_args[0][0]
     assert server_dict["test-sse"]["headers"] == {"Authorization": "Bearer token"}
+    assert callable(server_dict["test-sse"]["session_kwargs"]["sampling_callback"])
 
 
 @patch("assistant.assistant_container.MultiServerMCPClient")
@@ -87,6 +90,12 @@ def test_multiple_servers_share_same_callback(mock_mcp_client_cls):
     _get_mcp_tools(settings, llm)
 
     assert mock_mcp_client_cls.call_count == 2
+    first_dict = mock_mcp_client_cls.call_args_list[0][0][0]
+    second_dict = mock_mcp_client_cls.call_args_list[1][0][0]
+    assert (
+        first_dict["server-a"]["session_kwargs"]["sampling_callback"]
+        is second_dict["server-b"]["session_kwargs"]["sampling_callback"]
+    )
 
 
 @patch("assistant.assistant_container.MultiServerMCPClient")
@@ -104,7 +113,7 @@ def test_failing_server_does_not_break_others(mock_mcp_client_cls):
     """When one server fails to load tools, the others still contribute their tools."""
     good_tool = MagicMock()
 
-    def client_side_effect(server_dict, session_kwargs=None):
+    def client_side_effect(server_dict):
         client = MagicMock()
         name = list(server_dict.keys())[0]
         if name == "bad-server":

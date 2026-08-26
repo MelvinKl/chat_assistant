@@ -37,6 +37,10 @@ jobs:
         kind load docker-image local/mock-mcp-server:latest --name chat-assistant-test
         kind load docker-image local/mock-openai-server:test --name chat-assistant-test
 
+    - name: Fetch Helm chart dependencies
+      run: |
+        helm dependency build infrastructure/helm
+
     - name: Deploy Helm chart
       run: |
         helm install chat-assistant infrastructure/helm \
@@ -52,7 +56,6 @@ jobs:
           --set mcpServers.deployments[0].name=mock-mcp \
           --set mcpServers.deployments[0].port=8080 \
           --set mcpServers.deployments[0].image=local/mock-mcp-server:test \
-          --set mcpServers.deployments[0].command='[]' \
           --set mcpServers.deployments[0].secrets.TRANSPORT=sse \
           --set mcpServers.servers[0].name=mock-mcp \
           --set mcpServers.servers[0].url='http://mock-mcp:8080/sse' \
@@ -81,5 +84,6 @@ jobs:
         kubectl port-forward svc/assistant 8080:8080 &
         PORT_FORWARD_PID=$!
         sleep 10
+        export KUBECTL_PORT_FORWARD=1
         ./test-e2e.sh
         kill $PORT_FORWARD_PID 2>/dev/null || true
