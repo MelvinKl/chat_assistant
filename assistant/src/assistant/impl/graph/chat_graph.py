@@ -130,7 +130,11 @@ class ChatGraph:
     # nodes #
     #########
     async def _determine_language_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
-        question_language = detect(state["question"])
+        try:
+            question_language = detect(state["question"])
+        except Exception:
+            # Default to English if language detection fails
+            question_language = "en"
         logger.info(
             'Detected langauge for question "%s": %s',
             state["question"],

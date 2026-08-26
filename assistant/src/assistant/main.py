@@ -15,6 +15,16 @@ app = FastAPI(
 )
 
 
+@app.get("/health")
+def health_check():
+    return {"status": "healthy", "version": app.version}
+
+
+@app.get("/readiness")
+def readiness_check():
+    return {"status": "ready", "version": app.version}
+
+
 app.include_router(chat_api_router)
 app.include_router(models_api_router)
 app.include_router(assistant_api_router)

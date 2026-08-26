@@ -40,15 +40,16 @@ async def test_retrieve_model(models_api):
     """Test retrieve model endpoint."""
     response = await models_api.retrieve_model("any-model-id")
 
-    assert response.id == "chat_assistant"
+    assert response.id == "any-model-id"
     assert response.object == "model"
     assert len(response.owned_by) > 0
 
 
 @pytest.mark.asyncio
 async def test_retrieve_model_ignores_input_id(models_api):
-    """Test that retrieve model returns same model regardless of input."""
+    """Test that retrieve model returns model with input ID."""
     response1 = await models_api.retrieve_model("model-1")
     response2 = await models_api.retrieve_model("model-2")
 
-    assert response1.id == response2.id
+    assert response1.id == "model-1"
+    assert response2.id == "model-2"
