@@ -50,6 +50,7 @@ jobs:
         helm install chat-assistant infrastructure/helm \
           --set assistant.image.repository=local/assistant \
           --set assistant.image.tag=test \
+          --set assistant.image.pullPolicy=IfNotPresent \
           --set assistant.ingress.enabled=false \
           --set ghcrIo.username=test \
           --set ghcrIo.pat=test \
@@ -59,6 +60,7 @@ jobs:
           --set 'assistant.settings.openai.SETTINGS_OPENAI_API_KEY=test-key' \
           --set mcpServers.deployments[0].name=mock-mcp \
           --set mcpServers.deployments[0].port=8080 \
+          --set mcpServers.deployments[0].imagePullPolicy=IfNotPresent \
           --set mcpServers.deployments[0].image=local/mock-mcp-server:test \
           --set mcpServers.deployments[0].secrets.TRANSPORT=sse \
           --set mcpServers.servers[0].name=mock-mcp \

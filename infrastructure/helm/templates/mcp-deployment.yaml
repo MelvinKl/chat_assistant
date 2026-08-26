@@ -20,7 +20,7 @@ spec:
       - name: "pull-secret"
       containers:
       - name: {{ $server.name }}
-        imagePullPolicy: Always
+        imagePullPolicy: {{ $server.imagePullPolicy | default "Always" }}
         {{- if $server.command }}
         command: {{ $server.command | toJson }}
         {{- end }}
