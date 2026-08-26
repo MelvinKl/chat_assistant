@@ -16,7 +16,7 @@ jobs:
       uses: helm/kind-action@v1.12.0
       with:
         cluster_name: chat-assistant-test
-        config: .github/workflows/kind-config.yaml
+        config: .github/kind-config.yaml
 
     - name: Set up Helm
       uses: azure/setup-helm@v4
@@ -35,6 +35,10 @@ jobs:
         kind load docker-image local/mock-mcp-server:test --name chat-assistant-test
         kind load docker-image local/mock-mcp-server:latest --name chat-assistant-test
         kind load docker-image local/mock-openai-server:test --name chat-assistant-test
+
+    - name: Add Helm chart repositories
+      run: |
+        helm repo add otwld https://otwld.github.io/ollama-helm/
 
     - name: Fetch Helm chart dependencies
       run: |
