@@ -13,6 +13,7 @@ class MCPServer(BaseModel):
     env: str = ""
     transport: str
     agent: str | None = None
+    stage: str | None = None
     headers: dict[str, str] | None = None
 
 

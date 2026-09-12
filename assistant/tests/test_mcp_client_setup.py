@@ -98,6 +98,42 @@ def test_empty_servers_returns_no_tools(mock_mcp_client_cls):
 
 
 @patch("assistant.assistant_container.MultiServerMCPClient")
+def test_staged_server_is_keyed_by_stage(mock_mcp_client_cls):
+    """Servers with a stage set are registered under the stage name."""
+    mock_client = MagicMock()
+    mock_client.get_tools = AsyncMock(return_value=[MagicMock()])
+    mock_mcp_client_cls.return_value = mock_client
+
+    settings = MCPSettings(
+        servers=[
+            MCPServer(name="stagey", command="cmd", transport="stdio", stage="preprocess"),
+        ]
+    )
+
+    tools = _get_mcp_tools(settings)
+
+    assert set(tools.keys()) == {"preprocess"}
+
+
+@patch("assistant.assistant_container.MultiServerMCPClient")
+def test_stage_key_wins_over_agent_key(mock_mcp_client_cls):
+    """When both stage and agent are set, the stage key is used."""
+    mock_client = MagicMock()
+    mock_client.get_tools = AsyncMock(return_value=[MagicMock()])
+    mock_mcp_client_cls.return_value = mock_client
+
+    settings = MCPSettings(
+        servers=[
+            MCPServer(name="both", command="cmd", transport="stdio", agent="subagent", stage="postprocess"),
+        ]
+    )
+
+    tools = _get_mcp_tools(settings)
+
+    assert set(tools.keys()) == {"postprocess"}
+
+
+@patch("assistant.assistant_container.MultiServerMCPClient")
 def test_failing_server_does_not_break_others(mock_mcp_client_cls):
     """When one server fails to load tools, the others still contribute their tools."""
     good_tool = MagicMock()

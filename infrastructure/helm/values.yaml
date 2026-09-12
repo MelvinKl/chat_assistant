@@ -64,6 +64,26 @@ assistant:
         Question: {question}
         Answer: {raw_answer}
         Additional Information: {additional_info}
+      SETTINGS_PROMPTS_PREPROCESS_SYSTEM_PROMPT: |
+        You are the preprocessing stage of a question answering pipeline.
+        Your job is to prepare the question so that the answering agent can answer it as well as possible.
+        Use the available tools to complete the question with missing information if needed.
+        Only answer with the preprocessed question.
+      SETTINGS_PROMPTS_PREPROCESS_USER_PROMPT: |
+        Question: {question}
+        History: {history}
+        Additional Information: {additional_info}
+      SETTINGS_PROMPTS_POSTPROCESS_SYSTEM_PROMPT: |
+        You are the postprocessing stage of a question answering pipeline.
+        You will be provided with the question and the answer that was generated for it.
+        Your job is to review the answer and correct errors or improve its quality.
+        Use the available tools to verify the answer if needed.
+        Answer in the following language: {question_language}
+        Only answer with the postprocessed answer.
+      SETTINGS_PROMPTS_POSTPROCESS_USER_PROMPT: |
+        Question: {question}
+        Answer: {raw_answer}
+        Additional Information: {additional_info}
     openai:
       SETTINGS_OPENAI_MODEL: qwen3:4b
       SETTINGS_OPENAI_BASE_URL: http://ollama:11434/v1
@@ -246,6 +266,7 @@ mcpServers:
       env: ""
       transport: "sse"
       args: []
+      stage: ""
     - name: homeassistant
       agent: homeassistant
       url: "https://yoururl/mcp_server/sse"
@@ -253,7 +274,8 @@ mcpServers:
       headers:
         "Authorization": "Bearer yourtoken"
       transport: "sse"
-      args: []      
+      args: []
+      stage: ""      
 
 ollama:
   image:

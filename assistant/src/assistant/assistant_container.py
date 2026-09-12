@@ -23,6 +23,7 @@ from assistant.impl.settings.prompt_settings import PromptSettings
 from assistant.impl.settings.subagent_settings import (
     load_subagent_settings_from_json,
 )
+from assistant.impl.stages.stage import Stage
 
 # Apply the patch to allow nested event loops
 nest_asyncio.apply()
@@ -52,9 +53,10 @@ def _get_mcp_tools(settings_mcp: MCPSettings) -> dict[str | None, BaseTool]:
         try:
             logger.info("Adding mcp-server %s" % server_definition.name)
             server_tools = asyncio.run(mcp_client.get_tools())
-            if server_definition.agent not in tools:
-                tools[server_definition.agent] = []
-            tools[server_definition.agent] += server_tools
+            key = server_definition.stage if server_definition.stage else server_definition.agent
+            if key not in tools:
+                tools[key] = []
+            tools[key] += server_tools
         except Exception as e:
             logger.error("Could not load MCP Tools from server %s\t%s " % (server_definition.name, e))
             continue
@@ -105,6 +107,24 @@ def _di_config(binder: Binder) -> None:
             llm=llm,
             system_prompt=settings_prompt.rephrase_answer_system_prompt,
             user_prompt=settings_prompt.rephrase_answer_user_prompt,
+        ),
+    )
+    binder.bind(
+        "preprocess_stage",
+        Stage(
+            llm=llm,
+            system_prompt=settings_prompt.preprocess_system_prompt,
+            user_prompt=settings_prompt.preprocess_user_prompt,
+            tools=tools.get("preprocess", []),
+        ),
+    )
+    binder.bind(
+        "postprocess_stage",
+        Stage(
+            llm=llm,
+            system_prompt=settings_prompt.postprocess_system_prompt,
+            user_prompt=settings_prompt.postprocess_user_prompt,
+            tools=tools.get("postprocess", []),
         ),
     )
     binder.bind("tools", tools)

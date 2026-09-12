@@ -11,6 +11,7 @@ from assistant.impl.settings.mcp_server_settings import (
     MCPSettings,
     load_mcp_settings_from_json,
 )
+from assistant.impl.settings.prompt_settings import PromptSettings
 
 
 def test_load_mcp_settings_from_valid_json():
@@ -85,9 +86,67 @@ def test_mcp_server_model_validation():
     assert server.transport == "sse"
     assert server.command == ""
     assert server.args == []
+    assert server.stage is None
+    assert server.agent is None
+
+
+def test_mcp_server_stage_field():
+    """Test that the stage field assigns a server to a stage."""
+    server = MCPServer(name="test", transport="stdio", command="echo", stage="preprocess")
+    assert server.stage == "preprocess"
+
+
+def test_mcp_settings_stage_loaded_from_json():
+    """Test that the stage field is loaded from the settings json."""
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+        json.dump(
+            {
+                "servers": [
+                    {"name": "stagey", "url": "http://stagey:8080/sse", "transport": "sse", "stage": "postprocess"}
+                ]
+            },
+            f,
+        )
+        temp_path = f.name
+
+    try:
+        settings = load_mcp_settings_from_json(temp_path)
+        assert settings.servers[0].stage == "postprocess"
+    finally:
+        os.unlink(temp_path)
 
 
 def test_mcp_settings_model_validation():
     """Test MCPSettings model validation."""
     settings = MCPSettings(servers=[MCPServer(name="test", transport="sse", url="http://test")])
     assert len(settings.servers) == 1
+
+
+def test_prompt_settings_stage_defaults():
+    """The stage prompts default to empty strings."""
+    ps = PromptSettings()
+    assert ps.preprocess_system_prompt == ""
+    assert ps.preprocess_user_prompt == ""
+    assert ps.postprocess_system_prompt == ""
+    assert ps.postprocess_user_prompt == ""
+
+
+def test_prompt_settings_stage_from_env(monkeypatch):
+    """The stage prompts can be set through environment variables."""
+    for key in (
+        "SETTINGS_PROMPTS_PREPROCESS_SYSTEM_PROMPT",
+        "SETTINGS_PROMPTS_PREPROCESS_USER_PROMPT",
+        "SETTINGS_PROMPTS_POSTPROCESS_SYSTEM_PROMPT",
+        "SETTINGS_PROMPTS_POSTPROCESS_USER_PROMPT",
+    ):
+        monkeypatch.delenv(key, raising=False)
+    monkeypatch.setenv("SETTINGS_PROMPTS_PREPROCESS_SYSTEM_PROMPT", "pre sys")
+    monkeypatch.setenv("SETTINGS_PROMPTS_PREPROCESS_USER_PROMPT", "pre usr")
+    monkeypatch.setenv("SETTINGS_PROMPTS_POSTPROCESS_SYSTEM_PROMPT", "post sys")
+    monkeypatch.setenv("SETTINGS_PROMPTS_POSTPROCESS_USER_PROMPT", "post usr")
+
+    ps = PromptSettings()
+    assert ps.preprocess_system_prompt == "pre sys"
+    assert ps.preprocess_user_prompt == "pre usr"
+    assert ps.postprocess_system_prompt == "post sys"
+    assert ps.postprocess_user_prompt == "post usr"
