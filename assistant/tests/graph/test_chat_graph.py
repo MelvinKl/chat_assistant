@@ -4,9 +4,14 @@
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+from langchain_core.messages import HumanMessage
 from langgraph.graph import END, START
 
 from assistant.impl.graph.chat_graph import ChatGraph, GraphNodeNames
+from assistant.impl.graph.graph_state import GraphState
+from assistant.impl.stages.stage import Stage
+
+from ..fake_chat_model import FakeChatModel
 
 
 ########################################################################################
@@ -205,3 +210,138 @@ class TestChatGraph:
                 (GraphNodeNames.POSTPROCESS, GraphNodeNames.REPHRASE_ANSWER),
                 (GraphNodeNames.REPHRASE_ANSWER, END),
             ]
+
+
+########################################################################################
+# End-to-end tests – real compiled graph with real Stage runnables
+########################################################################################
+class RecordingFakeChatModel(FakeChatModel):
+    """FakeChatModel that also records the messages it was invoked with."""
+
+    messages_history: list = []
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.messages_history = []
+
+    def _generate(self, messages, stop=None, run_manager=None, **kwargs):
+        self.messages_history.append(list(messages))
+        return super()._generate(messages=messages, stop=stop, run_manager=run_manager, **kwargs)
+
+    async def _agenerate(self, messages, stop=None, run_manager=None, **kwargs):
+        return self._generate(messages=messages, stop=stop, run_manager=run_manager, **kwargs)
+
+
+@pytest.fixture
+def pipeline_preprocess_llm() -> RecordingFakeChatModel:
+    return RecordingFakeChatModel(answer="preprocessed question")
+
+
+@pytest.fixture
+def pipeline_postprocess_llm() -> RecordingFakeChatModel:
+    return RecordingFakeChatModel(answer="postprocessed answer")
+
+
+@pytest.fixture
+def pipeline_preprocess_stage(pipeline_preprocess_llm) -> Stage:
+    return Stage(
+        llm=pipeline_preprocess_llm,
+        system_prompt="You are the preprocessing stage.",
+        user_prompt="Question: {question}",
+    )
+
+
+@pytest.fixture
+def pipeline_postprocess_stage(pipeline_postprocess_llm) -> Stage:
+    return Stage(
+        llm=pipeline_postprocess_llm,
+        system_prompt="You are the postprocessing stage.",
+        user_prompt="Answer: {raw_answer}",
+    )
+
+
+@pytest.fixture
+def pipeline_chat_graph(
+    fake_llm,
+    fake_question_rephraser,
+    fake_answer_rephraser,
+    fake_mcp_agent,
+    pipeline_preprocess_stage,
+    pipeline_postprocess_stage,
+    fake_info_settings,
+) -> ChatGraph:
+    """ChatGraph with a real (unpatched) StateGraph and real Stage runnables."""
+    return ChatGraph(
+        llm=fake_llm,
+        question_rephraser=fake_question_rephraser,
+        answer_rephraser=fake_answer_rephraser,
+        mcp_agent=fake_mcp_agent,
+        preprocess_stage=pipeline_preprocess_stage,
+        postprocess_stage=pipeline_postprocess_stage,
+        information_settings=fake_info_settings,
+    )
+
+
+class TestChatGraphPipeline:
+    """Runs the real compiled graph end-to-end, including the two stages."""
+
+    @pytest.mark.asyncio
+    async def test_ainvoke_runs_full_pipeline(
+        self,
+        pipeline_chat_graph,
+        fake_mcp_agent,
+        fake_question_rephraser,
+        fake_answer_rephraser,
+    ):
+        fake_mcp_agent.ainvoke.return_value = {"messages": [MagicMock(content="raw answer")]}
+        fake_question_rephraser.ainvoke.return_value = "rephrased question"
+        fake_answer_rephraser.ainvoke.return_value = "butler answer"
+
+        result = await pipeline_chat_graph.ainvoke([("user", "What is the meaning of life?")])
+
+        assert result == "butler answer"
+
+    @pytest.mark.asyncio
+    async def test_pipeline_state_and_stage_ordering(
+        self,
+        pipeline_chat_graph,
+        fake_mcp_agent,
+        fake_question_rephraser,
+        fake_answer_rephraser,
+        pipeline_preprocess_llm,
+        pipeline_postprocess_llm,
+    ):
+        fake_mcp_agent.ainvoke.return_value = {"messages": [MagicMock(content="raw answer")]}
+        fake_question_rephraser.ainvoke.return_value = "rephrased question"
+        fake_answer_rephraser.ainvoke.return_value = "butler answer"
+
+        state = GraphState.create(
+            history=[],
+            question="What is the meaning of life?",
+            additional_info="extra context",
+        )
+        final_state = await pipeline_chat_graph._graph.ainvoke(input=state)
+
+        # The stage outputs are stored in the final state.
+        assert final_state["preprocessed_question"] == "preprocessed question"
+        assert final_state["postprocessed_answer"] == "postprocessed answer"
+        # The postprocess node runs after the answer was generated and rewrites the raw answer.
+        assert final_state["raw_answer"] == "postprocessed answer"
+        # The answer rephraser runs after the postprocess stage.
+        assert final_state["processed_answer"] == "butler answer"
+        # The language detection runs before the postprocess stage.
+        assert final_state["question_language"] == "en"
+
+        # The preprocessing stage saw the original question ...
+        pre_messages = pipeline_preprocess_llm.messages_history[0]
+        pre_user_message = [m for m in pre_messages if isinstance(m, HumanMessage)][0]
+        assert "What is the meaning of life?" in pre_user_message.content
+        # ... and the remaining pipeline ran with the preprocessed question.
+        assert final_state["question"] == "rephrased question"
+        rephraser_state = fake_question_rephraser.ainvoke.call_args[0][0]
+        assert rephraser_state["question"] == "preprocessed question"
+
+        # The postprocess stage ran after the answer had returned and saw the generated answer.
+        post_messages = pipeline_postprocess_llm.messages_history[0]
+        post_user_message = [m for m in post_messages if isinstance(m, HumanMessage)][0]
+        assert "raw answer" in post_user_message.content
