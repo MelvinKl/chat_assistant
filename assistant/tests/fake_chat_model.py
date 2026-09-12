@@ -18,6 +18,9 @@ class FakeChatModel(BaseChatModel):
         self.answer = answer
         self.kwargs_history: list[dict] = []  # store all captured kwargs
 
+    def bind_tools(self, tools, **kwargs):
+        return self.bind(tools=tools, **kwargs)
+
     @property
     def _llm_type(self) -> str:
         return "fake-chat-model-for-testing"

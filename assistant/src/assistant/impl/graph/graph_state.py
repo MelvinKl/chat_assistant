@@ -12,6 +12,8 @@ class GraphState(TypedDict):
     processed_answer: str | None
     question_language: str | None
     additional_info: str
+    preprocessed_question: str | None
+    postprocessed_answer: str | None
 
     @classmethod
     def create(
@@ -22,6 +24,8 @@ class GraphState(TypedDict):
         processed_answer: Optional[str] = None,
         question_language: Optional[str] = None,
         additional_info: Optional[str] = None,
+        preprocessed_question: Optional[str] = None,
+        postprocessed_answer: Optional[str] = None,
     ) -> "GraphState":
         """
         Create an instance of the GraphState
@@ -41,6 +45,10 @@ class GraphState(TypedDict):
             Defaults to None
         additional_info: str | None = None
             String with additional information that can be used in the answer generation process. Defaults to None
+        preprocessed_question: str | None = None
+            The output of the preprocessing stage. Defaults to None
+        postprocessed_answer: str | None = None
+            The output of the postprocessing stage. Defaults to None
 
         Returns
         -------
@@ -54,4 +62,6 @@ class GraphState(TypedDict):
             processed_answer=processed_answer,
             question_language=question_language,
             additional_info=additional_info,
+            preprocessed_question=preprocessed_question,
+            postprocessed_answer=postprocessed_answer,
         )

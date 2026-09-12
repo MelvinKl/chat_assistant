@@ -1,9 +1,9 @@
 # coding: utf-8
 
 import asyncio
+import logging
 import threading
 import time
-import logging
 from enum import StrEnum
 from threading import Lock
 

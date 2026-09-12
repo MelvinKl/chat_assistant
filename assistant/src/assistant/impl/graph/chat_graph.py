@@ -26,6 +26,8 @@ class GraphNodeNames(StrEnum):
     DETERMINE_LANGUAGE = "determine_language"
     DECIDE = "decide"
     REPHRASE_ANSWER = "rephrase_answer"
+    PREPROCESS = "preprocess"
+    POSTPROCESS = "postprocess"
 
 
 class ChatGraph:
@@ -36,6 +38,8 @@ class ChatGraph:
         question_rephraser="question_rephraser",
         answer_rephraser="answer_rephraser",
         mcp_agent="mcp_agent",
+        preprocess_stage="preprocess_stage",
+        postprocess_stage="postprocess_stage",
         information_settings=InformationSettings,
     )
     def __init__(
@@ -44,6 +48,8 @@ class ChatGraph:
         question_rephraser: Runnable,
         answer_rephraser: Runnable,
         mcp_agent: RunnableSequence,
+        preprocess_stage: Runnable,
+        postprocess_stage: Runnable,
         information_settings: InformationSettings,
     ):
         self._information_settings = information_settings
@@ -51,6 +57,8 @@ class ChatGraph:
         self._answer_rephraser = answer_rephraser
         self._llm = llm
         self._mcp_agent = mcp_agent
+        self._preprocess_stage = preprocess_stage
+        self._postprocess_stage = postprocess_stage
         self._state_graph = StateGraph(GraphState)
         self._graph = self._setup_graph()
 
@@ -149,6 +157,23 @@ class ChatGraph:
         )
         return {"question": rephrased_question}
 
+    async def _preprocess_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
+        preprocessed_question = await self._preprocess_stage.ainvoke(state, config)
+        logger.info(
+            'Preprocessed question "%s" to %s',
+            state["question"],
+            preprocessed_question,
+        )
+        return {"question": preprocessed_question, "preprocessed_question": preprocessed_question}
+
+    async def _postprocess_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
+        postprocessed_answer = await self._postprocess_stage.ainvoke(state, config)
+        logger.info(
+            "Postprocessed answer to %s",
+            postprocessed_answer,
+        )
+        return {"raw_answer": postprocessed_answer, "postprocessed_answer": postprocessed_answer}
+
     async def _answer_rephraser_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
         rephrased_answer = await self._answer_rephraser.ainvoke(state, config)
         return {"processed_answer": rephrased_answer}
@@ -163,15 +188,19 @@ class ChatGraph:
         self._state_graph.add_node(GraphNodeNames.DETERMINE_LANGUAGE, self._determine_language_node)
         self._state_graph.add_node(GraphNodeNames.DECIDE, self._decide_node)
         self._state_graph.add_node(GraphNodeNames.REPHRASE_ANSWER, self._answer_rephraser_node)
+        self._state_graph.add_node(GraphNodeNames.PREPROCESS, self._preprocess_node)
+        self._state_graph.add_node(GraphNodeNames.POSTPROCESS, self._postprocess_node)
 
     def _wire_graph(self):
         self._state_graph.add_edge(START, GraphNodeNames.DETERMINE_LANGUAGE)
-        self._state_graph.add_edge(START, GraphNodeNames.REPHRASE_QUESTION)
+        self._state_graph.add_edge(START, GraphNodeNames.PREPROCESS)
+        self._state_graph.add_edge(GraphNodeNames.PREPROCESS, GraphNodeNames.REPHRASE_QUESTION)
         self._state_graph.add_edge(GraphNodeNames.REPHRASE_QUESTION, GraphNodeNames.DECIDE)
         self._state_graph.add_edge(
             [GraphNodeNames.DETERMINE_LANGUAGE, GraphNodeNames.DECIDE],
-            GraphNodeNames.REPHRASE_ANSWER,
+            GraphNodeNames.POSTPROCESS,
         )
+        self._state_graph.add_edge(GraphNodeNames.POSTPROCESS, GraphNodeNames.REPHRASE_ANSWER)
         self._state_graph.add_edge(GraphNodeNames.REPHRASE_ANSWER, END)
 
     def _setup_graph(self):

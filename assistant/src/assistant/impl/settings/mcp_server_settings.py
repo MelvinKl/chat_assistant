@@ -13,6 +13,7 @@ class MCPServer(BaseModel):
     env: str = ""
     transport: str
     agent: str | None = None
+    stage: str | None = None
     headers: dict[str, str] | None = None
 
 
@@ -28,11 +29,13 @@ class MCPSettings(BaseSettings):
 
 
 def load_mcp_settings_from_json(
-    json_file_path="/config/mcp/SETTINGS_MCP_SERVERS",
+    json_file_path: str | None = None,
 ) -> MCPSettings:
-    # Check for environment variable override
-    path = os.environ.get("MCP_SETTINGS_PATH", json_file_path)
-
+    if json_file_path is None:
+        json_file_path = os.environ.get("MCP_SETTINGS_PATH", "/config/mcp/SETTINGS_MCP_SERVERS")
+    else:
+        json_file_path = os.environ.get("MCP_SETTINGS_PATH", json_file_path)
+    path = json_file_path
     try:
         with open(path, "r") as f:
             data = json.load(f)
@@ -42,4 +45,4 @@ def load_mcp_settings_from_json(
     except FileNotFoundError:
         return MCPSettings(servers=[])
     except json.JSONDecodeError as e:
-        raise ValueError("MCP settings file contains invalid JSON") from e
+        raise ValueError(f"MCP settings file contains invalid JSON: {e}")
