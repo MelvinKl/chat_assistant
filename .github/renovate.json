@@ -1,9 +1,0 @@
-{
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
-  "ignorePresets": [":ignoreModulesAndTests"],
-  "prHourlyLimit": 100,
-  "labels": ["renovate"],
-  "repositories": ["MelvinKl/chat_assistant"],
-  "enabledManagers": ["github-actions", "dockerfile", "devcontainer", "helm-requirements", "helmv3","kubernetes", "helm-values"]
-}

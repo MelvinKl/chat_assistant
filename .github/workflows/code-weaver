@@ -1,0 +1,33 @@
+name: code-weaver
+on:
+  issues:            # only a label addition starts a run — opening or editing no longer fires it
+    types: [labeled]
+  workflow_dispatch:
+    inputs:
+      issue_number: { description: Issue to process, type: string, required: false }
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+jobs:
+  factory:
+    # a reusable-workflow job may only carry `uses`/`with`/`secrets` — a
+    # `runs-on:` here makes the file schema-invalid. The runner is chosen
+    # through the factory's `runner` input instead (every factory job runs on
+    # it, so its environment must have pi pre-installed & configured).
+    # the oracle pins the owner and a VERSION TAG (a moving branch ref is not
+    # a stable ref)
+    uses: MelvinKl/code-weaver/.github/workflows/factory.yml@12
+    with:
+      max-loops: 25
+      issue-number: ${{ github.event.issue.number || inputs.issue_number }}
+      ai-requirements-label: code-weaver
+      llm-model: Qwen3.8  # which configured model — the one adjustable LLM setting
+      runner: self-hosted      # runner label whose environment has pi pre-installed & configured
+      factory-ref: main   # the same ref as the uses: line — the stage jobs clone the factory's runtime tree from the factory repo at it
+    secrets:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}   # repo-scoped; never a plain input
+      PI_MODELS: ${{ vars.PI_MODELS }}
+      PI_SETTINGS: ${{ vars.PI_SETTINGS }}
+      PI_MCP: ${{ vars.PI_MCP }}
+      PI_EXTENSION_ENV: ${{ vars.PI_EXTENSION_ENV }}
