@@ -17,8 +17,9 @@ jobs:
     # it, so its environment must have pi pre-installed & configured).
     # the oracle pins the owner and a VERSION TAG (a moving branch ref is not
     # a stable ref)
-    uses: MelvinKl/code-weaver/.github/workflows/factory.yml@2
+    uses: MelvinKl/code-weaver/.github/workflows/factory.yml@18
     with:
+      job-timeout: 2000
       max-loops: 25
       issue-number: ${{ github.event.issue.number || inputs.issue_number }}
       ai-requirements-label: code-weaver
