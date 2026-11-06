@@ -17,7 +17,7 @@ jobs:
     # it, so its environment must have pi pre-installed & configured).
     # the oracle pins the owner and a VERSION TAG (a moving branch ref is not
     # a stable ref)
-    uses: MelvinKl/code-weaver/.github/workflows/factory.yml@18
+    uses: MelvinKl/code-weaver/.github/workflows/factory.yml@19
     with:
       job-timeout: 2000
       max-loops: 25
