@@ -17,14 +17,14 @@ jobs:
     # it, so its environment must have pi pre-installed & configured).
     # the oracle pins the owner and a VERSION TAG (a moving branch ref is not
     # a stable ref)
-    uses: MelvinKl/code-weaver/.github/workflows/factory.yml@19
+    uses: MelvinKl/code-weaver/.github/workflows/factory.yml@31
     with:
       job-timeout: 2000
       max-loops: 25
       issue-number: ${{ github.event.issue.number || inputs.issue_number }}
       ai-requirements-label: code-weaver
       llm-model: Qwen3.8  # which configured model — the one adjustable LLM setting
-      runner: self-hosted      # runner label whose environment has pi pre-installed & configured
+      runner: code-weaver      # runner label whose environment has pi pre-installed & configured
       factory-ref: main   # the same ref as the uses: line — the stage jobs clone the factory's runtime tree from the factory repo at it
     secrets:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}   # repo-scoped; never a plain input
