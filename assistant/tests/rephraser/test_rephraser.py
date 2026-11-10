@@ -32,7 +32,11 @@ def simple_rephraser(dummy_llm):
 
 
 def test_rephraser_initialisation():
-    """Sanity that construction populates expected private attributes."""
+    """Sanity that construction populates expected private attributes.
+
+    Implements "the rephraser builds a prompt with a system and a user message"
+    (requirements/rephraser.feature)
+    """
     llm = FakeChatModel(answer="foo")
     r = Rephraser(
         llm=llm,
@@ -48,7 +52,11 @@ def test_rephraser_initialisation():
 
 @pytest.mark.asyncio
 async def test_ainvoke_basic_flow(simple_rephraser):
-    """Exercises the async path."""
+    """Exercises the async path.
+
+    Implements "the async invocation returns the LLM answer content"
+    (requirements/rephraser.feature)
+    """
     state = {"system_context": "ctx", "user_question": "how are you?"}
     answer = await simple_rephraser.ainvoke(state)
 
@@ -56,7 +64,11 @@ async def test_ainvoke_basic_flow(simple_rephraser):
 
 
 def test_invoke_basic_flow(simple_rephraser):
-    """Ensure invoke delegates to ainvoke via asyncio.run()."""
+    """Ensure invoke delegates to ainvoke via asyncio.run().
+
+    Implements "the sync invocation returns the LLM answer content"
+    (requirements/rephraser.feature)
+    """
     state = {"system_context": "ctx", "user_question": "what is life?"}
     answer = simple_rephraser.invoke(state)
 
@@ -65,7 +77,11 @@ def test_invoke_basic_flow(simple_rephraser):
 
 @pytest.mark.asyncio
 async def test_ainvoke_passes_kwargs_through(simple_rephraser):
-    """Check that extra kwargs wind up in the LLM call."""
+    """Check that extra kwargs wind up in the LLM call.
+
+    Implements "extra keyword arguments are passed to the LLM"
+    (requirements/rephraser.feature)
+    """
     fake_llm = simple_rephraser._llm  # type: ignore[attr-defined]
     config = RunnableConfig(tags=["test"])
     await simple_rephraser.ainvoke(
@@ -84,7 +100,11 @@ async def test_ainvoke_passes_kwargs_through(simple_rephraser):
 
 @pytest.mark.asyncio
 async def test_prompt_rendering_includes_state():
-    """Assert that the constructed prompt contains the variables from the state dict."""
+    """Assert that the constructed prompt contains the variables from the state dict.
+
+    Implements "template placeholders are rendered from the state"
+    (requirements/rephraser.feature)
+    """
     llm = FakeChatModel(answer="answer")
 
     # We can spy on _generate to see the formatted messages
@@ -109,7 +129,11 @@ async def test_prompt_rendering_includes_state():
 
 
 def test_mandatory_state_parameters_are_fulfilled():
-    """If PromptTemplate requires fields missing in state, expect KeyError on invoke."""
+    """If PromptTemplate requires fields missing in state, expect KeyError on invoke.
+
+    Implements "a missing template variable fails the invocation"
+    (requirements/rephraser.feature)
+    """
     llm = FakeChatModel(answer="ok")
     r = Rephraser(llm, system_prompt="{a}", user_prompt="{b}")
 

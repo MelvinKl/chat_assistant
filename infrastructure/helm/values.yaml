@@ -1,9 +1,3 @@
-features:
-  qdrant: true
-
-egress:
-  enabled: true
-
 ghcrIo:
   username: 
   pat:

@@ -37,4 +37,4 @@ def load_subagent_settings_from_json(
     except FileNotFoundError:
         return SubagentSettings(subagents=[])
     except json.JSONDecodeError as e:
-        raise ValueError("MCP settings file contains invalid JSON") from e
+        raise ValueError("Subagent settings file contains invalid JSON") from e

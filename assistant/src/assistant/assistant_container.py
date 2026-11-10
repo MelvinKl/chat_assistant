@@ -12,6 +12,7 @@ from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_openai import ChatOpenAI
 
 from assistant.impl.graph.chat_graph import ChatGraph
+from assistant.impl.mcp_sampling import create_sampling_callback
 from assistant.impl.rephraser.rephraser import Rephraser
 from assistant.impl.settings.information_settings import InformationSettings
 from assistant.impl.settings.mcp_server_settings import (
@@ -30,8 +31,9 @@ nest_asyncio.apply()
 logger = logging.getLogger(__name__)
 
 
-def _get_mcp_tools(settings_mcp: MCPSettings) -> dict[str | None, BaseTool]:
+def _get_mcp_tools(settings_mcp: MCPSettings, llm: BaseChatModel) -> dict[str | None, BaseTool]:
     tools = {}
+    sampling_callback = create_sampling_callback(llm)
 
     for server_definition in settings_mcp.servers:
         server_dict = {}
@@ -48,6 +50,10 @@ def _get_mcp_tools(settings_mcp: MCPSettings) -> dict[str | None, BaseTool]:
             }
             if server_definition.headers:
                 server_dict[server_definition.name]["headers"] = server_definition.headers
+        # The installed langchain-mcp-adapters takes no callback at the client
+        # level: the callback rides the connection dict's session_kwargs, which
+        # the adapter's session creators forward to the mcp SDK ClientSession.
+        server_dict[server_definition.name]["session_kwargs"] = {"sampling_callback": sampling_callback}
         mcp_client = MultiServerMCPClient(server_dict)
         try:
             logger.info("Adding mcp-server %s" % server_definition.name)
@@ -73,7 +79,7 @@ def _di_config(binder: Binder) -> None:
         api_key=settings_openai.api_key,
     )
 
-    tools = _get_mcp_tools(settings_mcp)
+    tools = _get_mcp_tools(settings_mcp, llm)
     subagents = [
         {
             "name": subagent.name,

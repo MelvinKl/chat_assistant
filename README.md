@@ -53,9 +53,9 @@ By default, the assistant has egress enabled to internal networks (10.0.0.0/8, 1
 |Key|Default value|Explanation|
 |---|---|---|
 |`assistant.settings.prompt.SETTINGS_PROMPTS_REPHRASE_QUESTION_SYSTEM_PROMPT`|`Your job is to rephrase the questions so they contain all the relevant information from the history required to answer the question.`|The system prompt used for rephrasing of the initial question. Usable placeholders are: `question`,`history`|
-|`assistant.settings.prompt.SETTINGS_PROMPTS_REPHRASE_QUESTION_USER_PROMPT`|`Question: {question}\nHistory: {history}`|The user prompt used for rephrasing of the initial question. Usable placeholders are: `question`,`history`|
+|`assistant.settings.prompt.SETTINGS_PROMPTS_REPHRASE_QUESTION_USER_PROMPT`|`Question: {question}\nHistory: {history}\nAdditional Information: {additional_info}`|The user prompt used for rephrasing of the initial question. Usable placeholders are: `question`,`history`,`additional_info`|
 |`assistant.settings.prompt.SETTINGS_PROMPTS_REPHRASE_ANSWER_SYSTEM_PROMPT`|`You are James, a butler of the aristocracy.\nYou will get asked questions and will be provided with the correct answer.\nHowever the answer might not be worded suitable for your master. Your job is to rephrase the answer in a way that is suitable for your master.\nAnswer in the following language: {question_language}`|The system prompt used for rephrasing the final answer. Usable placeholders are: `question`,`history`, `question_language`,`additional_info`,`raw_answer`|
-|`assistant.settings.prompt.SETTINGS_PROMPTS_REPHRASE_ANSWER_USER_PROMPT`|`Question: {question}\nAnswer: {raw_answer}`|The user prompt used for rephrasing the final answer. Usable placeholders are: `question`,`history`, `question_language`,`additional_info`,`raw_answer`|
+|`assistant.settings.prompt.SETTINGS_PROMPTS_REPHRASE_ANSWER_USER_PROMPT`|`Question: {question}\nAnswer: {raw_answer}\nAdditional Information: {additional_info}`|The user prompt used for rephrasing the final answer. Usable placeholders are: `question`,`history`, `question_language`,`additional_info`,`raw_answer`|
 
 ### LLM Settings
 |Key|Default value|Explanation|
@@ -126,10 +126,6 @@ The repository is organized as follows:
 ### `assistant`
 * The chat assistant API and its endpoints. This includes an OpenAI compatible chat completion endpoint and a modular assistant endpoint.
 
-### `components`
-* Directory containing additional components for extending the chat assistant.
-* `home-assistant`: Component for integrating with Home Assistant.
-
 ### `infrastructure/helm`
 * Contains the Helm chart for deploying the chat assistant to a Kubernetes cluster.
 
@@ -143,7 +139,7 @@ The repository is organized as follows:
 To get started with the chat assistant, follow these steps:
 
 1. Create a new Kubernetes cluster using `infrastructure/local/create_local_env.sh`.
-2. Create a `.env` file in the root of the repository with required secrets, such as `SETTINGS_HOMEASSISTANT_APIKEY`.
+2. Create a `.env` file in the root of the repository with the required secrets.
 3. Use `Tiltfile` to start the chat assistant application.
 4. When using `Tiltfile`, the APIs will wait for the debugger to connect.
 

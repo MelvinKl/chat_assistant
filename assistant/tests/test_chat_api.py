@@ -1,9 +1,10 @@
 """Unit tests for chat_api.py"""
 
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, patch
 
 import pytest
 
+from assistant.apis.chat_api_base import BaseChatApi
 from assistant.impl.apis.chat_api import ChatApi
 from assistant.models.chat_completion_messages import ChatCompletionMessages
 from assistant.models.chat_completion_request import ChatCompletionRequest
@@ -28,7 +29,15 @@ def chat_api(mock_chat_graph):
 
 @pytest.mark.asyncio
 async def test_chat_completions_basic_flow(chat_api, mock_chat_graph):
-    """Test basic chat completion flow."""
+    """Test basic chat completion flow.
+
+    Implements "accepting a valid chat completion request"
+    (requirements/chat-completions-api.feature)
+    Implements "the response contains a single finished assistant choice"
+    (requirements/chat-completions-api.feature)
+    Implements "the choice content is the processed answer of the chat graph"
+    (requirements/chat-completions-api.feature)
+    """
     request = ChatCompletionRequest(
         model="test-model",
         messages=[
@@ -43,6 +52,7 @@ async def test_chat_completions_basic_flow(chat_api, mock_chat_graph):
     assert response.model == "test-model"
     assert response.object == "chat.completion"
     assert len(response.choices) == 1
+    assert response.choices[0].index == 0
     assert response.choices[0].message.content == "Test response"
     assert response.choices[0].message.role == "assistant"
     assert response.choices[0].finish_reason == "stop"
@@ -50,7 +60,11 @@ async def test_chat_completions_basic_flow(chat_api, mock_chat_graph):
 
 @pytest.mark.asyncio
 async def test_chat_completions_converts_messages_to_history(chat_api, mock_chat_graph):
-    """Test that messages are correctly converted to history tuples."""
+    """Test that messages are correctly converted to history tuples.
+
+    Implements "request messages are converted to ordered history entries"
+    (requirements/chat-completions-api.feature)
+    """
     request = ChatCompletionRequest(
         model="test-model",
         messages=[
@@ -74,7 +88,13 @@ async def test_chat_completions_converts_messages_to_history(chat_api, mock_chat
 
 @pytest.mark.asyncio
 async def test_chat_completions_returns_valid_response_structure(chat_api):
-    """Test that response has all required fields."""
+    """Test that response has all required fields.
+
+    Implements "the response echoes the requested model and object type"
+    (requirements/chat-completions-api.feature)
+    Implements "the response usage reports zero token counts"
+    (requirements/chat-completions-api.feature)
+    """
     request = ChatCompletionRequest(
         model="test-model",
         messages=[ChatCompletionMessages(role="user", content="Test")],
@@ -83,6 +103,8 @@ async def test_chat_completions_returns_valid_response_structure(chat_api):
     response = await chat_api.chat_completions(request, chat_graph=chat_api._chat_graph)
 
     # Check required fields
+    assert response.model == "test-model"
+    assert response.object == "chat.completion"
     assert hasattr(response, "id")
     assert response.id is not None
     assert len(response.id) > 0
@@ -96,7 +118,11 @@ async def test_chat_completions_returns_valid_response_structure(chat_api):
 
 @pytest.mark.asyncio
 async def test_chat_completions_with_single_message(chat_api):
-    """Test chat completion with single message."""
+    """Test chat completion with single message.
+
+    Implements "the response contains a single finished assistant choice"
+    (requirements/chat-completions-api.feature)
+    """
     request = ChatCompletionRequest(
         model="test-model",
         messages=[ChatCompletionMessages(role="user", content="Hello")],
@@ -107,3 +133,39 @@ async def test_chat_completions_with_single_message(chat_api):
     assert response.model == "test-model"
     assert len(response.choices) == 1
     assert response.choices[0].index == 0
+    assert response.choices[0].finish_reason == "stop"
+    assert response.choices[0].message.role == "assistant"
+
+
+########################################################################################
+# Endpoint-level tests against the assistant application
+########################################################################################
+def test_chat_completions_rejects_request_without_model(client):
+    """Implements "a request without a model is rejected"
+    (requirements/chat-completions-api.feature)
+    """
+    payload = {"messages": [{"role": "user", "content": "Hello"}]}
+    response = client.post("/chat/completions", json=payload)
+    assert response.status_code == 422
+
+
+def test_chat_completions_rejects_request_without_messages(client):
+    """Implements "a request without messages is rejected"
+    (requirements/chat-completions-api.feature)
+    """
+    response = client.post("/chat/completions", json={"model": "test-model"})
+    assert response.status_code == 422
+
+
+def test_chat_completions_no_registered_implementation(client):
+    """Implements "no chat API implementation is registered"
+    (requirements/chat-completions-api.feature)
+    """
+    payload = {
+        "model": "test-model",
+        "messages": [{"role": "user", "content": "Hello"}],
+    }
+    with patch.object(BaseChatApi, "subclasses", ()):
+        response = client.post("/chat/completions", json=payload)
+    assert response.status_code == 500
+    assert response.json()["detail"] == "Not implemented"
