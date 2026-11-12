@@ -31,4 +31,4 @@ jobs:
       PI_MODELS: ${{ vars.PI_MODELS }}
       PI_SETTINGS: ${{ vars.PI_SETTINGS }}
       PI_MCP: ${{ vars.PI_MCP }}
-      PI_EXTENSION_ENV: ${{ vars.PI_EXTENSION_ENV }}
+      EXTENSION_ENV: ${{ vars.PI_EXTENSION_ENV }}
