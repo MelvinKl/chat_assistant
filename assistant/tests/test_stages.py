@@ -7,6 +7,9 @@ Run with e.g.:
 
 """
 
+import json
+from unittest.mock import patch
+
 import pytest
 from langchain_core.messages import AIMessage
 from langchain_core.outputs import ChatGeneration, ChatResult
@@ -175,3 +178,48 @@ def test_the_system_one_model_is_optional():
 
     assert without_settings.create_llm() is llm
     assert with_empty_settings.create_llm() is llm
+
+
+def test_the_system_one_model_filters_the_mcp_servers_available_to_a_stage():
+    """Implements "the SystemOne model filters the MCP servers available to a stage"
+    (requirements/stages.feature)
+
+    Given a stage with a configured SystemOne model and available MCP
+    servers, when the stage LLM is created, the MCP servers available to
+    the stage are filtered by the SystemOne model: the model is consulted
+    with the names of the available MCP servers, and only the servers the
+    model keeps contribute their tools to the stage LLM.
+    """
+    llm = FakeChatModel(answer="the stage answer")
+    system_one = SystemOneSettings(
+        model="the system one model",
+        base_url="http://the system one url",
+        api_key="the system one api key",
+    )
+    stage = Stage(
+        llm=llm,
+        system_prompt="the stage system prompt",
+        user_prompt="the content is {content}",
+        tools=[make_tool("the first server tool"), make_tool("the second server tool")],
+        mcp_servers={
+            "the first server": [make_tool("the first server tool")],
+            "the second server": [make_tool("the second server tool")],
+        },
+        system_one=system_one,
+    )
+    system_one_model = BindableFakeChatModel(answer=json.dumps(["the first server"]))
+    model_calls = capture_llm_messages(system_one_model)
+    with patch("assistant.impl.stages.stage.ChatOpenAI", return_value=system_one_model):
+        created = stage.create_llm()
+
+    # The SystemOne model is consulted with the names of the available MCP
+    # servers of the stage.
+    assert len(model_calls) == 1
+    assert [type(message).__name__ for message in model_calls[0]] == ["HumanMessage"]
+    prompt = model_calls[0][0].content
+    assert "the first server" in prompt
+    assert "the second server" in prompt
+    # The stage LLM runs on the SystemOne model ...
+    assert created.bound is system_one_model
+    # ... and only the servers the model keeps contribute their tools to it.
+    assert [entry["function"]["name"] for entry in created.kwargs["tools"]] == ["the first server tool"]

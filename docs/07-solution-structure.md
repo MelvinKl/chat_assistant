@@ -10,9 +10,9 @@ The repository as a set of building blocks:
 | `assistant/src/assistant/assistant_container.py` | The dependency container (`inject`): the composition root — LLM, rephrasers, MCP tool groups, settings, chat graph, deep agent; patches `nest_asyncio` at import |
 | `assistant/src/assistant/apis/` | The HTTP layer: routers plus the base registries (`chat_api_base`, `models_api_base`, `assistant_api_base`) |
 | `assistant/src/assistant/impl/apis/`, `impl/endpoints/` | The registered implementations (`ChatApi`, `ModelsApi`) and the generated endpoint stubs (`default_assist_endpoint`, `default_get_description_endpoint`) |
-| `assistant/src/assistant/impl/graph/` | The chat processing graph (`chat_graph.py`: `ChatGraph`, `GraphNodeNames`) and its typed state (`graph_state.py`: `GraphState`) |
+| `assistant/src/assistant/impl/graph/` | The chat processing graph (`chat_graph.py`: `ChatGraph`, `GraphNodeNames` — a configured SystemOne model is consulted at invocation for the goal-reachability determination) and its typed state (`graph_state.py`: `GraphState`) |
 | `assistant/src/assistant/impl/rephraser/` | The `Rephraser` runnable (system + user prompt template over a state dict, sync/async invocation) |
-| `assistant/src/assistant/impl/stages/` | The question answering stages (`stage.py`: `Stage` — a runnable LLM call carrying the stage's own system prompt, the tools of the MCP servers available to the stage and an optional SystemOne model) |
+| `assistant/src/assistant/impl/stages/` | The question answering stages (`stage.py`: `Stage` — a runnable LLM call carrying the stage's own system prompt, the tools of the MCP servers available to the stage — filtered by the SystemOne model when it is configured — and an optional SystemOne model) |
 | `assistant/src/assistant/impl/mcp_sampling.py` | The MCP sampling support (`_extract_text`, `_convert_mcp_messages`, `create_sampling_callback`) |
 | `assistant/src/assistant/impl/settings/` | The settings modules: `openai_settings`, `prompt_settings`, `information_settings`, `api_settings`, `mcp_server_settings`, `subagent_settings`, `system_one_settings` |
 | `assistant/src/assistant/endpoints/` | The health/readiness router with the background MCP probe thread; plus orphaned generated endpoint stubs (see chapter 11) |
@@ -22,7 +22,7 @@ The repository as a set of building blocks:
 | `infrastructure/local/` | `create_local_env.sh` + `k3d-cluster-config.yaml`: the local k3d cluster with registry and nginx ingress |
 | `.github/workflows/` | `test-and-lint.yml` (PR gate), `docker-image.yml` (release images), `code-weaver.yml` (the factory) |
 | `Tiltfile`, `Makefile`, `.devcontainer/`, `.vscode/` | The local development environment: live-reload builds, port forwards, debug attach, format/lint/test targets |
-| `requirements/` | The Gherkin oracle: 14 feature files, 127 scenarios |
+| `requirements/` | The Gherkin oracle: 14 feature files, 130 scenarios |
 | `docs/` | This arc42 documentation |
 | `LICENSE` | Apache License 2.0 |
 
@@ -34,8 +34,8 @@ The repository as a set of building blocks:
 | Modular assist endpoint | `apis/assistant_api.py` delegating to `BaseAssistantApi.subclasses[0]` |
 | LLM creation | `assistant_container._di_config` from `OpenAISetttings` |
 | Question/answer rephrasing | `impl/rephraser/rephraser.py`, bound as `question_rephraser` / `answer_rephraser` |
-| Question answering stages | `impl/stages/stage.py`, bound as `preprocessing` and `postprocessing` (own system prompt, own MCP server selection, optional SystemOne model) |
-| Chat processing | `impl/graph/chat_graph.py` (nodes, edges, `ainvoke`, image export), `impl/graph/graph_state.py` |
+| Question answering stages | `impl/stages/stage.py`, bound as `preprocessing` and `postprocessing` (own system prompt, own MCP server selection — the stage's available MCP servers, filtered by the SystemOne model when it is configured —, optional SystemOne model) |
+| Chat processing | `impl/graph/chat_graph.py` (nodes, edges, `ainvoke` — including the goal-reachability determination the configured SystemOne model runs at invocation —, image export), `impl/graph/graph_state.py` |
 | MCP tool loading | `assistant_container._get_mcp_tools` (one `MultiServerMCPClient` per server) |
 | MCP sampling | `impl/mcp_sampling.py` (`create_sampling_callback`) |
 | Subagent configuration | `impl/settings/subagent_settings.py`; subagents are composed in `_di_config` |
@@ -72,7 +72,7 @@ support, `extra="ignore"`):
 | `APISetttings` | `SETTINGS_API_*` | `name`, `description` |
 | `MCPSettings` | file `/config/mcp/SETTINGS_MCP_SERVERS` (override: `MCP_SETTINGS_PATH`) | `servers`: `name`, `transport`, `url`, `command`, `args`, `env`, `agent`, `headers` |
 | `SubagentSettings` | file `/config/subagents/SETTINGS_SUBAGENTS` (override: `SUBAGENT_SETTINGS_PATH`) | `subagents`: `name`, `description`, `system_prompt` |
-| `SystemOneSettings` | `SETTINGS_SYSTEM_ONE_*` | `model`, `base_url`, `api_key` — the optional SystemOne model a question answering stage may run on |
+| `SystemOneSettings` | `SETTINGS_SYSTEM_ONE_*` | `model`, `base_url`, `api_key` — the optional SystemOne model a question answering stage may run on (it filters the MCP servers available to the stage) and the chat graph consults at invocation for the goal-reachability determination |
 
 **I3 — MCP.** The assistant connects to each configured server with its own
 `MultiServerMCPClient` (stdio: `command`/`args`; sse/http: `url`/`transport`
@@ -119,14 +119,18 @@ main`; secrets `GH_TOKEN`, `PI_MODELS`, `PI_SETTINGS`, `PI_MCP`,
 families, creates the `ChatOpenAI` LLM, loads the MCP tools per server
 (`_get_mcp_tools`: a failing server is logged and skipped; tools are grouped
 under the server's `agent` key — `None` the main agent, a subagent name that
-subagent, `preprocessing`/`postprocessing` the respective stage), composes the
+subagent, `preprocessing`/`postprocessing` the respective stage — and the
+loaded tools of every server are additionally recorded keyed by the server
+name), composes the
 deep agent with the configured subagents (each subagent receives the tools of
 the servers that name it, else none), composes the preprocessing and
 postprocessing stages (each with its system prompt from the prompt settings,
-the tools of the servers assigned to it and the `SystemOneSettings` model),
+the tools of the servers assigned to it, the loaded tools of those servers
+keyed per server and the `SystemOneSettings` model),
 and binds both rephrasers, both stages, the tool
 group, the `MCPSettings` and `InformationSettings` objects, the `ChatGraph`
-constructor and the `mcp_agent`.
+constructor (handed the `SystemOneSettings` model and the `MCPSettings`)
+and the `mcp_agent`.
 
 The chat graph (`chat_graph.py`) is a compiled `StateGraph(GraphState)` with
 six nodes — `preprocessing`, `rephrase_question`, `determine_language`,
@@ -140,7 +144,14 @@ question and the postprocessing stage on the rephrased answer; the final
 incoming message list onto the state
 (the last message is the question, the earlier ones become `role: content`
 history entries, the additional information comes from the information
-settings), runs the graph, and returns the `processed_answer`; an empty input
+settings); a graph built with a configured SystemOne model then consults that
+model — before any node runs — with the question and the names of the
+assistant's available MCP servers, to determine whether the user's goal can be
+reached at all with them; an unreachable goal short-circuits the invocation
+to `No MCP servers are currently available to help.` without executing the
+stages up to the answer generation (the invocation-level bypass the
+empty-input short-circuit sets the pattern for). Otherwise the invocation
+runs the graph and returns the `processed_answer`; an empty input
 short-circuits to `No question has been found.`. `draw_graph` exports the
 compiled graph as a PNG via the Mermaid API.
 
@@ -155,8 +166,9 @@ sampling callback registration on every connection — chapter 11),
 `test_mcp_sampling` (sampling), `test_subagent_settings` (the subagents
 config file loading), `test_stages` (the question answering stages — the
 own-system-prompt LLM call on the question and on the returned answer, the
-tools of the stages' available MCP servers, the optional SystemOne model and
-its main-LLM fallback), `test_container` (the container's
+tools of the stages' available MCP servers, the optional SystemOne model —
+its main-LLM fallback and its filtering of the stages' available MCP servers
+—), `test_container` (the container's
 bound rephrasers, the bound stages and the chart default prompts), `test_chat_api`,
 `test_models_api`, `test_assistant_api` (the modular assist endpoint —
 body dispatch, the empty-registry 500, self-registration and the
@@ -178,7 +190,7 @@ the guard, `test_scenario_coverage.py`, introduces the convention and makes
 it machine-checkable:
 
 * **Extraction** — every `Scenario:` title of every
-  `requirements/*.feature` file is collected (14 files, 127 scenarios).
+  `requirements/*.feature` file is collected (14 files, 130 scenarios).
 * **Reference scan** — every test function's docstring is scanned for
   citations in the two accepted machine forms:
   `Implements "<scenario title>" (requirements/<name>.feature)` and the

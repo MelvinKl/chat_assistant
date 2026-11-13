@@ -22,7 +22,7 @@ the single source of truth for behaviour, and the pytest oracle under
 |---|---|---|
 | `assist-api.feature` | 4 | the modular assist endpoint |
 | `chat-completions-api.feature` | 9 | the OpenAI-compatible chat completions endpoint |
-| `chat-graph.feature` | 12 | the chat processing graph (six nodes, bracketed by the question answering stages) |
+| `chat-graph.feature` | 14 | the chat processing graph (six nodes, bracketed by the question answering stages, the SystemOne goal-reachability determination at invocation) |
 | `configuration.feature` | 9 | application settings and container bindings |
 | `health-api.feature` | 8 | health/readiness endpoints and the probe thread |
 | `helm-deployment.feature` | 15 | the Helm chart |
@@ -32,10 +32,10 @@ the single source of truth for behaviour, and the pytest oracle under
 | `models-api.feature` | 5 | the OpenAI-compatible models endpoints |
 | `rephraser.feature` | 10 | question/answer rephrasing |
 | `repository-structure.feature` | 6 | documentation–repository consistency |
-| `stages.feature` | 5 | the question answering stages |
+| `stages.feature` | 6 | the question answering stages |
 | `subagents.feature` | 8 | subagent configuration and tool assignment |
 
-**Total: 127 scenarios.**
+**Total: 130 scenarios.**
 
 **How the alignment is enforced.** Because the oracle is plain pytest (no
 Gherkin runner is a dependency), the join lives in the test docstrings: a test

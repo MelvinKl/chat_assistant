@@ -79,3 +79,15 @@ Feature: Chat processing graph
     Given a chat graph
     When the graph is drawn into a target directory
     Then a chat graph png file exists in the target directory
+
+  Scenario: the SystemOne model determines if the users goal can be reached
+    Given a chat graph with a configured SystemOne model
+    When the graph is invoked with a user question
+    Then the SystemOne model determines if the users goal can be reached at all with the available MCP servers
+
+  Scenario: an unreachable goal skips the stages up to the answer generation
+    Given a chat graph with a configured SystemOne model
+    And a user question whose goal cannot be reached with the available MCP servers
+    When the graph is invoked with the question
+    Then the stages up to the answer generation are skipped
+    And the returned answer informs the user that no MCP servers are currently available to help

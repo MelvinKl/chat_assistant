@@ -57,6 +57,78 @@ def fake_info_settings() -> MagicMock:
 
 
 @pytest.fixture
+def fake_system_one_settings() -> MagicMock:
+    """Mock `SystemOneSettings` with a configured model."""
+    settings = MagicMock(spec=["model", "base_url", "api_key"])
+    settings.model = "the system one model"
+    settings.base_url = "http://the system one url"
+    settings.api_key = "the system one api key"
+    return settings
+
+
+@pytest.fixture
+def fake_mcp_settings() -> MagicMock:
+    """Mock `MCPSettings` with the available MCP servers."""
+    first_server = MagicMock(spec=["name"])
+    first_server.name = "the first mcp server"
+    second_server = MagicMock(spec=["name"])
+    second_server.name = "the second mcp server"
+    settings = MagicMock(spec=["servers"])
+    settings.servers = [first_server, second_server]
+    return settings
+
+
+@pytest.fixture
+def chat_graph_with_system_one(
+    fake_llm,
+    fake_question_rephraser,
+    fake_answer_rephraser,
+    fake_mcp_agent,
+    fake_preprocessing,
+    fake_postprocessing,
+    fake_info_settings,
+    fake_system_one_settings,
+    fake_mcp_settings,
+) -> ChatGraph:
+    """The `chat_graph` fixture with a configured SystemOne model and the
+    available MCP servers, so the invocation runs the reachability
+    determination."""
+    with patch("assistant.impl.graph.chat_graph.StateGraph", autospec=True):
+        cg = ChatGraph(
+            llm=fake_llm,
+            question_rephraser=fake_question_rephraser,
+            answer_rephraser=fake_answer_rephraser,
+            mcp_agent=fake_mcp_agent,
+            preprocessing=fake_preprocessing,
+            postprocessing=fake_postprocessing,
+            information_settings=fake_info_settings,
+            system_one=fake_system_one_settings,
+            mcp_settings=fake_mcp_settings,
+        )
+        # Patch the compiled graph to async invoke safely.
+        cg._graph = AsyncMock()
+        return cg
+
+
+@pytest.fixture
+def reachable_system_one() -> MagicMock:
+    """The SystemOne model answering that the user's goal is reachable."""
+    model = MagicMock(name="system_one_model")
+    model.ainvoke = AsyncMock(return_value=MagicMock(content="reachable"))
+    with patch("assistant.impl.graph.chat_graph.ChatOpenAI", return_value=model):
+        yield model
+
+
+@pytest.fixture
+def unreachable_system_one() -> MagicMock:
+    """The SystemOne model answering that the user's goal is unreachable."""
+    model = MagicMock(name="system_one_model")
+    model.ainvoke = AsyncMock(return_value=MagicMock(content="unreachable"))
+    with patch("assistant.impl.graph.chat_graph.ChatOpenAI", return_value=model):
+        yield model
+
+
+@pytest.fixture
 def chat_graph(
     fake_llm,
     fake_question_rephraser,
@@ -171,6 +243,67 @@ class TestChatGraph:
             chat_graph._graph.ainvoke.return_value = {"processed_answer": "ok"}
             await chat_graph.ainvoke([("user", "q")])
             fake_gs.create.assert_called_once_with(history=[], question="q", additional_info="extra context")
+
+    @pytest.mark.asyncio
+    async def test_the_system_one_model_determines_if_the_users_goal_can_be_reached(
+        self,
+        chat_graph_with_system_one,
+        reachable_system_one,
+    ):
+        """Implements "the SystemOne model determines if the users goal can be reached"
+        (requirements/chat-graph.feature)
+
+        Given a chat graph with a configured SystemOne model, when the graph
+        is invoked with a user question, the SystemOne model determines if
+        the user's goal can be reached at all with the available MCP
+        servers: the model is consulted with the question and the names of
+        the available MCP servers before any node of the compiled graph
+        runs, and a reachable determination lets the invocation run the
+        graph.
+        """
+        chat_graph_with_system_one._graph.ainvoke.return_value = {"processed_answer": "the processed answer"}
+
+        result = await chat_graph_with_system_one.ainvoke([("user", "how do I deploy the assistant?")])
+
+        # The SystemOne model is consulted for the reachability determination.
+        reachable_system_one.ainvoke.assert_awaited_once()
+        prompt = reachable_system_one.ainvoke.await_args.args[0]
+        assert "how do I deploy the assistant?" in prompt
+        assert "the first mcp server" in prompt
+        assert "the second mcp server" in prompt
+        # The goal is reachable, so the invocation runs the compiled graph.
+        chat_graph_with_system_one._graph.ainvoke.assert_awaited_once()
+        assert result == "the processed answer"
+
+    @pytest.mark.asyncio
+    async def test_an_unreachable_goal_skips_the_stages_up_to_the_answer_generation(
+        self,
+        chat_graph_with_system_one,
+        unreachable_system_one,
+    ):
+        """Implements "an unreachable goal skips the stages up to the answer generation"
+        (requirements/chat-graph.feature)
+
+        Given a chat graph with a configured SystemOne model and a user
+        question whose goal cannot be reached with the available MCP
+        servers, when the graph is invoked with the question, the stages up
+        to the answer generation do not run (no stage LLM call on the
+        question, the compiled graph is not run) and the returned answer
+        informs the user that no MCP servers are currently available to
+        help.
+        """
+        result = await chat_graph_with_system_one.ainvoke([("user", "how do I deploy the assistant?")])
+
+        # The determination runs ...
+        unreachable_system_one.ainvoke.assert_awaited_once()
+        # ... and concludes the goal is unreachable: the stages up to the
+        # answer generation do not run and neither does the compiled graph.
+        chat_graph_with_system_one._preprocessing.ainvoke.assert_not_awaited()
+        chat_graph_with_system_one._postprocessing.ainvoke.assert_not_awaited()
+        chat_graph_with_system_one._graph.ainvoke.assert_not_awaited()
+        # The returned answer informs the user that no MCP servers are
+        # currently available to help.
+        assert result == "No MCP servers are currently available to help."
 
     # ------------------------------------------------------------------ #
     # Node level unit tests                                              #

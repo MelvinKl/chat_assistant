@@ -14,6 +14,13 @@ client ──POST /chat/completions {model, messages}──► chat router
      - input empty  → "No question has been found."
      - question  = last message;  history = "role: content" of the earlier ones
      - state = GraphState.create(history, question, additional_info)
+     - system one configured?  → the SystemOne model determines if the
+       user's goal can be reached at all with the available MCP servers
+       (consulted with the question and the names of the configured
+       servers); an unreachable goal short-circuits to
+       "No MCP servers are currently available to help." — the stages up to
+       the answer generation are skipped and the compiled graph is not run;
+       a reachable goal continues below
      - run the compiled LangGraph:
          START ─► preprocessing   (preprocessing stage: an LLM call on the
                                      question with the preprocessing system
@@ -55,10 +62,13 @@ the server's `agent` key — `None` for the main agent, a subagent name for
 that subagent, `preprocessing`/`postprocessing` for the respective question
 answering stage. The preprocessing and postprocessing stages are composed
 (each with its system prompt from the prompt settings, the tools of the
-servers assigned to it and the `SystemOneSettings` model), the deep agent is
+servers assigned to it — with the loaded tools of those servers kept per
+server — and the `SystemOneSettings` model), the deep agent is
 created with the LLM, the main tool set and the configured subagents (each
 subagent carries its system prompt plus the tools of the servers that name
-it), and all of it is bound into the `inject` container.
+it), the chat graph is handed the `SystemOneSettings` model and the
+`MCPSettings` (for the goal-reachability determination at invocation),
+and all of it is bound into the `inject` container.
 
 **Sampling.** `create_sampling_callback(llm)` in `impl/mcp_sampling.py` is
 the assistant's MCP sampling handler: it converts the MCP sampling messages

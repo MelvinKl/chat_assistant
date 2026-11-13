@@ -10,13 +10,21 @@ from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.runnables import Runnable, RunnableConfig
 from langchain_core.runnables.base import RunnableSequence
 from langchain_core.runnables.graph import MermaidDrawMethod
+from langchain_openai import ChatOpenAI
 from langdetect import detect
 from langgraph.graph import END, START, StateGraph
 
 from assistant.impl.graph.graph_state import GraphState
 from assistant.impl.settings.information_settings import InformationSettings
+from assistant.impl.settings.mcp_server_settings import MCPSettings
+from assistant.impl.settings.system_one_settings import SystemOneSettings
 
 logger = logging.getLogger(__name__)
+
+# The answer an unreachable goal is answered with: the invocation skips the
+# stages up to the answer generation and informs the user that no MCP servers
+# are currently available to help.
+NO_MCP_SERVERS_ANSWER = "No MCP servers are currently available to help."
 
 
 class GraphNodeNames(StrEnum):
@@ -51,6 +59,8 @@ class ChatGraph:
         preprocessing: Runnable,
         postprocessing: Runnable,
         information_settings: InformationSettings,
+        system_one: Optional[SystemOneSettings] = None,
+        mcp_settings: Optional[MCPSettings] = None,
     ):
         self._information_settings = information_settings
         self._question_rephraser = question_rephraser
@@ -59,6 +69,8 @@ class ChatGraph:
         self._mcp_agent = mcp_agent
         self._preprocessing = preprocessing
         self._postprocessing = postprocessing
+        self._system_one = system_one if system_one is not None and system_one.model else None
+        self._mcp_settings = mcp_settings
         self._state_graph = StateGraph(GraphState)
         self._graph = self._setup_graph()
 
@@ -70,6 +82,13 @@ class ChatGraph:
     ) -> str:
         """
         Processes a chat assistant request and handles mcp calls.
+
+        A graph built with a configured SystemOne model runs the
+        goal-reachability determination before any node executes: when the
+        SystemOne model concludes that the user's goal cannot be reached at
+        all with the available MCP servers, the invocation skips the stages
+        up to the answer generation and returns `NO_MCP_SERVERS_ANSWER`
+        without running the graph.
 
         Parameters
         ----------
@@ -93,6 +112,12 @@ class ChatGraph:
         except Exception as e:
             logger.error(e)
             return "No question has been found."
+        if self._system_one is not None and not await self._determine_goal_reachable(question, config):
+            logger.info(
+                'The goal of question "%s" is unreachable with the available MCP servers',
+                question,
+            )
+            return NO_MCP_SERVERS_ANSWER
         history = [f"{message[0]}: {message[1]}" for message in graph_input[0:-1]]
 
         state = GraphState.create(
@@ -108,6 +133,48 @@ class ChatGraph:
         logger.info("GENERATED answer: %s", response_state["processed_answer"])
 
         return response_state["processed_answer"]
+
+    async def _determine_goal_reachable(
+        self,
+        question: str,
+        config: Optional[RunnableConfig] = None,
+    ) -> bool:
+        """Determine if the user's goal can be reached at all with the available MCP servers.
+
+        The SystemOne model is created from the configured SystemOne settings
+        and consulted with the question and the names of the MCP servers the
+        assistant has available. A determination the model's answer does not
+        express as unreachable keeps the invocation running.
+
+        Parameters
+        ----------
+        question : str
+            The question of the user the determination runs for.
+        config : RunnableConfig
+            configuration for the llm. Defaults to None
+
+        Returns
+        -------
+        bool
+            True when the model's answer does not state that the goal is
+            unreachable with the available MCP servers
+        """
+        llm = ChatOpenAI(
+            model=self._system_one.model,
+            base_url=self._system_one.base_url,
+            api_key=self._system_one.api_key,
+        )
+        server_names = [server.name for server in self._mcp_settings.servers] if self._mcp_settings else []
+        servers = "none" if not server_names else ", ".join(server_names)
+        prompt = (
+            "You are the SystemOne model of a chat assistant. You determine whether a user's goal can be "
+            f"reached at all with the MCP servers the assistant has available.\n"
+            f"The user's question: {question}\n"
+            f"The available MCP servers: {servers}\n"
+            'Answer with exactly "reachable" or "unreachable".'
+        )
+        response = await llm.ainvoke(prompt, config)
+        return "unreachable" not in response.content.lower()
 
     def draw_graph(self, relative_dir_path: Optional[str] = None) -> None:
         """
