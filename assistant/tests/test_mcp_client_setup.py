@@ -198,6 +198,60 @@ def test_server_tools_grouped_by_agent_assignment(mock_mcp_client_cls):
 
 
 @patch("assistant.assistant_container.MultiServerMCPClient")
+def test_server_assigned_to_preprocessing_stage(mock_mcp_client_cls):
+    """Implements "a server assigned to the preprocessing stage registers its tools for that stage"
+    (requirements/mcp-integration.feature)
+
+    When the tools of a server whose ``agent`` field is ``preprocessing``
+    are loaded, the tools of the server are registered under the
+    preprocessing stage.
+    """
+    stage_tool = MagicMock()
+
+    mock_client = MagicMock()
+    mock_client.get_tools = AsyncMock(return_value=[stage_tool])
+    mock_mcp_client_cls.return_value = mock_client
+
+    settings = MCPSettings(
+        servers=[
+            MCPServer(name="prep-server", command="cmd", transport="stdio", agent="preprocessing"),
+        ]
+    )
+    llm = FakeChatModel(answer="test")
+
+    tools = _get_mcp_tools(settings, llm)
+
+    assert tools == {"preprocessing": [stage_tool]}
+
+
+@patch("assistant.assistant_container.MultiServerMCPClient")
+def test_server_assigned_to_postprocessing_stage(mock_mcp_client_cls):
+    """Implements "a server assigned to the postprocessing stage registers its tools for that stage"
+    (requirements/mcp-integration.feature)
+
+    When the tools of a server whose ``agent`` field is ``postprocessing``
+    are loaded, the tools of the server are registered under the
+    postprocessing stage.
+    """
+    stage_tool = MagicMock()
+
+    mock_client = MagicMock()
+    mock_client.get_tools = AsyncMock(return_value=[stage_tool])
+    mock_mcp_client_cls.return_value = mock_client
+
+    settings = MCPSettings(
+        servers=[
+            MCPServer(name="post-server", command="cmd", transport="stdio", agent="postprocessing"),
+        ]
+    )
+    llm = FakeChatModel(answer="test")
+
+    tools = _get_mcp_tools(settings, llm)
+
+    assert tools == {"postprocessing": [stage_tool]}
+
+
+@patch("assistant.assistant_container.MultiServerMCPClient")
 def test_sampling_callback_registered_on_every_connection(mock_mcp_client_cls):
     """Implements "the sampling callback is registered with every connected mcp server"
     (requirements/mcp-sampling.feature)

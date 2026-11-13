@@ -12,8 +12,9 @@ The repository as a set of building blocks:
 | `assistant/src/assistant/impl/apis/`, `impl/endpoints/` | The registered implementations (`ChatApi`, `ModelsApi`) and the generated endpoint stubs (`default_assist_endpoint`, `default_get_description_endpoint`) |
 | `assistant/src/assistant/impl/graph/` | The chat processing graph (`chat_graph.py`: `ChatGraph`, `GraphNodeNames`) and its typed state (`graph_state.py`: `GraphState`) |
 | `assistant/src/assistant/impl/rephraser/` | The `Rephraser` runnable (system + user prompt template over a state dict, sync/async invocation) |
+| `assistant/src/assistant/impl/stages/` | The question answering stages (`stage.py`: `Stage` — a runnable LLM call carrying the stage's own system prompt, the tools of the MCP servers available to the stage and an optional SystemOne model) |
 | `assistant/src/assistant/impl/mcp_sampling.py` | The MCP sampling support (`_extract_text`, `_convert_mcp_messages`, `create_sampling_callback`) |
-| `assistant/src/assistant/impl/settings/` | The settings modules: `openai_settings`, `prompt_settings`, `information_settings`, `api_settings`, `mcp_server_settings`, `subagent_settings` |
+| `assistant/src/assistant/impl/settings/` | The settings modules: `openai_settings`, `prompt_settings`, `information_settings`, `api_settings`, `mcp_server_settings`, `subagent_settings`, `system_one_settings` |
 | `assistant/src/assistant/endpoints/` | The health/readiness router with the background MCP probe thread; plus orphaned generated endpoint stubs (see chapter 11) |
 | `assistant/src/assistant/models/` | The pydantic request/response models, generated from `assistant/openapi.yaml` by openapi-generator (bookkeeping in `assistant/src/.openapi-generator/`) |
 | `assistant/tests/` | The pytest oracle: per-area test modules plus `conftest.py`, `fake_chat_model.py` and the scenario coverage guard `test_scenario_coverage.py` (chapter 10) |
@@ -21,7 +22,7 @@ The repository as a set of building blocks:
 | `infrastructure/local/` | `create_local_env.sh` + `k3d-cluster-config.yaml`: the local k3d cluster with registry and nginx ingress |
 | `.github/workflows/` | `test-and-lint.yml` (PR gate), `docker-image.yml` (release images), `code-weaver.yml` (the factory) |
 | `Tiltfile`, `Makefile`, `.devcontainer/`, `.vscode/` | The local development environment: live-reload builds, port forwards, debug attach, format/lint/test targets |
-| `requirements/` | The Gherkin oracle: 14 feature files, 128 scenarios |
+| `requirements/` | The Gherkin oracle: 14 feature files, 127 scenarios |
 | `docs/` | This arc42 documentation |
 | `LICENSE` | Apache License 2.0 |
 
@@ -33,13 +34,14 @@ The repository as a set of building blocks:
 | Modular assist endpoint | `apis/assistant_api.py` delegating to `BaseAssistantApi.subclasses[0]` |
 | LLM creation | `assistant_container._di_config` from `OpenAISetttings` |
 | Question/answer rephrasing | `impl/rephraser/rephraser.py`, bound as `question_rephraser` / `answer_rephraser` |
+| Question answering stages | `impl/stages/stage.py`, bound as `preprocessing` and `postprocessing` (own system prompt, own MCP server selection, optional SystemOne model) |
 | Chat processing | `impl/graph/chat_graph.py` (nodes, edges, `ainvoke`, image export), `impl/graph/graph_state.py` |
 | MCP tool loading | `assistant_container._get_mcp_tools` (one `MultiServerMCPClient` per server) |
 | MCP sampling | `impl/mcp_sampling.py` (`create_sampling_callback`) |
 | Subagent configuration | `impl/settings/subagent_settings.py`; subagents are composed in `_di_config` |
 | Subagents as agents | the `deepagents` `create_deep_agent` call in `_di_config` |
 | Health & readiness | `endpoints/health_endpoints.py` (router, status global, probe thread) |
-| Configuration | the six settings modules + the mounted JSON config files |
+| Configuration | the seven settings modules + the mounted JSON config files |
 | Deployment | the chart under `infrastructure/helm` |
 | Local development | `Tiltfile`, `infrastructure/local/`, `.devcontainer/`, `Makefile` |
 | CI / image publication | `.github/workflows/test-and-lint.yml`, `docker-image.yml` |
@@ -65,11 +67,12 @@ support, `extra="ignore"`):
 | Family | Prefix / source | Fields |
 |---|---|---|
 | `OpenAISetttings` | `SETTINGS_OPENAI_*` | `model`, `base_url`, `api_key` |
-| `PromptSettings` | `SETTINGS_PROMPTS_*` | the four rephrasing prompts (`rephrase_question_system_prompt`, `rephrase_question_user_prompt`, `rephrase_answer_system_prompt`, `rephrase_answer_user_prompt`) |
+| `PromptSettings` | `SETTINGS_PROMPTS_*` | the six prompt settings (the four rephrasing prompts `rephrase_question_system_prompt`, `rephrase_question_user_prompt`, `rephrase_answer_system_prompt`, `rephrase_answer_user_prompt`, plus `preprocessing_system_prompt` and `postprocessing_system_prompt` for the question answering stages) |
 | `InformationSettings` | `SETTINGS_ADDITIONAL_*` | `information` |
 | `APISetttings` | `SETTINGS_API_*` | `name`, `description` |
 | `MCPSettings` | file `/config/mcp/SETTINGS_MCP_SERVERS` (override: `MCP_SETTINGS_PATH`) | `servers`: `name`, `transport`, `url`, `command`, `args`, `env`, `agent`, `headers` |
 | `SubagentSettings` | file `/config/subagents/SETTINGS_SUBAGENTS` (override: `SUBAGENT_SETTINGS_PATH`) | `subagents`: `name`, `description`, `system_prompt` |
+| `SystemOneSettings` | `SETTINGS_SYSTEM_ONE_*` | `model`, `base_url`, `api_key` — the optional SystemOne model a question answering stage may run on |
 
 **I3 — MCP.** The assistant connects to each configured server with its own
 `MultiServerMCPClient` (stdio: `command`/`args`; sse/http: `url`/`transport`
@@ -84,8 +87,9 @@ state).
 **I4 — The code-weaver factory.** Inputs of the pinned reusable workflow:
 `job-timeout: 2000`, `max-loops: 25`, `issue-number`,
 `ai-requirements-label: code-weaver`, `llm-model: Qwen3.8`,
-`runner: self-hosted`, `factory-ref: main`; secrets `GH_TOKEN`,
-`PI_MODELS`, `PI_SETTINGS`, `PI_MCP`, `PI_EXTENSION_ENV`.
+`runner: code-weaver` (a dedicated self-hosted runner), `factory-ref:
+main`; secrets `GH_TOKEN`, `PI_MODELS`, `PI_SETTINGS`, `PI_MCP`,
+`EXTENSION_ENV` (sourced from the `PI_EXTENSION_ENV` repository variable).
 
 ## 7.4 Cross-Cutting Concepts
 
@@ -111,20 +115,29 @@ state).
 ### The assistant application
 
 `main.py` builds the FastAPI app, includes the four routers and calls
-`configure()`. The container (`assistant_container.py`) reads all six settings
+`configure()`. The container (`assistant_container.py`) reads all seven settings
 families, creates the `ChatOpenAI` LLM, loads the MCP tools per server
 (`_get_mcp_tools`: a failing server is logged and skipped; tools are grouped
-under the server's `agent` key, `None` meaning the main agent), composes the
+under the server's `agent` key — `None` the main agent, a subagent name that
+subagent, `preprocessing`/`postprocessing` the respective stage), composes the
 deep agent with the configured subagents (each subagent receives the tools of
-the servers that name it, else none), and binds both rephrasers, the tool
+the servers that name it, else none), composes the preprocessing and
+postprocessing stages (each with its system prompt from the prompt settings,
+the tools of the servers assigned to it and the `SystemOneSettings` model),
+and binds both rephrasers, both stages, the tool
 group, the `MCPSettings` and `InformationSettings` objects, the `ChatGraph`
 constructor and the `mcp_agent`.
 
 The chat graph (`chat_graph.py`) is a compiled `StateGraph(GraphState)` with
-four nodes — `rephrase_question`, `determine_language`, `decide`,
-`rephrase_answer` — wired `START → determine_language ∥ rephrase_question →
-decide → rephrase_answer → END` (both predecessors converge into
-`rephrase_answer`). `ainvoke` maps the incoming message list onto the state
+six nodes — `preprocessing`, `rephrase_question`, `determine_language`,
+`decide`, `rephrase_answer`, `postprocessing` — wired `START → preprocessing →
+determine_language ∥ rephrase_question → decide → rephrase_answer →
+postprocessing → END` (the preprocessing node fans out to the two parallel
+branches; both predecessors converge into `rephrase_answer`, which feeds the
+postprocessing node). The preprocessing stage runs an LLM call on the
+question and the postprocessing stage on the rephrased answer; the final
+`processed_answer` is the postprocessing stage's output. `ainvoke` maps the
+incoming message list onto the state
 (the last message is the question, the earlier ones become `role: content`
 history entries, the additional information comes from the information
 settings), runs the graph, and returns the `processed_answer`; an empty input
@@ -140,8 +153,11 @@ the scenario-reference convention lives in the tests themselves. The modules:
 `test_mcp_client_setup` (MCP tool loading and client connections, plus the
 sampling callback registration on every connection — chapter 11),
 `test_mcp_sampling` (sampling), `test_subagent_settings` (the subagents
-config file loading), `test_container` (the container's
-bound rephrasers and the chart default prompts), `test_chat_api`,
+config file loading), `test_stages` (the question answering stages — the
+own-system-prompt LLM call on the question and on the returned answer, the
+tools of the stages' available MCP servers, the optional SystemOne model and
+its main-LLM fallback), `test_container` (the container's
+bound rephrasers, the bound stages and the chart default prompts), `test_chat_api`,
 `test_models_api`, `test_assistant_api` (the modular assist endpoint —
 body dispatch, the empty-registry 500, self-registration and the
 first-registered delegation, exercised against the oracle's own
@@ -154,19 +170,15 @@ failing-server unhealthy flip and the all-reachable healthy status),
 with the module's own go-template subset — chapter 11), `test_local_development` (the local development tooling — the
 Tiltfile, the k3d bootstrap script and cluster config, the devcontainer, the
 make targets and the CI workflows, inspected statically),
-`test_code_weaver_workflow` (the code-weaver factory workflow — the
-``.github/workflows/code-weaver.yml`` file parsed as yaml: the label trigger
-and the manual dispatch, the pinned factory reference, the runner, budget
-and model inputs, and the secrets-only credential passing),
 `test_integration`,
 `graph/test_chat_graph`, `rephraser/test_rephraser`,
 shared by `conftest.py` and `fake_chat_model.py`.
 
-The guard, `test_scenario_coverage.py`, introduces the convention and makes
+the guard, `test_scenario_coverage.py`, introduces the convention and makes
 it machine-checkable:
 
 * **Extraction** — every `Scenario:` title of every
-  `requirements/*.feature` file is collected (14 files, 128 scenarios).
+  `requirements/*.feature` file is collected (14 files, 127 scenarios).
 * **Reference scan** — every test function's docstring is scanned for
   citations in the two accepted machine forms:
   `Implements "<scenario title>" (requirements/<name>.feature)` and the

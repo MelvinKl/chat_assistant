@@ -10,10 +10,11 @@ Feature: Application settings
     Then an openai compatible chat model is created with the configured model, base url and api key
 
   Scenario: the prompt settings are read from the environment
-    Given the four SETTINGS_PROMPTS_ environment variables
+    Given the SETTINGS_PROMPTS_ environment variables
     When the prompt settings are created
     Then the settings carry the question rephrasing system and user prompts
     And the settings carry the answer rephrasing system and user prompts
+    And the settings carry the preprocessing and postprocessing system prompts
 
   Scenario: the additional information is read from the environment
     Given the SETTINGS_ADDITIONAL_INFORMATION environment variable
@@ -42,6 +43,12 @@ Feature: Application settings
     And the answer rephraser is bound with the answer rephrasing prompts
     And the tools, the mcp settings, the information settings and the chat graph are bound
     And the mcp agent is bound as the deep agent of the LLM
+
+  Scenario: the container binds the preprocessing and postprocessing stages
+    Given configured LLM, tools, subagents, prompts and information settings
+    When the dependency container is configured
+    Then the preprocessing stage is bound with the preprocessing system prompt
+    And the postprocessing stage is bound with the postprocessing system prompt
 
   Scenario: nested event loops are allowed for MCP tool loading
     When the assistant container module is imported

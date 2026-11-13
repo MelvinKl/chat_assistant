@@ -37,6 +37,18 @@ def fake_mcp_agent() -> AsyncMock:
 
 
 @pytest.fixture
+def fake_preprocessing() -> AsyncMock:
+    """Async version so `ainvoke` works in the preprocessing node."""
+    return AsyncMock(name="preprocessing")
+
+
+@pytest.fixture
+def fake_postprocessing() -> AsyncMock:
+    """Async version so `ainvoke` works in the postprocessing node."""
+    return AsyncMock(name="postprocessing")
+
+
+@pytest.fixture
 def fake_info_settings() -> MagicMock:
     """Mock `InformationSettings`."""
     ms = MagicMock(spec=["information"])
@@ -50,6 +62,8 @@ def chat_graph(
     fake_question_rephraser,
     fake_answer_rephraser,
     fake_mcp_agent,
+    fake_preprocessing,
+    fake_postprocessing,
     fake_info_settings,
 ) -> ChatGraph:
     """Instance assembled with mocked dependencies."""
@@ -59,6 +73,8 @@ def chat_graph(
             question_rephraser=fake_question_rephraser,
             answer_rephraser=fake_answer_rephraser,
             mcp_agent=fake_mcp_agent,
+            preprocessing=fake_preprocessing,
+            postprocessing=fake_postprocessing,
             information_settings=fake_info_settings,
         )
         # Patch the compiled graph to async invoke safely.
@@ -72,6 +88,8 @@ def wired_chat_graph(
     fake_question_rephraser,
     fake_answer_rephraser,
     fake_mcp_agent,
+    fake_preprocessing,
+    fake_postprocessing,
     fake_info_settings,
 ) -> ChatGraph:
     """Instance with the real StateGraph, so the compiled graph's edges and
@@ -81,6 +99,8 @@ def wired_chat_graph(
         question_rephraser=fake_question_rephraser,
         answer_rephraser=fake_answer_rephraser,
         mcp_agent=fake_mcp_agent,
+        preprocessing=fake_preprocessing,
+        postprocessing=fake_postprocessing,
         information_settings=fake_info_settings,
     )
 
@@ -90,13 +110,15 @@ def wired_chat_graph(
 ########################################################################################
 class TestGraphNodeNames:
     def test_enum_values(self):
-        """Implements "the graph contains the four processing nodes"
+        """Implements "the graph contains the six processing nodes"
         (requirements/chat-graph.feature)
         """
+        assert GraphNodeNames.PREPROCESSING == "preprocessing"
         assert GraphNodeNames.REPHRASE_QUESTION == "rephrase_question"
         assert GraphNodeNames.DETERMINE_LANGUAGE == "determine_language"
         assert GraphNodeNames.DECIDE == "decide"
         assert GraphNodeNames.REPHRASE_ANSWER == "rephrase_answer"
+        assert GraphNodeNames.POSTPROCESSING == "postprocessing"
 
 
 class TestChatGraph:
@@ -197,11 +219,13 @@ class TestChatGraph:
             chat_graph._state_graph = sg_mock
             chat_graph._add_nodes()
 
+            sg_mock.add_node.assert_any_call(GraphNodeNames.PREPROCESSING, chat_graph._preprocessing_node)
             sg_mock.add_node.assert_any_call(GraphNodeNames.REPHRASE_QUESTION, chat_graph._rephrase_question_node)
             sg_mock.add_node.assert_any_call(GraphNodeNames.DETERMINE_LANGUAGE, chat_graph._determine_language_node)
             sg_mock.add_node.assert_any_call(GraphNodeNames.DECIDE, chat_graph._decide_node)
             sg_mock.add_node.assert_any_call(GraphNodeNames.REPHRASE_ANSWER, chat_graph._answer_rephraser_node)
-            assert sg_mock.add_node.call_count == 4
+            sg_mock.add_node.assert_any_call(GraphNodeNames.POSTPROCESSING, chat_graph._postprocessing_node)
+            assert sg_mock.add_node.call_count == 6
 
 
 ########################################################################################
@@ -209,7 +233,7 @@ class TestChatGraph:
 ########################################################################################
 class TestGraphWiring:
     def test_wired_graph_edges(self, wired_chat_graph):
-        """Implements "the graph starts both language detection and question rephrasing"
+        """Implements "the graph starts with the preprocessing step"
         (requirements/chat-graph.feature)
         Implements "the question rephrasing feeds the decision"
         (requirements/chat-graph.feature)
@@ -217,12 +241,14 @@ class TestGraphWiring:
         (requirements/chat-graph.feature)
         """
         edges = {(str(edge.source), str(edge.target)) for edge in wired_chat_graph._graph.get_graph().edges}
-        assert (START, "determine_language") in edges
-        assert (START, "rephrase_question") in edges
+        assert (START, "preprocessing") in edges
+        assert ("preprocessing", "determine_language") in edges
+        assert ("preprocessing", "rephrase_question") in edges
         assert ("rephrase_question", "decide") in edges
         assert ("determine_language", "rephrase_answer") in edges
         assert ("decide", "rephrase_answer") in edges
-        assert ("rephrase_answer", END) in edges
+        assert ("rephrase_answer", "postprocessing") in edges
+        assert ("postprocessing", END) in edges
 
 
 class TestDrawGraph:

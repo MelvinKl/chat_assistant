@@ -24,6 +24,8 @@ from assistant.impl.settings.prompt_settings import PromptSettings
 from assistant.impl.settings.subagent_settings import (
     load_subagent_settings_from_json,
 )
+from assistant.impl.settings.system_one_settings import SystemOneSettings
+from assistant.impl.stages.stage import Stage
 
 # Apply the patch to allow nested event loops
 nest_asyncio.apply()
@@ -72,6 +74,7 @@ def _di_config(binder: Binder) -> None:
     settings_prompt = PromptSettings()
     settings_mcp = load_mcp_settings_from_json()
     settings_subagents = load_subagent_settings_from_json()
+    settings_system_one = SystemOneSettings()
 
     llm = ChatOpenAI(
         model=settings_openai.model,
@@ -110,6 +113,26 @@ def _di_config(binder: Binder) -> None:
             llm=llm,
             system_prompt=settings_prompt.rephrase_answer_system_prompt,
             user_prompt=settings_prompt.rephrase_answer_user_prompt,
+        ),
+    )
+    binder.bind(
+        "preprocessing",
+        Stage(
+            llm=llm,
+            system_prompt=settings_prompt.preprocessing_system_prompt,
+            user_prompt="The question is: {question}",
+            tools=tools.get("preprocessing", []),
+            system_one=settings_system_one,
+        ),
+    )
+    binder.bind(
+        "postprocessing",
+        Stage(
+            llm=llm,
+            system_prompt=settings_prompt.postprocessing_system_prompt,
+            user_prompt="The returned answer is: {processed_answer}",
+            tools=tools.get("postprocessing", []),
+            system_one=settings_system_one,
         ),
     )
     binder.bind("tools", tools)

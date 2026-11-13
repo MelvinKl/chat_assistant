@@ -17,14 +17,16 @@
 
 * **The repository is maintained by the code-weaver factory.** The reusable
   factory workflow is pinned to an owner plus version tag
-  (`MelvinKl/code-weaver/.github/workflows/factory.yml@19`) — a moving branch
+  (`MelvinKl/code-weaver/.github/workflows/factory.yml`) — a moving branch
   ref is not a stable ref. The factory job declares no runner of its own
   (a reusable-workflow job may only carry `uses`/`with`/`secrets`); the runner
-  is supplied as the `runner` input (`self-hosted`) and must have `pi`
-  pre-installed and configured. The runtime tree is cloned at `factory-ref:
-  main`, the loop budget is 25 loops within a 2000-minute job timeout, the
-  LLM model is `Qwen3.8`, and only issues labeled `code-weaver` are acted on.
-  Credentials (`GH_TOKEN`, the `PI_*` configuration variables) are passed as
+  is supplied as the `runner` input (the dedicated `code-weaver` self-hosted
+  runner) and must have `pi` pre-installed and configured. The runtime tree
+  is cloned at `factory-ref: main`, the loop budget is 25 loops within a
+  2000-minute job timeout, the LLM model is `Qwen3.8`, and only issues
+  labeled `code-weaver` are acted on. Credentials (`GH_TOKEN`, the pi
+  configuration variables — the `PI_*` repository variables, with
+  `PI_EXTENSION_ENV` passed under the `EXTENSION_ENV` key) are passed as
   secrets, never as plain inputs.
 * **The brownfield test-oracle alignment run (issue 11) is scoped to the test
   oracle.** Per the brownfield clause of that run, no plan step implements or

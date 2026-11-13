@@ -62,3 +62,13 @@ Feature: MCP server integration
     When the tools of the servers are loaded
     Then the tools of the first server are registered under the main agent
     And the tools of the second server are registered under the named subagent
+
+  Scenario: a server assigned to the preprocessing stage registers its tools for that stage
+    Given an mcp server with the agent preprocessing
+    When the tools of the server are loaded
+    Then the tools of the server are registered under the preprocessing stage
+
+  Scenario: a server assigned to the postprocessing stage registers its tools for that stage
+    Given an mcp server with the agent postprocessing
+    When the tools of the server are loaded
+    Then the tools of the server are registered under the postprocessing stage

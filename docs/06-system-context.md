@@ -7,7 +7,7 @@ flowchart LR
     subgraph outside["Outside the cluster"]
         GH[GitHub repository<br/>this tree]
         FACTORY["code-weaver factory<br/>(reusable workflow, pinned version tag)"]
-        RUNNER["self-hosted runner<br/>pi pre-installed & configured"]
+        RUNNER["code-weaver runner<br/>(self-hosted; pi pre-installed & configured)"]
         GHCR[ghcr.io image registry]
     end
 
@@ -28,7 +28,7 @@ flowchart LR
     ASST -.->|pull secret, egress: internal CIDRs only| GHCR
     FACTORY -->|clones runtime tree at main| RUNNER
     RUNNER -->|labelled issues -> PRs| GH
-    FACTORY -.->|secrets: GH_TOKEN, PI_*| RUNNER
+    FACTORY -.->|secrets: GH_TOKEN, PI_*, EXTENSION_ENV| RUNNER
     INGRESS --- TLS
 ```
 
@@ -48,8 +48,9 @@ From outside the cluster, the system touches:
 * **GitHub** — the CI jobs (test & lint on pull requests to `main`, image
   build & push on published releases) and the code-weaver factory;
 * **the code-weaver factory** — a reusable workflow pinned to a version tag of
-  `MelvinKl/code-weaver`; its job runs on a self-hosted runner that must have
-  `pi` pre-installed and configured, clones the factory's runtime tree from
+  `MelvinKl/code-weaver`; its job runs on the dedicated self-hosted
+  `code-weaver` runner, which must have `pi` pre-installed and configured,
+  clones the factory's runtime tree from
   `main`, and works issues labeled `code-weaver` within a 25-loop /
   2000-minute budget on the `Qwen3.8` model.
 

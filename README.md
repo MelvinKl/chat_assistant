@@ -56,6 +56,8 @@ By default, the assistant has egress enabled to internal networks (10.0.0.0/8, 1
 |`assistant.settings.prompt.SETTINGS_PROMPTS_REPHRASE_QUESTION_USER_PROMPT`|`Question: {question}\nHistory: {history}\nAdditional Information: {additional_info}`|The user prompt used for rephrasing of the initial question. Usable placeholders are: `question`,`history`,`additional_info`|
 |`assistant.settings.prompt.SETTINGS_PROMPTS_REPHRASE_ANSWER_SYSTEM_PROMPT`|`You are James, a butler of the aristocracy.\nYou will get asked questions and will be provided with the correct answer.\nHowever the answer might not be worded suitable for your master. Your job is to rephrase the answer in a way that is suitable for your master.\nAnswer in the following language: {question_language}`|The system prompt used for rephrasing the final answer. Usable placeholders are: `question`,`history`, `question_language`,`additional_info`,`raw_answer`|
 |`assistant.settings.prompt.SETTINGS_PROMPTS_REPHRASE_ANSWER_USER_PROMPT`|`Question: {question}\nAnswer: {raw_answer}\nAdditional Information: {additional_info}`|The user prompt used for rephrasing the final answer. Usable placeholders are: `question`,`history`, `question_language`,`additional_info`,`raw_answer`|
+|`assistant.settings.prompt.SETTINGS_PROMPTS_PREPROCESSING_SYSTEM_PROMPT`|`You are the preprocessing stage of a chat assistant. You receive the question a user asked. Rewrite the question so that it is clear and self-contained, and answer with the rewritten question only.`|The system prompt of the preprocessing stage. This stage runs before language detection and question rephrasing and prepares the question for the following graph steps.|
+|`assistant.settings.prompt.SETTINGS_PROMPTS_POSTPROCESSING_SYSTEM_PROMPT`|`You are the postprocessing stage of a chat assistant. You receive the answer generated for a user question. Shape the answer so that it is suitable to present to the user, and answer with the shaped answer only.`|The system prompt of the postprocessing stage. This stage runs after the answer rephrasing and shapes the answer that is presented to the user. The stage can run on an optional SystemOne model (`SETTINGS_SYSTEM_ONE_*` environment variables) that limits the tools available to the stage LLM; without one it runs on the main LLM.|
 
 ### LLM Settings
 |Key|Default value|Explanation|
@@ -99,7 +101,7 @@ Each deployment should be an array item containing the following information:
 |`port`|`8080`|Port of the MCP server|
 |`image`|`ghcr.io/melvinkl/mcp-weather/server:latest`|Image of the MCP server|
 |`command`|`["uv","run","python","src/main.py"]`|(Optional) Run command for the MCP server|
-|`agent`|-|(Optional) Decides which subagent will get this tool. If not set, the main agent will receive the tool.|
+|`agent`|-|(Optional) Decides which agent will get this tool: a subagent name gives the tool to that subagent, and `preprocessing` or `postprocessing` gives the tool to the respective question answering stage. If not set, the main agent will receive the tool.|
 |`secrets`|`TRANSPORT: sse`|Values that will  be saved as kubernetes secret and injected as env vars into the MCP server.|
 
 #### Servers

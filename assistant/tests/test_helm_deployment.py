@@ -594,9 +594,11 @@ def test_prompt_settings_rendered_as_environment_variables():
     (requirements/helm-deployment.feature)
 
     Given the assistant.settings.prompt and additionalInformation values,
-    rendering the chart puts the four prompt values and the additional
-    information into the ``assistant-cm`` config map as environment variable
-    entries, and the assistant deployment injects the config map.
+    rendering the chart puts the six prompt values (the four rephrasing
+    prompts plus the preprocessing and postprocessing system prompts) and
+    the additional information into the ``assistant-cm`` config map as
+    environment variable entries, and the assistant deployment injects the
+    config map.
     """
     documents = render_chart()
     (config_map,) = documents_of_kind(documents, "ConfigMap", "assistant-cm")
@@ -608,6 +610,8 @@ def test_prompt_settings_rendered_as_environment_variables():
         "SETTINGS_PROMPTS_REPHRASE_QUESTION_USER_PROMPT",
         "SETTINGS_PROMPTS_REPHRASE_ANSWER_SYSTEM_PROMPT",
         "SETTINGS_PROMPTS_REPHRASE_ANSWER_USER_PROMPT",
+        "SETTINGS_PROMPTS_PREPROCESSING_SYSTEM_PROMPT",
+        "SETTINGS_PROMPTS_POSTPROCESSING_SYSTEM_PROMPT",
     ):
         assert data[key].rstrip("\n") == settings["prompt"][key].rstrip("\n"), key
     (deployment,) = documents_of_kind(documents, "Deployment", "assistant")

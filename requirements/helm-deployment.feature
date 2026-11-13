@@ -51,6 +51,7 @@ Feature: Kubernetes deployment via helm chart
     Given assistant.settings.prompt and additionalInformation values
     When the chart is rendered
     Then the assistant config map carries the prompts and the additional information as environment variables
+    And the rendered prompt environment variables include the preprocessing and postprocessing system prompts
 
   Scenario: each mcp server deployment gets its own resources
     Given mcpServers.deployments entries with name, port, image, command, secrets and config

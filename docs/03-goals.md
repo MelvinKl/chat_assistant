@@ -9,9 +9,10 @@
    modular `POST /assist` endpoint, so any OpenAI-compatible client works
    unchanged.
 3. **LLM-shaped conversation processing.** Every request travels through a
-   state graph that detects the question language, rephrases the question with
-   history, answers it through an MCP tool-capable agent, and rephrases the
-   answer in the question's language.
+   state graph bracketed by a preprocessing stage on the question and a
+   postprocessing stage on the answer, that detects the question language,
+   rephrases the question with history, answers it through an MCP
+   tool-capable agent, and rephrases the answer in the question's language.
 4. **Extensibility without code.** Skills are contributed by MCP servers
    (configuration, not source), and specialized subagents receive dedicated
    system prompts and dedicated tool selections.
@@ -29,7 +30,7 @@ The system-wide quality goals, as specified in chapter 1:
 * **Robustness** — a failing MCP server is logged and skipped during tool
   loading and turns the health status `unhealthy`; the remaining servers keep
   serving tools and the chat path keeps working.
-* **Testability** — the requirements are Gherkin scenarios (128 of them in 14
+* **Testability** — the requirements are Gherkin scenarios (136 of them in 15
   feature files under `requirements/`); the pytest oracle references each
   scenario from a test docstring, and the coverage guard in
   `assistant/tests/test_scenario_coverage.py` verifies both directions of that

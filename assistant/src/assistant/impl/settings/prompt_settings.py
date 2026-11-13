@@ -15,3 +15,6 @@ class PromptSettings(BaseSettings):
 
     rephrase_answer_system_prompt: str = Field(default="")
     rephrase_answer_user_prompt: str = Field(default="")
+
+    preprocessing_system_prompt: str = Field(default="")
+    postprocessing_system_prompt: str = Field(default="")

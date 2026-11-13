@@ -58,6 +58,10 @@ assistant:
         Question: {question}
         Answer: {raw_answer}
         Additional Information: {additional_info}
+      SETTINGS_PROMPTS_PREPROCESSING_SYSTEM_PROMPT: |
+        You are the preprocessing stage of a chat assistant. You receive the question a user asked. Rewrite the question so that it is clear and self-contained, and answer with the rewritten question only.
+      SETTINGS_PROMPTS_POSTPROCESSING_SYSTEM_PROMPT: |
+        You are the postprocessing stage of a chat assistant. You receive the answer generated for a user question. Shape the answer so that it is suitable to present to the user, and answer with the shaped answer only.
     openai:
       SETTINGS_OPENAI_MODEL: qwen3:4b
       SETTINGS_OPENAI_BASE_URL: http://ollama:11434/v1

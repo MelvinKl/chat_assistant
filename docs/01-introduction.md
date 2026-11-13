@@ -56,7 +56,7 @@ The repository contains:
   the devcontainer, the `Makefile`);
 * the CI/CD and factory workflows (`.github/workflows/`);
 * the Gherkin requirements oracle (`requirements/`: 14 feature files,
-  128 scenarios);
+  127 scenarios);
 * this arc42 documentation (`docs/`);
 * the Apache-2.0 `LICENSE`.
 

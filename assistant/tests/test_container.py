@@ -22,6 +22,7 @@ from langgraph.graph.state import CompiledStateGraph
 from assistant.impl.graph.chat_graph import ChatGraph
 from assistant.impl.settings.information_settings import InformationSettings
 from assistant.impl.settings.mcp_server_settings import MCPSettings
+from assistant.impl.stages.stage import Stage
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 HELM_VALUES = REPO_ROOT / "infrastructure" / "helm" / "values.yaml"
@@ -38,6 +39,8 @@ ENV = {
     "SETTINGS_PROMPTS_REPHRASE_QUESTION_USER_PROMPT": "question user prompt",
     "SETTINGS_PROMPTS_REPHRASE_ANSWER_SYSTEM_PROMPT": "answer system prompt",
     "SETTINGS_PROMPTS_REPHRASE_ANSWER_USER_PROMPT": "answer user prompt",
+    "SETTINGS_PROMPTS_PREPROCESSING_SYSTEM_PROMPT": "preprocessing system prompt",
+    "SETTINGS_PROMPTS_POSTPROCESSING_SYSTEM_PROMPT": "postprocessing system prompt",
     "SETTINGS_ADDITIONAL_INFORMATION": "additional information",
     "MCP_SETTINGS_PATH": "/tmp/non_existent_mcp_config.json",  # noqa: S108
     "SUBAGENT_SETTINGS_PATH": "/tmp/non_existent_subagent_config.json",  # noqa: S108
@@ -64,6 +67,8 @@ def configured_container():
         yield {
             "question_rephraser": injector.get_instance("question_rephraser"),
             "answer_rephraser": injector.get_instance("answer_rephraser"),
+            "preprocessing": injector.get_instance("preprocessing"),
+            "postprocessing": injector.get_instance("postprocessing"),
         }
     finally:
         os.environ.clear()
@@ -285,6 +290,32 @@ def test_container_binds_agent_components(configured_container):
         bound = getattr(model_node.bound, attribute, None)
         bound_closures.extend((cell.cell_contents for cell in bound.__closure__) if bound else [])
     assert llm in bound_closures
+
+
+def test_container_binds_preprocessing_and_postprocessing_stages(configured_container):
+    """Implements "the container binds the preprocessing and postprocessing stages"
+    (requirements/configuration.feature)
+
+    With configured LLM, tools, subagents, prompts and information
+    settings, configuring the dependency container binds the
+    preprocessing stage with the preprocessing system prompt and the
+    postprocessing stage with the postprocessing system prompt.
+    """
+    # The preprocessing stage is bound with the preprocessing system prompt.
+    preprocessing = configured_container["preprocessing"]
+    assert isinstance(preprocessing, Stage)
+    assert (
+        preprocessing._prompt_template.messages[0].prompt.template
+        == ENV["SETTINGS_PROMPTS_PREPROCESSING_SYSTEM_PROMPT"]
+    )
+
+    # The postprocessing stage is bound with the postprocessing system prompt.
+    postprocessing = configured_container["postprocessing"]
+    assert isinstance(postprocessing, Stage)
+    assert (
+        postprocessing._prompt_template.messages[0].prompt.template
+        == ENV["SETTINGS_PROMPTS_POSTPROCESSING_SYSTEM_PROMPT"]
+    )
 
 
 def test_container_import_allows_nested_event_loops():

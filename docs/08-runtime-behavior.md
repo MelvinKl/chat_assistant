@@ -15,14 +15,22 @@ client ──POST /chat/completions {model, messages}──► chat router
      - question  = last message;  history = "role: content" of the earlier ones
      - state = GraphState.create(history, question, additional_info)
      - run the compiled LangGraph:
-         START ─► determine_language  (langdetect on the question)
-         START ─► rephrase_question   (question rephraser runnable)
+         START ─► preprocessing   (preprocessing stage: an LLM call on the
+                                     question with the preprocessing system
+                                     prompt; its output is the question)
+         preprocessing ─► determine_language  (langdetect on the question)
+         preprocessing ─► rephrase_question   (question rephraser runnable)
          rephrase_question ─► decide  (deep agent invoked with
                                       {"messages": <rephrased question>};
                                       raw_answer = last agent message)
          [determine_language, decide] ─► rephrase_answer  (answer rephraser,
                                                        in {question_language})
-         rephrase_answer ─► END
+         rephrase_answer ─► postprocessing  (postprocessing stage: an LLM
+                                             call on the rephrased answer
+                                             with the postprocessing system
+                                             prompt; its output is the
+                                             processed_answer)
+         postprocessing ─► END
   4. response: model = requested model, object = "chat.completion",
      single choice (index 0, finish_reason "stop", role "assistant",
      content = processed_answer), usage = zeros, id/created stamped
@@ -33,7 +41,7 @@ or without `messages` is answered 422 by FastAPI.
 
 ### Scenario 2 — Container configuration at startup (MCP tool loading)
 
-On import of `assistant.main`, `configure()` runs: the six settings families
+On import of `assistant.main`, `configure()` runs: the seven settings families
 are read (environment + `.env`); the `ChatOpenAI` LLM is created from the
 OpenAI settings; for every configured MCP server a `MultiServerMCPClient` is
 built — stdio servers with `command`/`args`, remote servers with
@@ -43,7 +51,11 @@ mcp-sampling oracle pins) — and `get_tools()` is awaited
 through `asyncio.run` (which is why the module patches `nest_asyncio` at
 import). A server that fails is logged (`Could not load MCP Tools from
 server …`) and skipped; the others still contribute. Tools are grouped under
-the server's `agent` key — `None` for the main agent. The deep agent is
+the server's `agent` key — `None` for the main agent, a subagent name for
+that subagent, `preprocessing`/`postprocessing` for the respective question
+answering stage. The preprocessing and postprocessing stages are composed
+(each with its system prompt from the prompt settings, the tools of the
+servers assigned to it and the `SystemOneSettings` model), the deep agent is
 created with the LLM, the main tool set and the configured subagents (each
 subagent carries its system prompt plus the tools of the servers that name
 it), and all of it is bound into the `inject` container.
@@ -87,16 +99,16 @@ under the lock; `GET /readiness` answers a static
 An issue receives a label (or a maintainer dispatches the workflow manually
 with an optional `issue_number`) → `code-weaver.yml` starts → its single job
 `uses` the pinned reusable factory workflow
-(`MelvinKl/code-weaver/.github/workflows/factory.yml@19` — an owner plus a
+(`MelvinKl/code-weaver/.github/workflows/factory.yml` — an owner plus a
 version tag, never a moving branch ref), declares no `runs-on` of its own
 (reusable-workflow jobs may only carry `uses`/`with`/`secrets`; the runner is
-the `runner` input, `self-hosted`, whose environment has `pi` pre-installed
-and configured) → the factory clones its runtime tree at `factory-ref:
-main`, works the issue within `max-loops: 25` and a 2000-minute job timeout
+the `runner` input, the dedicated `code-weaver` self-hosted runner, whose
+environment has `pi` pre-installed and configured) → the factory clones its
+runtime tree at `factory-ref: main`, works the issue within `max-loops: 25` and a 2000-minute job timeout
 on the `Qwen3.8` model, acting only on issues carrying the
 `code-weaver` label (`ai-requirements-label`) → the stage jobs produce
 planned, implemented and reviewed pull requests, authenticated through the
-`GH_TOKEN` secret (the `PI_*` configuration variables are passed as secrets
+`GH_TOKEN` secret (the pi configuration variables are passed as secrets
 too — no credential ever travels as a plain input).
 
 ## 8.2 MCP Tool Loading and Sampling — Internal Contract
@@ -132,9 +144,11 @@ prefixed with the server name by default.
 
 * The health probe repeats on a 300 s interval and re-opens a client per
   server per round.
-* Each chat request costs one `langdetect` classification, two LLM
-  rephrasing calls (question, answer) and one deep-agent round that may fan
-  out into MCP tool calls; language detection and question rephrasing run in
-  parallel graph branches.
+* Each chat request costs one `langdetect` classification, two stage LLM
+  calls (the preprocessing stage on the question, the postprocessing stage
+  on the answer), two LLM rephrasing calls (question, answer) and one
+  deep-agent round that may fan out into MCP tool calls; language detection
+  and question rephrasing run in parallel graph branches behind the
+  preprocessing node.
 * The HTTP layer reports zero token usage by design; no per-request token
   accounting exists.

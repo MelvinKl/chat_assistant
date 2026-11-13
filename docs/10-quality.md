@@ -22,20 +22,20 @@ the single source of truth for behaviour, and the pytest oracle under
 |---|---|---|
 | `assist-api.feature` | 4 | the modular assist endpoint |
 | `chat-completions-api.feature` | 9 | the OpenAI-compatible chat completions endpoint |
-| `chat-graph.feature` | 12 | the chat processing graph |
-| `code-weaver-workflow.feature` | 9 | the factory workflow |
-| `configuration.feature` | 8 | application settings and container bindings |
+| `chat-graph.feature` | 12 | the chat processing graph (six nodes, bracketed by the question answering stages) |
+| `configuration.feature` | 9 | application settings and container bindings |
 | `health-api.feature` | 8 | health/readiness endpoints and the probe thread |
 | `helm-deployment.feature` | 15 | the Helm chart |
 | `local-development.feature` | 10 | the local development environment |
-| `mcp-integration.feature` | 11 | MCP settings loading and client connections |
+| `mcp-integration.feature` | 13 | MCP settings loading and client connections |
 | `mcp-sampling.feature` | 13 | the MCP sampling support |
 | `models-api.feature` | 5 | the OpenAI-compatible models endpoints |
 | `rephraser.feature` | 10 | question/answer rephrasing |
 | `repository-structure.feature` | 6 | documentation–repository consistency |
+| `stages.feature` | 5 | the question answering stages |
 | `subagents.feature` | 8 | subagent configuration and tool assignment |
 
-**Total: 128 scenarios.**
+**Total: 127 scenarios.**
 
 **How the alignment is enforced.** Because the oracle is plain pytest (no
 Gherkin runner is a dependency), the join lives in the test docstrings: a test
@@ -96,7 +96,7 @@ the entry point of the CI test job and of the plan's gate step.
 | Building block | Provides |
 |---|---|
 | `tests/test_scenario_coverage.py` | the coverage guard (per-area parametrised) and the dangling-reference check; the home of the reference convention |
-| the per-area test modules (`test_chat_api`, `test_models_api`, `test_assistant_api`, `test_health_endpoints`, `test_helm_deployment`, `test_local_development`, `test_code_weaver_workflow`, `test_repository_structure`, `test_settings`, `test_mcp_client_setup`, `test_mcp_sampling`, `test_subagent_settings`, `test_container`, `graph/test_chat_graph`, `rephraser/test_rephraser`, `test_integration`) | the scenario implementations, each citing the scenario it arose from |
+| the per-area test modules (`test_chat_api`, `test_models_api`, `test_assistant_api`, `test_health_endpoints`, `test_helm_deployment`, `test_local_development`, `test_repository_structure`, `test_settings`, `test_mcp_client_setup`, `test_mcp_sampling`, `test_subagent_settings`, `test_stages`, `test_container`, `graph/test_chat_graph`, `rephraser/test_rephraser`, `test_integration`) | the scenario implementations, each citing the scenario it arose from |
 | `conftest.py`, `fake_chat_model.py` | the shared app/client fixtures and the stub LLM |
 | the `make lint` / `make test` targets and the `test-and-lint.yml` CI job | the standing validation gate on every pull request to `main` |
-| the pinned factory reference and the requirements oracle | the machine-actionable maintenance loop |
+| the requirements oracle | the machine-actionable maintenance loop |

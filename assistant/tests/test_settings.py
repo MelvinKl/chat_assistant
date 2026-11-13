@@ -173,16 +173,18 @@ def test_prompt_settings_read_from_environment():
     """Implements "the prompt settings are read from the environment"
     (requirements/configuration.feature)
 
-    The four SETTINGS_PROMPTS_ environment variables are read when the
-    prompt settings are created, so the settings carry the question
-    rephrasing system and user prompts and the answer rephrasing system and
-    user prompts.
+    The SETTINGS_PROMPTS_ environment variables are read when the prompt
+    settings are created, so the settings carry the question rephrasing
+    system and user prompts, the answer rephrasing system and user prompts,
+    and the preprocessing and postprocessing system prompts.
     """
     env_vars = {
         "SETTINGS_PROMPTS_REPHRASE_QUESTION_SYSTEM_PROMPT": "question system prompt",
         "SETTINGS_PROMPTS_REPHRASE_QUESTION_USER_PROMPT": "question user prompt",
         "SETTINGS_PROMPTS_REPHRASE_ANSWER_SYSTEM_PROMPT": "answer system prompt",
         "SETTINGS_PROMPTS_REPHRASE_ANSWER_USER_PROMPT": "answer user prompt",
+        "SETTINGS_PROMPTS_PREPROCESSING_SYSTEM_PROMPT": "preprocessing system prompt",
+        "SETTINGS_PROMPTS_POSTPROCESSING_SYSTEM_PROMPT": "postprocessing system prompt",
     }
     old_env = {name: os.environ.get(name) for name in env_vars}
     for name in env_vars:
@@ -195,6 +197,8 @@ def test_prompt_settings_read_from_environment():
         assert settings.rephrase_question_user_prompt == "question user prompt"
         assert settings.rephrase_answer_system_prompt == "answer system prompt"
         assert settings.rephrase_answer_user_prompt == "answer user prompt"
+        assert settings.preprocessing_system_prompt == "preprocessing system prompt"
+        assert settings.postprocessing_system_prompt == "postprocessing system prompt"
     finally:
         for name, value in old_env.items():
             if value is None:
@@ -306,6 +310,8 @@ def test_unrelated_environment_variables_ignored():
         "SETTINGS_PROMPTS_REPHRASE_QUESTION_USER_PROMPT",
         "SETTINGS_PROMPTS_REPHRASE_ANSWER_SYSTEM_PROMPT",
         "SETTINGS_PROMPTS_REPHRASE_ANSWER_USER_PROMPT",
+        "SETTINGS_PROMPTS_PREPROCESSING_SYSTEM_PROMPT",
+        "SETTINGS_PROMPTS_POSTPROCESSING_SYSTEM_PROMPT",
         "SETTINGS_OPENAI_MODEL",
         "SETTINGS_OPENAI_BASE_URL",
         "SETTINGS_OPENAI_API_KEY",

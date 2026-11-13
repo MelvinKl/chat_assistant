@@ -5,7 +5,7 @@ Feature: Chat processing graph
   the question language, rephrases the question, answers it through the MCP
   agent and rephrases the answer.
 
-  Scenario: the graph contains the four processing nodes
+  Scenario: the graph contains the six processing nodes
     Given a chat graph
     When the node names are read
     Then the node names are
@@ -14,12 +14,15 @@ Feature: Chat processing graph
       | rephrase question  | rephrase_question  |
       | decide             | decide             |
       | rephrase answer    | rephrase_answer    |
+      | preprocessing      | preprocessing      |
+      | postprocessing     | postprocessing     |
 
-  Scenario: the graph starts both language detection and question rephrasing
+  Scenario: the graph starts with the preprocessing step
     Given a chat graph
     When the graph wiring is read
-    Then the start node connects to the determine language node
-    And the start node connects to the rephrase question node
+    Then the start node connects to the preprocessing node
+    And the preprocessing node connects to the determine language node
+    And the preprocessing node connects to the rephrase question node
 
   Scenario: the question rephrasing feeds the decision
     Given a chat graph
@@ -31,7 +34,8 @@ Feature: Chat processing graph
     When the graph wiring is read
     Then the determine language node connects to the rephrase answer node
     And the decide node connects to the rephrase answer node
-    And the rephrase answer node connects to the end node
+    And the rephrase answer node connects to the postprocessing node
+    And the postprocessing node connects to the end node
 
   Scenario: an empty request yields the no question answer
     Given a chat graph

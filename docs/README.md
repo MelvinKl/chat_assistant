@@ -25,7 +25,7 @@ that run, this repository carried no arc42 documentation. The content
 describes the code as it exists at that point — including the scenario
 coverage guard `assistant/tests/test_scenario_coverage.py` introduced by the
 first step of that run — and treats the Gherkin files under `requirements/`
-(14 feature files, 128 scenarios) as the executable requirements oracle.
+(14 feature files, 127 scenarios) as the executable requirements oracle.
 Where the `README.md` and the repository tree disagree (for example the
 `components/` directory the README lists that is not present in the tree),
 this documentation follows the tree and records the discrepancy in chapter 11.

@@ -22,10 +22,12 @@ logger = logging.getLogger(__name__)
 class GraphNodeNames(StrEnum):
     """Enum for names of the nodes in the ChatGraph"""
 
+    PREPROCESSING = "preprocessing"
     REPHRASE_QUESTION = "rephrase_question"
     DETERMINE_LANGUAGE = "determine_language"
     DECIDE = "decide"
     REPHRASE_ANSWER = "rephrase_answer"
+    POSTPROCESSING = "postprocessing"
 
 
 class ChatGraph:
@@ -36,6 +38,8 @@ class ChatGraph:
         question_rephraser="question_rephraser",
         answer_rephraser="answer_rephraser",
         mcp_agent="mcp_agent",
+        preprocessing="preprocessing",
+        postprocessing="postprocessing",
         information_settings=InformationSettings,
     )
     def __init__(
@@ -44,6 +48,8 @@ class ChatGraph:
         question_rephraser: Runnable,
         answer_rephraser: Runnable,
         mcp_agent: RunnableSequence,
+        preprocessing: Runnable,
+        postprocessing: Runnable,
         information_settings: InformationSettings,
     ):
         self._information_settings = information_settings
@@ -51,6 +57,8 @@ class ChatGraph:
         self._answer_rephraser = answer_rephraser
         self._llm = llm
         self._mcp_agent = mcp_agent
+        self._preprocessing = preprocessing
+        self._postprocessing = postprocessing
         self._state_graph = StateGraph(GraphState)
         self._graph = self._setup_graph()
 
@@ -129,6 +137,15 @@ class ChatGraph:
     #########
     # nodes #
     #########
+    async def _preprocessing_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
+        preprocessed_question = await self._preprocessing.ainvoke(state, config)
+        logger.info(
+            'Preprocessed question "%s" to "%s"',
+            state["question"],
+            preprocessed_question,
+        )
+        return {"question": preprocessed_question}
+
     async def _determine_language_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
         question_language = detect(state["question"])
         logger.info(
@@ -158,21 +175,34 @@ class ChatGraph:
         answer = answer["messages"][-1].content
         return {"raw_answer": answer}
 
+    async def _postprocessing_node(self, state: dict, config: Optional[RunnableConfig] = None) -> dict:
+        postprocessed_answer = await self._postprocessing.ainvoke(state, config)
+        logger.info(
+            'Postprocessed answer "%s" to "%s"',
+            state["processed_answer"],
+            postprocessed_answer,
+        )
+        return {"processed_answer": postprocessed_answer}
+
     def _add_nodes(self):
+        self._state_graph.add_node(GraphNodeNames.PREPROCESSING, self._preprocessing_node)
         self._state_graph.add_node(GraphNodeNames.REPHRASE_QUESTION, self._rephrase_question_node)
         self._state_graph.add_node(GraphNodeNames.DETERMINE_LANGUAGE, self._determine_language_node)
         self._state_graph.add_node(GraphNodeNames.DECIDE, self._decide_node)
         self._state_graph.add_node(GraphNodeNames.REPHRASE_ANSWER, self._answer_rephraser_node)
+        self._state_graph.add_node(GraphNodeNames.POSTPROCESSING, self._postprocessing_node)
 
     def _wire_graph(self):
-        self._state_graph.add_edge(START, GraphNodeNames.DETERMINE_LANGUAGE)
-        self._state_graph.add_edge(START, GraphNodeNames.REPHRASE_QUESTION)
+        self._state_graph.add_edge(START, GraphNodeNames.PREPROCESSING)
+        self._state_graph.add_edge(GraphNodeNames.PREPROCESSING, GraphNodeNames.DETERMINE_LANGUAGE)
+        self._state_graph.add_edge(GraphNodeNames.PREPROCESSING, GraphNodeNames.REPHRASE_QUESTION)
         self._state_graph.add_edge(GraphNodeNames.REPHRASE_QUESTION, GraphNodeNames.DECIDE)
         self._state_graph.add_edge(
             [GraphNodeNames.DETERMINE_LANGUAGE, GraphNodeNames.DECIDE],
             GraphNodeNames.REPHRASE_ANSWER,
         )
-        self._state_graph.add_edge(GraphNodeNames.REPHRASE_ANSWER, END)
+        self._state_graph.add_edge(GraphNodeNames.REPHRASE_ANSWER, GraphNodeNames.POSTPROCESSING)
+        self._state_graph.add_edge(GraphNodeNames.POSTPROCESSING, END)
 
     def _setup_graph(self):
         self._add_nodes()
