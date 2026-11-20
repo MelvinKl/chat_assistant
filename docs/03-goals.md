@@ -30,7 +30,7 @@ The system-wide quality goals, as specified in chapter 1:
 * **Robustness** — a failing MCP server is logged and skipped during tool
   loading and turns the health status `unhealthy`; the remaining servers keep
   serving tools and the chat path keeps working.
-* **Testability** — the requirements are Gherkin scenarios (130 of them in 14
+* **Testability** — the requirements are Gherkin scenarios (131 of them in 14
   feature files under `requirements/`); the pytest oracle references each
   scenario from a test docstring, and the coverage guard in
   `assistant/tests/test_scenario_coverage.py` verifies both directions of that

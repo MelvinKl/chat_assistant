@@ -49,5 +49,6 @@ oracle under `assistant/tests/` cites the scenarios it implements, the
 coverage guard makes that citation complete and non-dangling, and the
 repository's own `make test` target (lint + pytest via uv) is the gate the CI
 test job runs. Operations closes the loop: the cluster is provisioned by a
-script, the image is published by the release workflow (or live-reloaded by
-Tilt in development), and the factory maintains the code against the oracle.
+script, the image is published by the docker image workflow on a push to
+`main` (or live-reloaded by Tilt in development), and the factory maintains
+the code against the oracle.

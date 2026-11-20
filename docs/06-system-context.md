@@ -45,8 +45,8 @@ From outside the cluster, the system touches:
 
 * **ghcr.io** — pulling the assistant and the MCP server images (pull secret
   rendered from the `ghcrIo` values);
-* **GitHub** — the CI jobs (test & lint on pull requests to `main`, image
-  build & push on published releases) and the code-weaver factory;
+* **GitHub** — the CI jobs (test & lint on pull requests to `main`, the
+  image build & push on pushes to `main`) and the code-weaver factory;
 * **the code-weaver factory** — a reusable workflow pinned to a version tag of
   `MelvinKl/code-weaver`; its job runs on the dedicated self-hosted
   `code-weaver` runner, which must have `pi` pre-installed and configured,

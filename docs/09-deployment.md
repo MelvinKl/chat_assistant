@@ -29,9 +29,11 @@ nginx-ingress-controller (chart 10.3.0) into its own namespace.
 ## 9.2 Infrastructure
 
 * **Images** — published to ghcr.io: the assistant image by the release
-  workflow (tag = release tag, plus a re-tagged `latest`); the MCP server
-  images named in the chart values (default: the mcp-weather server); the
-  ollama image from the subchart (`pullPolicy: Always`).
+  workflow (tag = the version number the workflow releases — counted up
+  from the repository's released versions with every release — plus a
+  re-tagged `latest`); the MCP server images named in the chart values
+  (default: the mcp-weather server); the ollama image from the subchart
+  (`pullPolicy: Always`).
 * **Charts** — the bitnami nginx-ingress-controller (10.3.0) for local
   ingress; the otwld ollama-helm chart (1.93.0, digest-pinned in
   `infrastructure/helm/Chart.lock`).
@@ -54,7 +56,7 @@ directly (8080 → the API, 5679 → the debugger).
 | `infrastructure/local/create_local_env.sh` | creates the k3d cluster, waits for ready nodes, installs the bitnami nginx ingress controller |
 | `Tiltfile` | reads `.env`; offers the `debug` flag; `docker_build`s the assistant image from `assistant/Dockerfile` (build arg `DEV` set in debug mode) with a live-update sync of `assistant/` into `/app/assistant`; assembles the Helm values (ingress disabled, the `GH_*` credentials, the `SETTINGS_OPENAI_*` overrides from the environment, and `ollama.enabled=false` whenever a custom `SETTINGS_OPENAI_BASE_URL` is set); deploys the `assistant` Helm release; forwards 8080 (linked as `/docs`) and 5679 |
 | `Makefile` | `format` (isort + black via uv), `lint` (flake8 via uv), `test` (lint, then `pytest .` via uv) — the same entry points the CI test job uses |
-| `.github/workflows/docker-image.yml` | on `release: published` (or manual dispatch): checks out, logs in to ghcr.io with `GITHUB_TOKEN`, builds `assistant/Dockerfile`, pushes the release tag and re-tags `latest` |
+| `.github/workflows/docker-image.yml` | on a push to `main` (or manual dispatch): checks out, logs in to ghcr.io with `GITHUB_TOKEN`, releases a new version of the assistant — the version number counted up from the repository's released versions (the successor of the highest of them), recorded as a new `v*` tag of the checked out commit — builds `assistant/Dockerfile`, pushes it tagged with the version number and re-tags `latest` |
 | `.github/workflows/test-and-lint.yml` | on pull requests to `main` (or manual dispatch): sets up Python 3.14, installs `uv`, syncs the dev extras, runs `make lint` then `make test` |
 | `.devcontainer/devcontainer.json` | the development container: `mcr.microsoft.com/devcontainers/python:3.13-bookworm`, remote user `vscode`, VS Code extensions (python, helm-intellisense, tiltfile, …), and the devcontainer features `docker-outside-of-docker`, `kubectl-helm-minikube`, `tilt`; `KUBECONFIG` pointed at the workspace |
 

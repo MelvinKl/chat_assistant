@@ -146,7 +146,7 @@ prefixed with the server name by default.
 | Trigger | Effect |
 |---|---|
 | Pull request to `main` | `test-and-lint.yml`: sets up Python 3.14 + uv, installs the dev extras, runs `make lint` then `make test` |
-| `release: published` | `docker-image.yml`: builds `assistant/Dockerfile` and pushes it to ghcr.io tagged with the release tag, re-tagged `latest` |
+| Push to `main` | `docker-image.yml`: releases a new version of the assistant (its version number counted up from the repository's released versions) and builds `assistant/Dockerfile`, pushing it to ghcr.io tagged with that version number, re-tagged `latest` |
 | An issue is labeled (or manual dispatch) | `code-weaver.yml`: the factory run of scenario 4 |
 | First `GET /health` | the background probe thread starts |
 

@@ -308,19 +308,21 @@ def test_ci_test_and_lint_job_validates_pull_requests():
 def test_ci_docker_image_job_publishes_release_images():
     """Implements "the CI docker image job publishes release images" (requirements/local-development.feature)
 
-    The ``docker-image.yml`` workflow triggers on ``release: published``: it
-    builds the assistant image from ``assistant/Dockerfile`` tagged with the
-    release tag name, pushes it to ghcr.io, and re-tags and pushes the same
-    image as ``latest``.
+    The ``docker-image.yml`` workflow triggers on a push to the ``main``
+    branch: on that trigger it releases a new version of the assistant and
+    builds the assistant image from ``assistant/Dockerfile`` tagged with
+    that version number, pushes it to ghcr.io, and re-tags and pushes the
+    same image as ``latest``.
     """
     workflow = yaml.safe_load(DOCKER_IMAGE_WORKFLOW.read_text(encoding="utf-8"))
-    assert workflow_triggers(workflow)["release"]["types"] == ["published"]
+    assert workflow_triggers(workflow)["push"]["branches"] == ["main"]
     build_step = [
         step for step in workflow["jobs"]["build"]["steps"] if step.get("name") == "Build and push Docker image"
     ][0]
     script = build_step["run"]
     assert "docker build . -f assistant/Dockerfile -t $TAG" in script
-    assert "${{ github.event.release.tag_name }}" in script
+    assert "export VERSION=${{ steps.release.outputs.version }}" in script
+    assert "export TAG=ghcr.io/${GITHUB_REPOSITORY@L}/assistant:$VERSION" in script
     assert "docker push $TAG" in script
     assert "docker image tag $TAG $LATEST_TAG" in script
     assert "docker push $LATEST_TAG" in script
@@ -340,3 +342,38 @@ def test_devcontainer_provides_development_tooling():
     assert any("docker" in name for name in features)
     assert any("kubectl-helm" in name for name in features)
     assert any("tilt" in name for name in features)
+
+
+def test_version_number_counts_up_with_every_release():
+    """Implements "the version number counts up with every release" (requirements/local-development.feature)
+
+    The workflow's ``Release a new version`` step derives the version number
+    of every release the workflow performs from the repository's already
+    released versions: it takes the highest of the released version tags
+    and computes the new version number as the successor of that highest
+    released version (its patch number counted up by one, ``0.1.0`` where
+    no version has been released yet) — strictly higher than the version
+    number of the previous release. It records the new version as a ``v*``
+    tag of the checked out commit, so the next release counts up from it,
+    and hands the number to the build step as the step's ``version``
+    output.
+    """
+    workflow = yaml.safe_load(DOCKER_IMAGE_WORKFLOW.read_text(encoding="utf-8"))
+    release_step = next(
+        step for step in workflow["jobs"]["build"]["steps"] if step.get("name") == "Release a new version"
+    )
+    script = release_step["run"]
+    # the derivation reads the repository's released versions
+    assert "git tag --list" in script
+    # and takes the highest of them
+    assert "sort -V" in script
+    assert "tail -n 1" in script
+    # the new version number is the successor of the highest released
+    # version, counted up by one: strictly higher than the previous one
+    assert "$(( ${HIGHEST##*.} + 1 ))" in script
+    assert "VERSION=0.1.0" in script
+    # the released version is recorded as a new tag of the repository
+    assert 'git tag "v$VERSION"' in script
+    assert 'git push origin "v$VERSION"' in script
+    # and handed to the build step as the step's version output
+    assert 'echo "version=$VERSION" >> "$GITHUB_OUTPUT"' in script

@@ -5,11 +5,11 @@
 * `README.md` — the primary human-facing documentation (installation,
   configuration tables, directory structure, getting started, development)
 * `requirements/*.feature` — the requirements oracle:
-  `assist-api` (4), `chat-completions-api` (9), `chat-graph` (12),
+  `assist-api` (4), `chat-completions-api` (9), `chat-graph` (14),
   `configuration` (9), `health-api` (8), `helm-deployment` (15),
-  `local-development` (10), `mcp-integration` (13), `mcp-sampling` (13),
+  `local-development` (11), `mcp-integration` (13), `mcp-sampling` (13),
   `models-api` (5), `rephraser` (10), `repository-structure` (6),
-  `stages` (5), `subagents` (8) — 127 scenarios
+  `stages` (6), `subagents` (8) — 131 scenarios
 * `plans/11.md` — the brownfield test-oracle alignment plan (16 steps) whose
   run established this documentation tree and the coverage guard
 * `plans/12.md` — the plan that extended question answering with the

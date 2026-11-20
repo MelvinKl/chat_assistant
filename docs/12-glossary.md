@@ -13,7 +13,7 @@
 | **feature file** | One Gherkin file under `requirements/`; the unit of the requirements oracle |
 | **MCP** | The Model Context Protocol; the assistant connects to MCP servers to load their tools and offers its LLM back to them through sampling |
 | **MCP server** | A tool provider configured in the MCP settings (name, transport, and either `command`/`args` for stdio or `url`/`headers` for remote transports, plus an optional `agent` assignment: `None` = main agent, a subagent name, or the `preprocessing`/`postprocessing` question answering stage) |
-| **oracle** | The body of requirements the implementation is judged against; here, the 130 Gherkin scenarios in the 14 feature files under `requirements/` |
+| **oracle** | The body of requirements the implementation is judged against; here, the 131 Gherkin scenarios in the 14 feature files under `requirements/` |
 | **pull secret** | The Kubernetes `dockerconfigjson` secret (`pull-secret`) rendered from the `ghcrIo` chart values |
 | **rephraser** | The `Rephraser` runnable: a system-plus-user prompt template rendered from a state dict, invoked sync or async against the LLM; bound as `question_rephraser` and `answer_rephraser` |
 | **stage** | One of the question answering stages (`Stage`): a runnable LLM call carrying the stage's own system prompt (the preprocessing stage on the question, the postprocessing stage on the returned answer), the tools of the MCP servers available to the stage, and an optional SystemOne model; bound as `preprocessing` and `postprocessing` and wired into the chat graph |

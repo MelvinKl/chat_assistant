@@ -22,7 +22,7 @@ The repository as a set of building blocks:
 | `infrastructure/local/` | `create_local_env.sh` + `k3d-cluster-config.yaml`: the local k3d cluster with registry and nginx ingress |
 | `.github/workflows/` | `test-and-lint.yml` (PR gate), `docker-image.yml` (release images), `code-weaver.yml` (the factory) |
 | `Tiltfile`, `Makefile`, `.devcontainer/`, `.vscode/` | The local development environment: live-reload builds, port forwards, debug attach, format/lint/test targets |
-| `requirements/` | The Gherkin oracle: 14 feature files, 130 scenarios |
+| `requirements/` | The Gherkin oracle: 14 feature files, 131 scenarios |
 | `docs/` | This arc42 documentation |
 | `LICENSE` | Apache License 2.0 |
 
@@ -190,7 +190,7 @@ the guard, `test_scenario_coverage.py`, introduces the convention and makes
 it machine-checkable:
 
 * **Extraction** — every `Scenario:` title of every
-  `requirements/*.feature` file is collected (14 files, 130 scenarios).
+  `requirements/*.feature` file is collected (14 files, 131 scenarios).
 * **Reference scan** — every test function's docstring is scanned for
   citations in the two accepted machine forms:
   `Implements "<scenario title>" (requirements/<name>.feature)` and the

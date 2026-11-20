@@ -48,10 +48,16 @@ Feature: Local development environment
     And the workflow runs the test target
 
   Scenario: the CI docker image job publishes release images
-    When a release is published
-    Then the assistant image is built and pushed tagged with the release name
+    When a change is pushed to the main branch
+    Then a new version of the assistant is released
+    And the assistant image is built and pushed tagged with the version number
     And the image is re tagged as latest
 
   Scenario: the devcontainer provides the development tooling
     When the devcontainer is started
     Then a python 3.13 image with kubernetes, helm and tilt tooling is running
+
+  Scenario: the version number counts up with every release
+    Given a released version of the assistant
+    When a new version of the assistant is released
+    Then the version number of the new release is higher than the version number of the previous release

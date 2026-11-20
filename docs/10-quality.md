@@ -26,7 +26,7 @@ the single source of truth for behaviour, and the pytest oracle under
 | `configuration.feature` | 9 | application settings and container bindings |
 | `health-api.feature` | 8 | health/readiness endpoints and the probe thread |
 | `helm-deployment.feature` | 15 | the Helm chart |
-| `local-development.feature` | 10 | the local development environment |
+| `local-development.feature` | 11 | the local development environment |
 | `mcp-integration.feature` | 13 | MCP settings loading and client connections |
 | `mcp-sampling.feature` | 13 | the MCP sampling support |
 | `models-api.feature` | 5 | the OpenAI-compatible models endpoints |
@@ -35,7 +35,7 @@ the single source of truth for behaviour, and the pytest oracle under
 | `stages.feature` | 6 | the question answering stages |
 | `subagents.feature` | 8 | subagent configuration and tool assignment |
 
-**Total: 130 scenarios.**
+**Total: 131 scenarios.**
 
 **How the alignment is enforced.** Because the oracle is plain pytest (no
 Gherkin runner is a dependency), the join lives in the test docstrings: a test
